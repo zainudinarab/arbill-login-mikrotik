@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <title>HTTPS Login - WiFi ARABPAY</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="setting.js"></script>
+</head>
+<body>
+
+  <!-- Dynamic Floating Orbs Background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+
+  $(if chap-id)
+  <form name="sendin" action="$(link-ssl-login-only)" method="post" style="display:none">
+    <input type="hidden" name="username" />
+    <input type="hidden" name="password" />
+    <input type="hidden" name="dst" value="$(link-orig)" />
+    <input type="hidden" name="popup" value="true" />
+  </form>
+
+  <script src="js/md5.js"></script>
+  <script>
+    function doLogin() {
+      var form = document.login;
+      var activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+      
+      if (activeTab === 'voucher') {
+        var voucherCode = form.voucher.value.trim();
+        if (!voucherCode) {
+          showError('Silakan masukkan Kode Voucher Anda.');
+          return false;
+        }
+        form.username.value = voucherCode;
+        form.password.value = voucherCode;
+      } else {
+        if (!form.username_input.value.trim() || !form.password_input.value) {
+          showError('Username dan Password wajib diisi.');
+          return false;
+        }
+        form.username.value = form.username_input.value.trim();
+        form.password.value = form.password_input.value;
+      }
+
+      document.sendin.username.value = form.username.value;
+      document.sendin.password.value = hex_md5('$(chap-id)' + form.password.value + '$(chap-challenge)');
+      document.sendin.submit();
+      return false;
+    }
+  </script>
+  $(endif)
+
+  <div class="wrapper">
+
+    <!-- Top Action Bar (Live Time & Theme Switcher) -->
+    <div class="top-action-bar">
+      <div class="live-time-widget">
+        <span class="live-dot"></span>
+        <span id="live-time-display">--:--:--</span>
+      </div>
+
+      <div class="theme-switcher-btns">
+        <button type="button" class="theme-btn active" title="Cyber Dark" onclick="setTheme('cyber', this)">🌙</button>
+        <button type="button" class="theme-btn" title="Gold Luxury" onclick="setTheme('gold', this)">👑</button>
+        <button type="button" class="theme-btn" title="Clean Light" onclick="setTheme('light', this)">☀️</button>
+      </div>
+    </div>
+
+    <!-- Brand Header -->
+    <div class="brand-header">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3C6.95 3 2.55 5.37 0 9l2.24 2.98C4.34 8.7 8.01 6.5 12 6.5s7.66 2.2 9.76 5.48L24 9c-2.55-3.63-6.95-6-12-6zm0 6c-3.31 0-6.19 1.55-7.91 3.96l2.24 2.98C7.38 14.47 9.57 13 12 13s4.62 1.47 5.67 2.94l2.24-2.98C18.19 10.55 15.31 9 12 9zm0 6c-1.66 0-3.08.77-3.95 1.96L12 22l3.95-5.04C15.08 15.77 13.66 15 12 15z"/>
+        </svg>
+      </div>
+      <h1 class="brand-title">WIFI ARABPAY</h1>
+      <div class="brand-subtitle">
+        Super Fast & Secure Internet
+        <span class="ssl-badge">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+          HTTPS SSL 256-bit
+        </span>
+      </div>
+    </div>
+<!-- Prayer Times (Jadwal Sholat) Widget -->
+    <div class="prayer-times-widget">
+      <div class="prayer-header">
+        <div class="prayer-title">
+          <span>🕌 Jadwal Sholat</span>
+          <span id="prayer-today-date" class="prayer-date">Hari Ini</span>
+        </div>
+        <div id="next-prayer-badge" class="next-prayer-badge">
+          Memuat...
+        </div>
+      </div>
+      <div class="prayer-grid">
+        <div class="prayer-item" id="item-subuh">
+          <span class="p-name">Subuh</span>
+          <span class="p-time" id="time-subuh">--:--</span>
+        </div>
+        <div class="prayer-item" id="item-dzuhur">
+          <span class="p-name">Dzuhur</span>
+          <span class="p-time" id="time-dzuhur">--:--</span>
+        </div>
+        <div class="prayer-item" id="item-ashar">
+          <span class="p-name">Ashar</span>
+          <span class="p-time" id="time-ashar">--:--</span>
+        </div>
+        <div class="prayer-item" id="item-maghrib">
+          <span class="p-name">Maghrib</span>
+          <span class="p-time" id="time-maghrib">--:--</span>
+        </div>
+        <div class="prayer-item" id="item-isya">
+          <span class="p-name">Isya</span>
+          <span class="p-time" id="time-isya">--:--</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notification Alert -->
+    $(if error)
+    <div class="alert alert-danger">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      <div>$(error)</div>
+    </div>
+    $(endif)
+
+    <div id="custom-alert" class="alert alert-danger" style="display: none;">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+      </svg>
+      <div id="custom-alert-text"></div>
+    </div>
+
+    <!-- Tab Selector -->
+    <div class="tab-group">
+      <button type="button" class="tab-btn active" data-tab="voucher" onclick="switchTab('voucher')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2z"/>
+        </svg>
+        Kode Voucher
+      </button>
+      <button type="button" class="tab-btn" data-tab="member" onclick="switchTab('member')">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+        </svg>
+        Member / Paket
+      </button>
+    </div>
+
+    <!-- Main Form -->
+    <form name="login" action="$(link-ssl-login-only)" method="post" $(if chap-id)onSubmit="return doLogin()"$(else)onSubmit="return handleFormSubmit(event)"$(endif)>
+      <input type="hidden" name="dst" value="$(link-orig)" />
+      <input type="hidden" name="popup" value="true" />
+      <input type="hidden" name="username" />
+      <input type="hidden" name="password" />
+
+      <!-- Form Mode: Voucher -->
+      <div id="form-voucher">
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="voucher">Kode Voucher</label>
+            <button type="button" class="btn-paste" onclick="pasteClipboard('voucher')">📋 Paste Kode</button>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" id="voucher" name="voucher" class="form-control" placeholder="Masukkan Kode Voucher" autocomplete="off" oninput="this.value = this.value.toUpperCase()" autofocus>
+            <svg class="input-icon" viewBox="0 0 24 24">
+              <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 12 7.4 15.38 12 17 10.83 14.92 8H20v6z"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Mode: Member -->
+      <div id="form-member" style="display: none;">
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label" for="username_input">Username Member</label>
+            <button type="button" class="btn-paste" onclick="pasteClipboard('username_input')">📋 Paste</button>
+          </div>
+          <div class="input-wrapper">
+            <input type="text" id="username_input" name="username_input" class="form-control" placeholder="Masukkan Username">
+            <svg class="input-icon" viewBox="0 0 24 24">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password_input">Password Member</label>
+          <div class="input-wrapper">
+            <input type="password" id="password_input" name="password_input" class="form-control" placeholder="Masukkan Password">
+            <svg class="input-icon" viewBox="0 0 24 24">
+              <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+            </svg>
+            <button type="button" class="btn-toggle-pw" onclick="togglePasswordVisibility()">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-submit">
+        <span>HUBUNGKAN SEKARANG</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+        </svg>
+      </button>
+    </form>
+
+    <!-- Interactive Pricing Section -->
+    <div class="pricing-section">
+      <div class="section-header">
+        <div class="section-title">Pilihan Paket Voucher</div>
+        <span id="pricing-live-status" style="font-size:0.7rem; color:var(--accent-cyan);">⚡ Pembelian Instan</span>
+      </div>
+
+      <!-- Flash Sale Live Header Banner (Otomatis tampil jika ada flash sale aktif) -->
+      <div id="flash-sale-banner" class="flash-sale-banner" style="display:none;">
+        <div class="fs-banner-left">
+          <span class="fs-icon">⚡</span>
+          <div>
+            <div id="fs-banner-title" class="fs-banner-title">FLASH SALE SPESIAL!</div>
+            <div id="fs-banner-sub" class="fs-banner-sub">Diskon paket terbatas</div>
+          </div>
+        </div>
+        <div id="fs-banner-timer" class="fs-banner-timer">
+          ⏱ 00:00:00
+        </div>
+      </div>
+
+      <!-- Dynamic Price Cards Container -->
+      <div class="price-cards" id="dynamic-price-cards">
+        <div class="price-card" onclick="selectPackage(this, '1 JAM', 'Rp 2.000', null, '1h', 2000)">
+          <div class="price-duration">1 JAM</div>
+          <div class="price-amount">Rp 2.000</div>
+        </div>
+        <div class="price-card selected" onclick="selectPackage(this, '24 JAM', 'Rp 5.000', null, '24h', 5000)">
+          <span class="price-badge">POPULER</span>
+          <div class="price-duration">24 JAM</div>
+          <div class="price-amount">Rp 5.000</div>
+        </div>
+        <div class="price-card" onclick="selectPackage(this, '7 HARI', 'Rp 25.000', null, '7d', 25000)">
+          <div class="price-duration">7 HARI</div>
+          <div class="price-amount">Rp 25.000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Footer Actions -->
+    <div class="quick-footer-actions">
+      <button type="button" class="btn-quick-act" onclick="openHelpModal()">
+        ❓ Bantuan / FAQ
+      </button>
+      <button type="button" class="btn-quick-act btn-wa-direct" onclick="document.getElementById('pkg-modal').classList.add('active')">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
+        </svg>
+        Beli Voucher
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-text">
+      <strong>WiFi ARABPAY Hotspot Digital</strong><br>
+      Layanan Pelanggan WhatsApp: <strong>0812-3456-7890</strong>
+    </div>
+
+  </div>
+
+  <!-- Interactive Package Purchase Modal -->
+  <div id="pkg-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Beli Voucher Hotspot</div>
+        <button class="btn-close-modal" onclick="closeModal('pkg-modal')">✕</button>
+      </div>
+      <div style="text-align:center; padding:10px 0;">
+        <div style="font-size:0.85rem; color:var(--text-secondary);">Paket Dipilih:</div>
+        <div id="modal-pkg-dur" style="font-size:1.35rem; font-weight:800; color:var(--accent-cyan); margin:4px 0;">24 JAM</div>
+        <div id="modal-pkg-price" style="font-size:1.25rem; font-weight:800; color:#fbbf24;">Rp 5.000</div>
+        <div id="modal-pkg-flash" style="display:none; margin-top:8px; font-size:0.75rem; color:#fef08a; font-weight:700; background:linear-gradient(135deg, rgba(239,68,68,0.3) 0%, rgba(245,158,11,0.3) 100%); border:1px solid rgba(245,158,11,0.5); border-radius:8px; padding:6px 10px;">
+          ⚡ Flash Sale Aktif! Diskon Terbatas
+        </div>
+      </div>
+      <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:10px; line-height:1.5;">
+        Pembayaran instan online mendukung: <strong>QRIS, ArabPay E-Wallet, VA Transfer, & Manual WhatsApp</strong>.
+      </div>
+      <button type="button" class="btn-submit" style="margin-top:14px; background:linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); font-weight:800; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);" onclick="openArbilPayCheckout()">
+        💳 Beli & Bayar Online (QRIS / E-Wallet)
+      </button>
+      <button type="button" class="btn-submit" style="margin-top:8px; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); font-weight:600; font-size:0.85rem;" onclick="confirmOrderWA()">
+        📲 Beli Manual via WhatsApp Admin
+      </button>
+    </div>
+  </div>
+
+  <!-- Interactive FAQ / Help Modal -->
+  <div id="help-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Panduan & Bantuan</div>
+        <button class="btn-close-modal" onclick="closeModal('help-modal')">✕</button>
+      </div>
+      <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
+        <p style="margin-bottom:10px;"><strong>1. Cara Pakai Voucher:</strong><br>Ketik kode voucher yang Anda beli dari Admin di kolom "Kode Voucher", lalu klik <em>Hubungkan Sekarang</em>.</p>
+        <p style="margin-bottom:10px;"><strong>2. Cara Beli Voucher:</strong><br>Klik salah satu paket harga atau tombol WhatsApp Admin untuk memesan kode voucher baru secara cepat.</p>
+        <p><strong>3. Kendala Koneksi:</strong><br>Jika koneksi terputus, pastikan Anda berada dalam jangkauan sinyal WiFi ARABPAY.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var CFG = window.APP_CONFIG || {};
+
+    // 1. Konfigurasi URL Billing Server dari setting.js
+    var BILLING_API_URL = (function() {
+      if (CFG.BILLING_URL && CFG.BILLING_URL.trim() !== '') {
+        return CFG.BILLING_URL.replace(/\/+$/, '');
+      }
+      if (window.BILLING_SERVER_URL) return window.BILLING_SERVER_URL;
+      var host = window.location.hostname;
+      if (!host || host === 'localhost' || host === '127.0.0.1') {
+        return 'http://localhost:3006';
+      }
+      return 'http://' + host + ':3006';
+    })();
+
+    // Terapkan branding dan konfigurasi dari setting.js ke tampilan UI
+    function applyAppConfig() {
+      var cfg = window.APP_CONFIG || {};
+
+      // Judul / Nama Brand
+      if (cfg.BRAND_NAME) {
+        document.title = 'HTTPS Login - ' + cfg.BRAND_NAME;
+        var titleEl = document.querySelector('.brand-title');
+        if (titleEl) titleEl.innerText = cfg.BRAND_NAME;
+        var footerBrand = document.querySelector('.footer-text strong');
+        if (footerBrand) footerBrand.innerText = cfg.BRAND_NAME + ' Hotspot Digital';
+      }
+
+      // Subtitle
+      if (cfg.BRAND_SUBTITLE) {
+        var subEl = document.querySelector('.brand-subtitle');
+        if (subEl && subEl.childNodes.length > 0) {
+          subEl.childNodes[0].nodeValue = cfg.BRAND_SUBTITLE + ' ';
+        }
+      }
+
+      // Nomor WhatsApp Admin
+      var waAdmin = (cfg.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
+      var waDisplay = cfg.WHATSAPP_DISPLAY || '0812-3456-7890';
+      var waBtn = document.querySelector('.btn-wa-direct');
+      if (waBtn) {
+        waBtn.href = 'https://wa.me/' + waAdmin + '?text=' + encodeURIComponent('Halo Admin ' + (cfg.BRAND_NAME || 'WiFi ARABPAY') + ', saya mau beli Voucher Hotspot');
+      }
+      var footerStrong = document.querySelectorAll('.footer-text strong');
+      if (footerStrong.length >= 2) {
+        footerStrong[1].innerText = waDisplay;
+      }
+
+      // Fitur Toggles
+      if (cfg.FEATURES) {
+        if (cfg.FEATURES.ENABLE_LIVE_CLOCK === false) {
+          var clockEl = document.querySelector('.live-time-widget');
+          if (clockEl) clockEl.style.display = 'none';
+        }
+        if (cfg.FEATURES.ENABLE_THEME_SWITCHER === false) {
+          var themeEl = document.querySelector('.theme-switcher-btns');
+          if (themeEl) themeEl.style.display = 'none';
+        }
+      }
+
+      // Jadwal Sholat Toggle
+      if (cfg.PRAYER_TIMES && cfg.PRAYER_TIMES.ENABLED === false) {
+        var prayerWidget = document.querySelector('.prayer-times-widget');
+        if (prayerWidget) prayerWidget.style.display = 'none';
+      }
+    }
+
+    var currentPkg = { dur: '24 JAM', price: 'Rp 5.000', isFlashSale: false, promoDetails: null };
+    var flashSaleTimerInterval = null;
+
+    // Live Clock Update
+    function updateClock() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      var s = String(now.getSeconds()).padStart(2, '0');
+      var el = document.getElementById('live-time-display');
+      if (el) el.innerText = h + ':' + m + ':' + s;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // Kalkulasi Jadwal Sholat Otomatis & Akurat (Kemenag RI - 100% Offline tanpa internet)
+    function updatePrayerTimes() {
+      function d2r(d) { return d * Math.PI / 180; }
+      function r2d(r) { return r * 180 / Math.PI; }
+      function fixHour(h) { return h - 24 * Math.floor(h / 24); }
+
+      var now = new Date();
+      var year = now.getFullYear();
+      var month = now.getMonth() + 1;
+      var day = now.getDate();
+
+      // Deteksi Timezone Indonesia (WIB=7, WITA=8, WIT=9, default 7)
+      var pCfg = (window.APP_CONFIG && window.APP_CONFIG.PRAYER_TIMES) || {};
+      if (pCfg.ENABLED === false) return;
+
+      var tZone = typeof pCfg.TIMEZONE === 'number' ? pCfg.TIMEZONE : -(now.getTimezoneOffset() / 60);
+      if (tZone < 7 || tZone > 9) tZone = 7;
+
+      var lat = typeof pCfg.LATITUDE === 'number' ? pCfg.LATITUDE : (tZone === 7 ? -6.2088 : (tZone === 8 ? -5.1477 : -2.5337));
+      var lng = typeof pCfg.LONGITUDE === 'number' ? pCfg.LONGITUDE : (tZone === 7 ? 106.8456 : (tZone === 8 ? 119.4327 : 140.7181));
+
+      var a = Math.floor((14 - month) / 12);
+      var y = year + 4800 - a;
+      var m = month + 12 * a - 3;
+      var jdn = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
+      var jd = jdn - 0.5 + (12 - tZone) / 24;
+
+      var d = jd - 2451545.0;
+      var g = 357.529 + 0.98560028 * d;
+      var q = 280.459 + 0.98564736 * d;
+      var L = q + 1.915 * Math.sin(d2r(g)) + 0.020 * Math.sin(d2r(2 * g));
+      var e = 23.439 - 0.00000036 * d;
+      var RA = r2d(Math.atan2(Math.cos(d2r(e)) * Math.sin(d2r(L)), Math.cos(d2r(L)))) / 15;
+      RA = fixHour(RA);
+      var decl = r2d(Math.asin(Math.sin(d2r(e)) * Math.sin(d2r(L))));
+      var EqT = q / 15 - RA;
+      EqT = fixHour(EqT + 12) - 12;
+
+      var noon = 12 + tZone - lng / 15 - EqT;
+
+      function sunAngleTime(angle, direction) {
+        var cosH = (Math.sin(d2r(angle)) - Math.sin(d2r(lat)) * Math.sin(d2r(decl))) / (Math.cos(d2r(lat)) * Math.cos(d2r(decl)));
+        if (cosH > 1 || cosH < -1) return null;
+        var H = r2d(Math.acos(cosH)) / 15;
+        return noon + (direction === 'ccw' ? -H : H);
+      }
+
+      function asrTime(factor) {
+        var angle = r2d(Math.atan(1 / (factor + Math.tan(d2r(Math.abs(lat - decl))))));
+        return sunAngleTime(angle, 'cw');
+      }
+
+      var rawTimes = {
+        subuh: sunAngleTime(-20, 'ccw') + 2 / 60, // Kemenag 20 deg + 2m ihtiyat
+        dzuhur: noon + 2 / 60, // + 2m ihtiyat
+        ashar: asrTime(1) + 2 / 60, // Shafi'i + 2m ihtiyat
+        maghrib: sunAngleTime(-0.8333 - 0.0347 * Math.sqrt(10), 'cw') + 2 / 60,
+        isya: sunAngleTime(-18, 'cw') + 2 / 60 // Kemenag 18 deg + 2m ihtiyat
+      };
+
+      function formatTime(val) {
+        val = fixHour(val);
+        var h = Math.floor(val);
+        var min = Math.round((val - h) * 60);
+        if (min >= 60) { h = (h + 1) % 24; min = 0; }
+        return String(h).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+      }
+
+      var times = {
+        subuh: formatTime(rawTimes.subuh),
+        dzuhur: formatTime(rawTimes.dzuhur),
+        ashar: formatTime(rawTimes.ashar),
+        maghrib: formatTime(rawTimes.maghrib),
+        isya: formatTime(rawTimes.isya)
+      };
+
+      // Tampilkan jam di kartu
+      for (var key in times) {
+        var el = document.getElementById('time-' + key);
+        if (el) el.innerText = times[key];
+      }
+
+      // Tampilkan tanggal hari ini
+      var dateEl = document.getElementById('prayer-today-date');
+      if (dateEl) {
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        dateEl.innerText = day + ' ' + months[now.getMonth()] + ' ' + year;
+      }
+
+      // Tentukan jadwal sholat berikutnya yang aktif
+      var curMinutes = now.getHours() * 60 + now.getMinutes();
+      var prayerList = [
+        { name: 'Subuh', id: 'item-subuh', key: 'subuh', min: Math.round(fixHour(rawTimes.subuh) * 60) },
+        { name: 'Dzuhur', id: 'item-dzuhur', key: 'dzuhur', min: Math.round(fixHour(rawTimes.dzuhur) * 60) },
+        { name: 'Ashar', id: 'item-ashar', key: 'ashar', min: Math.round(fixHour(rawTimes.ashar) * 60) },
+        { name: 'Maghrib', id: 'item-maghrib', key: 'maghrib', min: Math.round(fixHour(rawTimes.maghrib) * 60) },
+        { name: 'Isya', id: 'item-isya', key: 'isya', min: Math.round(fixHour(rawTimes.isya) * 60) }
+      ];
+
+      var nextPrayer = null;
+      var diffMin = 0;
+
+      for (var i = 0; i < prayerList.length; i++) {
+        var p = prayerList[i];
+        var itemEl = document.getElementById(p.id);
+        if (itemEl) itemEl.classList.remove('active');
+
+        if (!nextPrayer && curMinutes < p.min) {
+          nextPrayer = p;
+          diffMin = p.min - curMinutes;
+        }
+      }
+
+      // Jika sudah lewat Isya, maka sholat berikutnya adalah Subuh besok
+      if (!nextPrayer) {
+        nextPrayer = prayerList[0];
+        diffMin = (24 * 60 - curMinutes) + prayerList[0].min;
+      }
+
+      // Highlight item aktif dengan warna kuning
+      var activeEl = document.getElementById(nextPrayer.id);
+      if (activeEl) activeEl.classList.add('active');
+
+      // Tampilkan badge hitung mundur sholat berikutnya
+      var badge = document.getElementById('next-prayer-badge');
+      if (badge) {
+        var diffH = Math.floor(diffMin / 60);
+        var diffM = diffMin % 60;
+        var diffStr = (diffH > 0 ? (diffH + 'j ') : '') + diffM + 'm';
+        badge.innerHTML = '🕌 Menuju ' + nextPrayer.name + ': <strong>' + diffStr + '</strong>';
+      }
+    }
+
+    // Jalankan pertama kali dan update tiap 30 detik
+    updatePrayerTimes();
+    setInterval(updatePrayerTimes, 30000);
+
+    // Theme Switcher
+    function setTheme(theme, btn) {
+      document.querySelectorAll('.theme-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.body.className = '';
+      if (theme === 'gold') document.body.classList.add('theme-gold');
+      if (theme === 'light') document.body.classList.add('theme-light');
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(function(btn) { btn.classList.remove('active'); });
+      var activeBtn = document.querySelector('[data-tab="' + tab + '"]');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      if (tab === 'voucher') {
+        document.getElementById('form-voucher').style.display = 'block';
+        document.getElementById('form-member').style.display = 'none';
+        document.getElementById('voucher').focus();
+      } else {
+        document.getElementById('form-voucher').style.display = 'none';
+        document.getElementById('form-member').style.display = 'block';
+        document.getElementById('username_input').focus();
+      }
+    }
+
+    function togglePasswordVisibility() {
+      var input = document.getElementById('password_input');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function pasteClipboard(targetId) {
+      if (navigator.clipboard && navigator.clipboard.readText) {
+        navigator.clipboard.readText().then(function(text) {
+          if (text) {
+            document.getElementById(targetId).value = text.toUpperCase();
+          }
+        }).catch(function() {
+          alert('Silakan salin teks terlebih dahulu lalu tempel di kolom.');
+        });
+      } else {
+        alert('Gunakan Ctrl+V untuk menempelkan kode voucher.');
+      }
+    }
+
+    function formatRupiah(num) {
+      if (typeof num !== 'number') num = parseFloat(num) || 0;
+      return 'Rp ' + Math.round(num).toLocaleString('id-ID');
+    }
+
+    function parseIsoDuration(iso) {
+      if (!iso || typeof iso !== 'string') return '';
+      var matches = iso.match(/P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?/i);
+      if (!matches) return iso;
+      var days = parseInt(matches[1] || 0, 10);
+      var hours = parseInt(matches[2] || 0, 10);
+      var mins = parseInt(matches[3] || 0, 10);
+      var parts = [];
+      if (days > 0) parts.push(days + ' HARI');
+      if (hours > 0) parts.push(hours + ' JAM');
+      if (mins > 0) parts.push(mins + ' MENIT');
+      return parts.join(' ') || iso;
+    }
+
+    function selectPackage(el, dur, price, flashSale, packageId, rawPrice) {
+      document.querySelectorAll('.price-card').forEach(function(c) { c.classList.remove('selected'); });
+      if (el) el.classList.add('selected');
+      
+      currentPkg = {
+        dur: dur,
+        price: price,
+        rawPrice: rawPrice,
+        packageId: packageId || (flashSale ? (flashSale.target_package_id || flashSale.id) : null),
+        isFlashSale: !!flashSale,
+        promoDetails: flashSale || null
+      };
+
+      document.getElementById('modal-pkg-dur').innerText = dur;
+      document.getElementById('modal-pkg-price').innerText = price;
+
+      var flashNotice = document.getElementById('modal-pkg-flash');
+      if (flashNotice) {
+        if (flashSale) {
+          flashNotice.style.display = 'block';
+          var hemat = (flashSale.original_price || 0) - (flashSale.promo_price || 0);
+          flashNotice.innerHTML = '⚡ <strong>' + (flashSale.badge_label || 'FLASH SALE') + '</strong>' + (hemat > 0 ? (' (Hemat ' + formatRupiah(hemat) + ')') : '');
+        } else {
+          flashNotice.style.display = 'none';
+        }
+      }
+
+      document.getElementById('pkg-modal').classList.add('active');
+    }
+
+    function confirmOrderWA() {
+      var cfg = window.APP_CONFIG || {};
+      var waNum = (cfg.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
+      var brand = cfg.BRAND_NAME || 'WiFi ARABPAY';
+      var note = currentPkg.isFlashSale ? (" (⚡ Promo Flash Sale: " + (currentPkg.promoDetails && currentPkg.promoDetails.badge_label ? currentPkg.promoDetails.badge_label : 'Diskon Terbatas') + ")") : "";
+      var msg = encodeURIComponent("Halo Admin " + brand + ", saya ingin membeli Paket Voucher " + currentPkg.dur + " (" + currentPkg.price + ")" + note + ". Mohon info cara pembayarannya.");
+      window.open("https://wa.me/" + waNum + "?text=" + msg, "_blank");
+      closeModal('pkg-modal');
+    }
+
+    // Buka Halaman Billing ArbilBaru & Langsung Munculkan Modal Konfirmasi Pembelian (Gambar 2)
+    function openArbilPayCheckout() {
+      var url = BILLING_API_URL + '/#/portal';
+      var params = [];
+      if (currentPkg.packageId) {
+        params.push('buy_package_id=' + encodeURIComponent(currentPkg.packageId));
+      }
+      if (currentPkg.isFlashSale && currentPkg.promoDetails && currentPkg.promoDetails.id) {
+        params.push('flash_sale_id=' + encodeURIComponent(currentPkg.promoDetails.id));
+      }
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+      window.open(url, '_blank');
+      closeModal('pkg-modal');
+    }
+
+    // Dynamic Live Voucher Loader dari Billing ArbilBaru
+    function loadLiveVoucherPackages() {
+      var container = document.getElementById('dynamic-price-cards');
+      var statusBadge = document.getElementById('pricing-live-status');
+      if (!container) return;
+
+      var endpoint = BILLING_API_URL + '/api/vouchers/available';
+
+      fetch(endpoint, { method: 'GET', cache: 'no-cache' })
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function(data) {
+          if (!data || !data.success || !data.packages || data.packages.length === 0) {
+            console.log('Paket dinamis kosong, menggunakan daftar fallback.');
+            renderFallbackFromConfig();
+            return;
+          }
+
+          if (statusBadge) {
+            statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
+          }
+
+          // Handle Flash Sale Top Banner
+          var banner = document.getElementById('flash-sale-banner');
+          if (banner) {
+            if (data.has_flash_sale && data.flash_sales && data.flash_sales.length > 0) {
+              var activeFs = data.flash_sales[0];
+              banner.style.display = 'flex';
+              var titleEl = document.getElementById('fs-banner-title');
+              var subEl = document.getElementById('fs-banner-sub');
+              var timerEl = document.getElementById('fs-banner-timer');
+
+              var cleanTitle = (activeFs.title || 'FLASH SALE SPESIAL!').replace(/^⚡\s*/, '');
+              if (titleEl) titleEl.innerText = '⚡ ' + cleanTitle;
+
+              var cleanDiscount = (activeFs.discount_text || 'Diskon spesial terbatas').replace(/Rp\s*Rp/gi, 'Rp');
+              var remainingQuota = activeFs.quota_remaining !== undefined 
+                ? activeFs.quota_remaining 
+                : ((activeFs.quota_limit || 50) - (activeFs.quota_sold || 0));
+              if (subEl) subEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
+
+              // Robust countdown timer: hitung mundur langsung dari end_time
+              var targetEndTime = activeFs.end_time ? new Date(activeFs.end_time).getTime() : 0;
+              if (!targetEndTime && activeFs.seconds_remaining) {
+                targetEndTime = Date.now() + (activeFs.seconds_remaining * 1000);
+              }
+
+              if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
+
+              function renderTimer() {
+                var now = Date.now();
+                var diffSec = Math.max(0, Math.floor((targetEndTime - now) / 1000));
+                if (diffSec <= 0) {
+                  if (timerEl) timerEl.innerText = 'BERAKHIR';
+                  if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
+                  return;
+                }
+                var h = Math.floor(diffSec / 3600);
+                var m = Math.floor((diffSec % 3600) / 60);
+                var s = diffSec % 60;
+                var hh = String(h).padStart(2, '0');
+                var mm = String(m).padStart(2, '0');
+                var ss = String(s).padStart(2, '0');
+                if (timerEl) timerEl.innerText = '⏱ ' + hh + ':' + mm + ':' + ss;
+              }
+
+              if (targetEndTime > Date.now()) {
+                renderTimer();
+                flashSaleTimerInterval = setInterval(renderTimer, 1000);
+              } else {
+                if (timerEl) timerEl.innerText = 'BERAKHIR';
+              }
+            } else {
+              banner.style.display = 'none';
+            }
+          }
+
+          // Kosongkan dan render paket baru
+          container.innerHTML = '';
+
+          data.packages.forEach(function(pkg, idx) {
+            var card = document.createElement('div');
+            card.className = 'price-card' + (idx === 0 ? ' selected' : '');
+
+            var durationDisplay = parseIsoDuration(pkg.uptime_limit || pkg.validity_iso) || pkg.package_name;
+            var packageNameDisplay = pkg.package_name || durationDisplay;
+
+            var effectivePriceStr = formatRupiah(pkg.effective_price || pkg.price);
+            var originalPriceStr = formatRupiah(pkg.price);
+
+            var html = '';
+
+            if (pkg.is_flash_sale && pkg.flash_sale) {
+              var fs = pkg.flash_sale;
+              html += '<span class="price-badge flash-sale">⚡ ' + (fs.badge_label || 'FLASH SALE') + '</span>';
+              html += '<div class="price-duration">' + packageNameDisplay + '</div>';
+              html += '<div class="price-original">' + originalPriceStr + '</div>';
+              html += '<div class="price-amount flash-promo">' + effectivePriceStr + '</div>';
+              if (fs.quota_remaining !== undefined) {
+                html += '<div class="price-quota-info">Sisa Kuota: ' + fs.quota_remaining + '</div>';
+              }
+            } else {
+              if (idx === 0) {
+                html += '<span class="price-badge">POPULER</span>';
+              }
+              html += '<div class="price-duration">' + packageNameDisplay + '</div>';
+              html += '<div class="price-amount">' + effectivePriceStr + '</div>';
+              if (pkg.rate_limit) {
+                html += '<div style="font-size:0.65rem; color:#ffffff; margin-top:3px; opacity:0.85;">⚡ ' + pkg.rate_limit + '</div>';
+              }
+            }
+
+            card.innerHTML = html;
+
+            var pkgId = pkg.package_id || pkg.profile_id || pkg.id;
+            var numPrice = Number(pkg.effective_price || pkg.price || 0);
+
+            card.addEventListener('click', function() {
+              selectPackage(card, packageNameDisplay, effectivePriceStr, pkg.is_flash_sale ? pkg.flash_sale : null, pkgId, numPrice);
+            });
+
+            container.appendChild(card);
+          });
+
+          // Set initial selected package
+          if (data.packages.length > 0) {
+            var first = data.packages[0];
+            var fName = first.package_name || parseIsoDuration(first.uptime_limit || first.validity_iso);
+            var fPrice = formatRupiah(first.effective_price || first.price);
+            currentPkg = {
+              dur: fName,
+              price: fPrice,
+              rawPrice: Number(first.effective_price || first.price || 0),
+              packageId: first.package_id || first.profile_id || first.id,
+              isFlashSale: !!first.is_flash_sale,
+              promoDetails: first.flash_sale || null
+            };
+            document.getElementById('modal-pkg-dur').innerText = fName;
+            document.getElementById('modal-pkg-price').innerText = fPrice;
+          }
+        })
+        .catch(function(err) {
+          console.warn('Billing live packages offline or unreachable:', err);
+          if (statusBadge) {
+            statusBadge.innerHTML = '⚡ Offline Mode';
+          }
+          renderFallbackFromConfig();
+        });
+    }
+
+    function renderFallbackFromConfig() {
+      var container = document.getElementById('dynamic-price-cards');
+      if (!container) return;
+      var fallbacks = (window.APP_CONFIG && window.APP_CONFIG.FALLBACK_PACKAGES) || [
+        { name: '1 JAM', price: 2000, badge: '', speed: '5 Mbps' },
+        { name: '24 JAM', price: 5000, badge: 'POPULER', speed: '10 Mbps' },
+        { name: '7 HARI', price: 25000, badge: 'HEMAT', speed: '15 Mbps' }
+      ];
+      container.innerHTML = '';
+      fallbacks.forEach(function(pkg, idx) {
+        var card = document.createElement('div');
+        card.className = 'price-card' + (idx === 1 ? ' selected' : '');
+        var priceFormatted = formatRupiah(pkg.price);
+        var html = '';
+        if (pkg.badge) html += '<span class="price-badge">' + pkg.badge + '</span>';
+        html += '<div class="price-duration">' + pkg.name + '</div>';
+        html += '<div class="price-amount">' + priceFormatted + '</div>';
+        if (pkg.speed) html += '<div style="font-size:0.65rem; color:#ffffff; margin-top:3px; opacity:0.85;">⚡ ' + pkg.speed + '</div>';
+        card.innerHTML = html;
+        card.addEventListener('click', function() {
+          selectPackage(card, pkg.name, priceFormatted, null);
+        });
+        container.appendChild(card);
+      });
+    }
+
+    function openHelpModal() {
+      document.getElementById('help-modal').classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    function showError(msg) {
+      var alertBox = document.getElementById('custom-alert');
+      var alertText = document.getElementById('custom-alert-text');
+      alertText.innerText = msg;
+      alertBox.style.display = 'flex';
+    }
+
+    function handleFormSubmit(e) {
+      e.preventDefault();
+      var activeTab = document.querySelector('.tab-btn.active').dataset.tab;
+      var inputVal = activeTab === 'voucher' ? document.getElementById('voucher').value : document.getElementById('username_input').value;
+      if (!inputVal) {
+        showError('Silakan isi data login terlebih dahulu!');
+        return false;
+      }
+      alert('✨ UJI COBA SIMULASI BERHASIL!\n\nKode/User: ' + inputVal + '\nStatus: Terverifikasi\nKoneksi: WiFi ARABPAY HTTPS (100 Mbps)\n\n(Saat dipasang di MikroTik asli, internet pelanggan akan langsung aktif).');
+      return false;
+    }
+
+    // Auto initialize live vouchers & settings
+    document.addEventListener('DOMContentLoaded', function() {
+      applyAppConfig();
+      loadLiveVoucherPackages();
+    });
+    // Trigger immediately
+    applyAppConfig();
+    loadLiveVoucherPackages();
+  </script>
+
+</body>
+</html>

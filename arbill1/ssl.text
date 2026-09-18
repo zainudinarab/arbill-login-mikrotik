@@ -1,0 +1,32 @@
+====================================================================
+PANDUAN LENGKAP KONFIGURASI SSL CLOUDFLARE FOR wifi.arabpay.my.id
+====================================================================
+
+1. DASHBOARD CLOUDFLARE (DNS RECORD):
+   - Domain: arabpay.my.id
+   - Add Record -> Type: A | Name: wifi | IPv4: <IP_Gateway_Mikrotik> (misal 192.168.88.1)
+   - Proxy Status: DNS ONLY (Awan Abu-abu / Grey Cloud)
+
+2. BUAT SERTIFIKAT ORIGIN CA (CLOUDFLARE):
+   - SSL/TLS -> Origin Server -> Create Certificate
+   - Hostnames: wifi.arabpay.my.id, *.arabpay.my.id
+   - Validity: 15 years
+   - Salin Origin Certificate ke file `wifi_arabpay.crt`
+   - Salin Private Key ke file `wifi_arabpay.key`
+
+3. UPLOAD & IMPOR DI MIKROTIK (WINBOX TERMINAL):
+   /certificate import file-name=wifi_arabpay.crt name=arabpay-ssl passphrase=""
+   /certificate import file-name=wifi_arabpay.key name=arabpay-ssl passphrase=""
+
+4. AKTIFKAN SSL DI HOTSPOT PROFILE:
+   /ip hotspot profile
+   set [find name="default"] \
+       dns-name="wifi.arabpay.my.id" \
+       html-directory="hotspot" \
+       login-by=http-chap,http-pap,https,cookie \
+       ssl-certificate=arabpay-ssl
+
+5. WALLED GARDEN:
+   /ip hotspot walled-garden
+   add dst-host="*.arabpay.my.id" action=allow
+   add dst-host="*.cloudflare.com" action=allow

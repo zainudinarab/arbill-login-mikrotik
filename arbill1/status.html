@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  $(if refresh-timeout)
+  <meta http-equiv="refresh" content="$(refresh-timeout-secs)">
+  $(endif)
+  <title>Status Koneksi - WiFi ARABPAY</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    $(if advert-pending == 'yes')
+      var popup = '';
+      function focusAdvert() {
+        if (window.focus) popup.focus();
+      }
+      function openAdvert() {
+        popup = open('$(link-advert)', 'advert', 'toolbar=1,location=1,directories=1,status=1,menubar=1,scrollbars=1,resizable=1');
+        setTimeout("focusAdvert()", 1000);
+      }
+    $(endif)
+    function openLogout() {
+      if (window.name != 'hotspot_status') return true;
+      open('$(link-logout)', 'hotspot_logout', 'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=1,width=280,height=250');
+      window.close();
+      return false;
+    }
+  </script>
+</head>
+<body $(if advert-pending == 'yes') onLoad="openAdvert()" $(endif)>
+
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <div class="wrapper">
+
+    <!-- Status Header -->
+    <div class="brand-header">
+      <div class="brand-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); shadow: 0 0 25px rgba(16,185,129,0.4);">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      </div>
+      <h1 class="brand-title">WIFI ARABPAY</h1>
+      <div class="brand-subtitle">
+        Selamat Datang, <strong>$(username)</strong>
+        <span class="ssl-badge">Online 🟢</span>
+      </div>
+    </div>
+
+    <!-- Status Cards Grid -->
+    <div class="status-grid">
+      <div class="status-card">
+        <div class="status-label">IP Address</div>
+        <div class="status-value highlight">$(ip)</div>
+      </div>
+      
+      <div class="status-card">
+        <div class="status-label">MAC Address</div>
+        <div class="status-value" style="font-size:0.85rem">$(mac)</div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">Durasi Terhubung</div>
+        <div class="status-value">$(uptime)</div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">Sisa Waktu</div>
+        <div class="status-value highlight">
+          $(if session-time-left)
+            $(session-time-left)
+          $(else)
+            Tak Terbatas
+          $(endif)
+        </div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">Upload</div>
+        <div class="status-value">$(bytes-out-nice)</div>
+      </div>
+
+      <div class="status-card">
+        <div class="status-label">Download</div>
+        <div class="status-value">$(bytes-in-nice)</div>
+      </div>
+
+      $(if remain-bytes-total)
+      <div class="status-card status-card-full">
+        <div class="status-label">Sisa Kuota Data</div>
+        <div class="status-value highlight">$(remain-bytes-total-nice)</div>
+      </div>
+      $(endif)
+    </div>
+
+    <!-- Action Forms -->
+    <form action="$(link-logout)" name="logout" onSubmit="return openLogout()">
+      <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
+        </svg>
+        <span>PUTUSKAN KONEKSI (LOGOUT)</span>
+      </button>
+    </form>
+
+    <div style="margin-top: 14px;">
+      <a href="https://www.google.com" class="btn-trial" style="border-color: var(--border-color); color: var(--text-primary); display: block; text-decoration:none;">
+        🌐 Buka Browser / Mulai Browsing
+      </a>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-text">
+      <strong>WiFi ARABPAY Hotspot Digital</strong><br>
+      Bantuan Pelanggan WhatsApp: 0812-3456-7890
+    </div>
+
+  </div>
+
+</body>
+</html>
