@@ -43,6 +43,7 @@
           showError('Silakan masukkan Kode Voucher Anda.');
           return false;
         }
+        try { localStorage.setItem('arbill_last_voucher', voucherCode); } catch(e) {}
         form.username.value = voucherCode;
         form.password.value = voucherCode;
       } else {
@@ -906,6 +907,14 @@
       if (currentPkg.isFlashSale && currentPkg.promoDetails && currentPkg.promoDetails.id) {
         params.push('flash_sale_id=' + encodeURIComponent(currentPkg.promoDetails.id));
       }
+      var rId = (CFG.ROUTER_ID || '').trim();
+      if (!rId) {
+        var mtIdentity = '$(identity)';
+        if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
+      }
+      if (rId) {
+        params.push('router_id=' + encodeURIComponent(rId));
+      }
       if (params.length > 0) {
         url += '?' + params.join('&');
       }
@@ -1004,13 +1013,183 @@
       });
     }
 
-    // Dynamic Live Voucher Loader dari Billing ArbilBaru
+    // Dynamic Live Voucher Loader dari Billing ArbilBaru (Dengan Caching LocalStorage SWR)
+    function renderLiveVoucherData(data, isFromCache) {
+      var container = document.getElementById('dynamic-price-cards');
+      var statusBadge = document.getElementById('pricing-live-status');
+      if (!container || !data || !data.packages) return;
+
+      if (statusBadge) {
+        if (isFromCache) {
+          statusBadge.innerHTML = '<span style="color:#06b6d4;">⚡</span> Memuat data...';
+        } else {
+          statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
+        }
+      }
+
+      // Handle Flash Sale Top Banner & Modal Banner
+      var banner = document.getElementById('flash-sale-banner');
+      var mBanner = document.getElementById('modal-fs-banner');
+      if (data.has_flash_sale && data.flash_sales && data.flash_sales.length > 0) {
+        var activeFs = data.flash_sales[0];
+        var cleanTitle = (activeFs.title || 'FLASH SALE SPESIAL!').replace(/^⚡\s*/, '');
+        var cleanDiscount = (activeFs.discount_text || 'Diskon spesial terbatas').replace(/Rp\s*Rp/gi, 'Rp');
+        var remainingQuota = activeFs.quota_remaining !== undefined 
+          ? activeFs.quota_remaining 
+          : ((activeFs.quota_limit || 50) - (activeFs.quota_sold || 0));
+
+        if (banner) {
+          banner.style.display = 'flex';
+          var titleEl = document.getElementById('fs-banner-title');
+          var subEl = document.getElementById('fs-banner-sub');
+          if (titleEl) titleEl.innerText = '⚡ ' + cleanTitle;
+          if (subEl) subEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
+        }
+
+        if (mBanner) {
+          mBanner.style.display = 'flex';
+          var mTitleEl = document.getElementById('modal-fs-title');
+          var mSubEl = document.getElementById('modal-fs-sub');
+          if (mTitleEl) mTitleEl.innerText = '⚡ ' + cleanTitle;
+          if (mSubEl) mSubEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
+        }
+
+        // Robust countdown timer
+        var targetEndTime = activeFs.end_time ? new Date(activeFs.end_time).getTime() : 0;
+        if (!targetEndTime && activeFs.seconds_remaining) {
+          targetEndTime = Date.now() + (activeFs.seconds_remaining * 1000);
+        }
+
+        if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
+
+        function renderTimer() {
+          var now = Date.now();
+          var diffSec = Math.max(0, Math.floor((targetEndTime - now) / 1000));
+          var timerEl = document.getElementById('fs-banner-timer');
+          var mTimerEl = document.getElementById('modal-fs-timer');
+
+          if (diffSec <= 0) {
+            if (timerEl) timerEl.innerText = 'BERAKHIR';
+            if (mTimerEl) mTimerEl.innerText = 'BERAKHIR';
+            if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
+            return;
+          }
+          var h = Math.floor(diffSec / 3600);
+          var m = Math.floor((diffSec % 3600) / 60);
+          var s = diffSec % 60;
+          var timeStr = '⏱ ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+          if (timerEl) timerEl.innerText = timeStr;
+          if (mTimerEl) mTimerEl.innerText = timeStr;
+        }
+
+        if (targetEndTime > Date.now()) {
+          renderTimer();
+          flashSaleTimerInterval = setInterval(renderTimer, 1000);
+        }
+      } else {
+        if (banner) banner.style.display = 'none';
+        if (mBanner) mBanner.style.display = 'none';
+      }
+
+      // Kosongkan dan render kartu paket di halaman utama
+      container.innerHTML = '';
+      data.packages.forEach(function(pkg, idx) {
+        var card = document.createElement('div');
+        card.className = 'price-card' + (idx === 0 ? ' selected' : '');
+
+        var durationDisplay = parseIsoDuration(pkg.uptime_limit || pkg.validity_iso) || pkg.package_name;
+        var packageNameDisplay = pkg.package_name || durationDisplay;
+        var effectivePriceStr = formatRupiah(pkg.effective_price || pkg.price);
+        var originalPriceStr = formatRupiah(pkg.price);
+
+        var html = '';
+        if (pkg.is_flash_sale && pkg.flash_sale) {
+          var fs = pkg.flash_sale;
+          html += '<span class="price-badge flash-sale">⚡ ' + (fs.badge_label || 'FLASH SALE') + '</span>';
+          html += '<div class="price-duration">' + packageNameDisplay + '</div>';
+          html += '<div class="price-original">' + originalPriceStr + '</div>';
+          html += '<div class="price-amount flash-promo">' + effectivePriceStr + '</div>';
+          if (fs.quota_remaining !== undefined) {
+            html += '<div class="price-quota-info">Sisa Kuota: ' + fs.quota_remaining + '</div>';
+          }
+        } else {
+          if (idx === 0) {
+            html += '<span class="price-badge">POPULER</span>';
+          }
+          html += '<div class="price-duration">' + packageNameDisplay + '</div>';
+          html += '<div class="price-amount">' + effectivePriceStr + '</div>';
+          if (pkg.rate_limit) {
+            html += '<div style="font-size:0.65rem; color:#ffffff; margin-top:3px; opacity:0.85;">⚡ ' + pkg.rate_limit + '</div>';
+          }
+        }
+
+        card.innerHTML = html;
+        var pkgId = pkg.package_id || pkg.profile_id || pkg.id;
+        var numPrice = Number(pkg.effective_price || pkg.price || 0);
+
+        card.addEventListener('click', function() {
+          selectPackage(card, packageNameDisplay, effectivePriceStr, pkg.is_flash_sale ? pkg.flash_sale : null, pkgId, numPrice, true);
+        });
+
+        container.appendChild(card);
+      });
+
+      // Render juga ke Modal Daftar Paket
+      renderModalPackagesList(data.packages);
+
+      // Set initial selected package
+      if (data.packages.length > 0) {
+        var first = data.packages[0];
+        var fName = first.package_name || parseIsoDuration(first.uptime_limit || first.validity_iso);
+        var fPrice = formatRupiah(first.effective_price || first.price);
+        currentPkg = {
+          dur: fName,
+          price: fPrice,
+          rawPrice: Number(first.effective_price || first.price || 0),
+          packageId: first.package_id || first.profile_id || first.id,
+          isFlashSale: !!first.is_flash_sale,
+          promoDetails: first.flash_sale || null
+        };
+        var dEl = document.getElementById('modal-pkg-dur');
+        if (dEl) dEl.innerText = fName;
+        var pEl = document.getElementById('modal-pkg-price');
+        if (pEl) pEl.innerText = fPrice;
+        var snEl = document.getElementById('modal-selected-name');
+        if (snEl) snEl.innerText = fName;
+        var spEl = document.getElementById('modal-selected-price');
+        if (spEl) spEl.innerText = fPrice;
+      }
+    }
+
     function loadLiveVoucherPackages() {
       var container = document.getElementById('dynamic-price-cards');
       var statusBadge = document.getElementById('pricing-live-status');
       if (!container) return;
 
+      var hasRenderedFromCache = false;
+
+      // 1. Pola SWR: Render instan (0 ms) dari LocalStorage jika ada cache sebelumnya
+      try {
+        var cachedRaw = localStorage.getItem('arbill_cached_packages');
+        if (cachedRaw) {
+          var cachedData = JSON.parse(cachedRaw);
+          if (cachedData && cachedData.packages && cachedData.packages.length > 0) {
+            renderLiveVoucherData(cachedData, true);
+            hasRenderedFromCache = true;
+          }
+        }
+      } catch(e) {}
+
+      // 2. Fetch data realtime terbaru di background
       var endpoint = BILLING_API_URL + '/api/vouchers/available';
+      var rId = (CFG.ROUTER_ID || '').trim();
+      if (!rId) {
+        var mtIdentity = '$(identity)';
+        if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
+      }
+      if (rId) {
+        endpoint += (endpoint.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
+      }
 
       fetch(endpoint, { method: 'GET', cache: 'no-cache' })
         .then(function(res) {
@@ -1019,154 +1198,32 @@
         })
         .then(function(data) {
           if (!data || !data.success || !data.packages || data.packages.length === 0) {
-            console.log('Paket dinamis kosong, menggunakan daftar fallback.');
-            renderFallbackFromConfig();
+            if (!hasRenderedFromCache) {
+              console.log('Paket dinamis kosong, menggunakan daftar fallback.');
+              renderFallbackFromConfig();
+            }
             return;
           }
 
-          if (statusBadge) {
-            statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
-          }
+          // Simpan data paket terbaru ke LocalStorage
+          try {
+            localStorage.setItem('arbill_cached_packages', JSON.stringify(data));
+          } catch(e) {}
 
-          // Handle Flash Sale Top Banner & Modal Banner
-          var banner = document.getElementById('flash-sale-banner');
-          var mBanner = document.getElementById('modal-fs-banner');
-          if (data.has_flash_sale && data.flash_sales && data.flash_sales.length > 0) {
-            var activeFs = data.flash_sales[0];
-            var cleanTitle = (activeFs.title || 'FLASH SALE SPESIAL!').replace(/^⚡\s*/, '');
-            var cleanDiscount = (activeFs.discount_text || 'Diskon spesial terbatas').replace(/Rp\s*Rp/gi, 'Rp');
-            var remainingQuota = activeFs.quota_remaining !== undefined 
-              ? activeFs.quota_remaining 
-              : ((activeFs.quota_limit || 50) - (activeFs.quota_sold || 0));
-
-            if (banner) {
-              banner.style.display = 'flex';
-              var titleEl = document.getElementById('fs-banner-title');
-              var subEl = document.getElementById('fs-banner-sub');
-              if (titleEl) titleEl.innerText = '⚡ ' + cleanTitle;
-              if (subEl) subEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
-            }
-
-            if (mBanner) {
-              mBanner.style.display = 'flex';
-              var mTitleEl = document.getElementById('modal-fs-title');
-              var mSubEl = document.getElementById('modal-fs-sub');
-              if (mTitleEl) mTitleEl.innerText = '⚡ ' + cleanTitle;
-              if (mSubEl) mSubEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
-            }
-
-            // Robust countdown timer
-            var targetEndTime = activeFs.end_time ? new Date(activeFs.end_time).getTime() : 0;
-            if (!targetEndTime && activeFs.seconds_remaining) {
-              targetEndTime = Date.now() + (activeFs.seconds_remaining * 1000);
-            }
-
-            if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
-
-            function renderTimer() {
-              var now = Date.now();
-              var diffSec = Math.max(0, Math.floor((targetEndTime - now) / 1000));
-              var timerEl = document.getElementById('fs-banner-timer');
-              var mTimerEl = document.getElementById('modal-fs-timer');
-
-              if (diffSec <= 0) {
-                if (timerEl) timerEl.innerText = 'BERAKHIR';
-                if (mTimerEl) mTimerEl.innerText = 'BERAKHIR';
-                if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
-                return;
-              }
-              var h = Math.floor(diffSec / 3600);
-              var m = Math.floor((diffSec % 3600) / 60);
-              var s = diffSec % 60;
-              var timeStr = '⏱ ' + String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
-              if (timerEl) timerEl.innerText = timeStr;
-              if (mTimerEl) mTimerEl.innerText = timeStr;
-            }
-
-            if (targetEndTime > Date.now()) {
-              renderTimer();
-              flashSaleTimerInterval = setInterval(renderTimer, 1000);
-            }
-          } else {
-            if (banner) banner.style.display = 'none';
-            if (mBanner) mBanner.style.display = 'none';
-          }
-
-          // Kosongkan dan render kartu paket di halaman utama
-          container.innerHTML = '';
-          data.packages.forEach(function(pkg, idx) {
-            var card = document.createElement('div');
-            card.className = 'price-card' + (idx === 0 ? ' selected' : '');
-
-            var durationDisplay = parseIsoDuration(pkg.uptime_limit || pkg.validity_iso) || pkg.package_name;
-            var packageNameDisplay = pkg.package_name || durationDisplay;
-            var effectivePriceStr = formatRupiah(pkg.effective_price || pkg.price);
-            var originalPriceStr = formatRupiah(pkg.price);
-
-            var html = '';
-            if (pkg.is_flash_sale && pkg.flash_sale) {
-              var fs = pkg.flash_sale;
-              html += '<span class="price-badge flash-sale">⚡ ' + (fs.badge_label || 'FLASH SALE') + '</span>';
-              html += '<div class="price-duration">' + packageNameDisplay + '</div>';
-              html += '<div class="price-original">' + originalPriceStr + '</div>';
-              html += '<div class="price-amount flash-promo">' + effectivePriceStr + '</div>';
-              if (fs.quota_remaining !== undefined) {
-                html += '<div class="price-quota-info">Sisa Kuota: ' + fs.quota_remaining + '</div>';
-              }
-            } else {
-              if (idx === 0) {
-                html += '<span class="price-badge">POPULER</span>';
-              }
-              html += '<div class="price-duration">' + packageNameDisplay + '</div>';
-              html += '<div class="price-amount">' + effectivePriceStr + '</div>';
-              if (pkg.rate_limit) {
-                html += '<div style="font-size:0.65rem; color:#ffffff; margin-top:3px; opacity:0.85;">⚡ ' + pkg.rate_limit + '</div>';
-              }
-            }
-
-            card.innerHTML = html;
-            var pkgId = pkg.package_id || pkg.profile_id || pkg.id;
-            var numPrice = Number(pkg.effective_price || pkg.price || 0);
-
-            card.addEventListener('click', function() {
-              selectPackage(card, packageNameDisplay, effectivePriceStr, pkg.is_flash_sale ? pkg.flash_sale : null, pkgId, numPrice, true);
-            });
-
-            container.appendChild(card);
-          });
-
-          // Render juga ke Modal Daftar Paket
-          renderModalPackagesList(data.packages);
-
-          // Set initial selected package
-          if (data.packages.length > 0) {
-            var first = data.packages[0];
-            var fName = first.package_name || parseIsoDuration(first.uptime_limit || first.validity_iso);
-            var fPrice = formatRupiah(first.effective_price || first.price);
-            currentPkg = {
-              dur: fName,
-              price: fPrice,
-              rawPrice: Number(first.effective_price || first.price || 0),
-              packageId: first.package_id || first.profile_id || first.id,
-              isFlashSale: !!first.is_flash_sale,
-              promoDetails: first.flash_sale || null
-            };
-            var dEl = document.getElementById('modal-pkg-dur');
-            if (dEl) dEl.innerText = fName;
-            var pEl = document.getElementById('modal-pkg-price');
-            if (pEl) pEl.innerText = fPrice;
-            var snEl = document.getElementById('modal-selected-name');
-            if (snEl) snEl.innerText = fName;
-            var spEl = document.getElementById('modal-selected-price');
-            if (spEl) spEl.innerText = fPrice;
-          }
+          renderLiveVoucherData(data, false);
         })
         .catch(function(err) {
           console.warn('Billing live packages offline or unreachable:', err);
-          if (statusBadge) {
-            statusBadge.innerHTML = '⚡ Offline Mode';
+          if (hasRenderedFromCache) {
+            if (statusBadge) {
+              statusBadge.innerHTML = '<span style="color:#fbbf24;">⚡</span> Mode Offline (Tersimpan)';
+            }
+          } else {
+            if (statusBadge) {
+              statusBadge.innerHTML = '⚡ Offline Mode';
+            }
+            renderFallbackFromConfig();
           }
-          renderFallbackFromConfig();
         });
     }
 
@@ -1528,6 +1585,7 @@
     function applyScannedVoucherAndLogin() {
       if (!lastScannedResult) return;
       var code = lastScannedResult;
+      try { localStorage.setItem('arbill_last_voucher', code); } catch(e) {}
       stopBarcodeScanner();
       switchTab('voucher');
       var vInput = document.getElementById('voucher');
@@ -1598,6 +1656,7 @@
         var p = params.get('password') || u;
         if (u) {
           u = cleanVoucherCode(u);
+          try { localStorage.setItem('arbill_last_voucher', u); } catch(e) {}
           switchTab('voucher');
           var vInput = document.getElementById('voucher');
           if (vInput) vInput.value = u;
@@ -1621,6 +1680,38 @@
       } catch(e) {}
     }
 
+    function restoreLastVoucher() {
+      try {
+        var lastV = localStorage.getItem('arbill_last_voucher');
+        var vInput = document.getElementById('voucher');
+        if (lastV && vInput && !vInput.value) {
+          vInput.value = lastV;
+          var hintEl = document.getElementById('last-voucher-hint');
+          if (!hintEl) {
+            var formVoucher = document.getElementById('form-voucher');
+            if (formVoucher) {
+              var fg = formVoucher.querySelector('.form-group');
+              if (fg) {
+                var badge = document.createElement('div');
+                badge.id = 'last-voucher-hint';
+                badge.style.cssText = 'display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; margin-top:6px; padding:5px 10px; background:rgba(6,182,212,0.12); border-radius:8px; color:var(--accent-cyan); border:1px solid rgba(6,182,212,0.3);';
+                badge.innerHTML = '<span>⚡ Voucher tersimpan: <strong>' + lastV + '</strong></span><button type="button" style="background:none; border:none; color:#ef4444; font-size:0.75rem; cursor:pointer; font-weight:700;" onclick="clearLastVoucher()">Hapus</button>';
+                fg.appendChild(badge);
+              }
+            }
+          }
+        }
+      } catch(e) {}
+    }
+
+    function clearLastVoucher() {
+      try { localStorage.removeItem('arbill_last_voucher'); } catch(e) {}
+      var vInput = document.getElementById('voucher');
+      if (vInput) vInput.value = '';
+      var hintEl = document.getElementById('last-voucher-hint');
+      if (hintEl) hintEl.remove();
+    }
+
     // Auto initialize live vouchers & settings
     function initApp() {
       try {
@@ -1629,6 +1720,7 @@
       } catch(e) {}
       applyAppConfig();
       updateFabScanLink();
+      restoreLastVoucher();
       loadLiveVoucherPackages();
       checkUrlVoucherLogin();
     }

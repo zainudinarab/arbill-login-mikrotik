@@ -14,6 +14,12 @@ window.APP_CONFIG = {
   //   Atau domain jika pakai Cloudflare/VPN: 'https://billing.arab.net'
   BILLING_URL: 'https://arbill.arabpay.my.id',
 
+  // 1.2. FILTER ROUTER MIKROTIK (OPSIONAL)
+  // Masukkan ID Router (misal: 'rtr-mtv0hjfd') atau Nama Router di Arbill Baru.
+  // Jika diisi, halaman login HANYA mengambil & menampilkan paket voucher milik router ini.
+  // Jika dikosongkan (''), sistem otomatis membaca identity MikroTik atau menampilkan semua paket.
+  ROUTER_ID: '',
+
   // 1.5. URL PEMINDAI KAMERA QR CODE VOUCHER (HTTPS)
   // Browser HP wajib membuka scanner lewat HTTPS agar diizinkan akses kamera
   QR_SCAN_URL: 'https://arbill.arabpay.my.id/myqr/',

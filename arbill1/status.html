@@ -625,28 +625,64 @@
       var firstFormatted = formatIndoDateTime(firstDateObj);
       if (elModalFirst) elModalFirst.innerText = firstFormatted;
 
-      // 2. Default estimasi kadaluarsa:
+      // 2. Coba baca status voucher dari cache LocalStorage (Instant Render 0ms)
+      var keyStatus = 'arbill_voucher_status_' + username;
+      try {
+        var cachedStatusRaw = localStorage.getItem(keyStatus);
+        if (cachedStatusRaw) {
+          var cachedStatus = JSON.parse(cachedStatusRaw);
+          if (cachedStatus && cachedStatus.expired_at) {
+            var cbDate = new Date(cachedStatus.expired_at);
+            if (!isNaN(cbDate.getTime())) {
+              var cbFormatted = formatIndoDateTime(cbDate);
+              if (elMasaAktif) elMasaAktif.innerText = cbFormatted;
+              if (elModalExpired) elModalExpired.innerText = cbFormatted;
+            }
+          }
+          if (cachedStatus && cachedStatus.first_login && elModalFirst) {
+            var cfDate = new Date(cachedStatus.first_login);
+            if (!isNaN(cfDate.getTime())) {
+              elModalFirst.innerText = formatIndoDateTime(cfDate);
+            }
+          }
+          if (cachedStatus && cachedStatus.uptime_left_nice && elModalOnline) {
+            elModalOnline.innerText = cachedStatus.uptime_left_nice;
+          }
+        }
+      } catch(e) {}
+
+      // 3. Default estimasi kadaluarsa jika cache belum ada:
       // Dari sisa detik sesi ATAU default masa aktif (7 hari sejak first login)
       var elSisa = document.getElementById("SisaWaktu");
       var timeLeftSecs = elSisa ? parseInt(elSisa.getAttribute('data-secs')) : NaN;
 
-      var expiredTime;
-      if (!isNaN(timeLeftSecs) && timeLeftSecs > 0) {
-        expiredTime = Date.now() + (timeLeftSecs * 1000);
-      } else {
-        var validityDays = CFG.DEFAULT_VALIDITY_DAYS || 7;
-        expiredTime = firstLoginTime + (validityDays * 24 * 3600 * 1000);
+      if (!elMasaAktif || elMasaAktif.innerText.indexOf('Menghitung') !== -1) {
+        var expiredTime;
+        if (!isNaN(timeLeftSecs) && timeLeftSecs > 0) {
+          expiredTime = Date.now() + (timeLeftSecs * 1000);
+        } else {
+          var validityDays = CFG.DEFAULT_VALIDITY_DAYS || 7;
+          expiredTime = firstLoginTime + (validityDays * 24 * 3600 * 1000);
+        }
+
+        var expDateObj = new Date(expiredTime);
+        var expFormatted = formatIndoDateTime(expDateObj);
+        if (elMasaAktif) elMasaAktif.innerText = expFormatted;
+        if (elModalExpired) elModalExpired.innerText = expFormatted;
       }
 
-      var expDateObj = new Date(expiredTime);
-      var expFormatted = formatIndoDateTime(expDateObj);
-      if (elMasaAktif) elMasaAktif.innerText = expFormatted;
-      if (elModalExpired) elModalExpired.innerText = expFormatted;
-
-      // 3. Sinkronisasi Resmi dari Server Billing Arbill (Jika Online)
+      // 4. Sinkronisasi Resmi dari Server Billing Arbill (Di Background)
       var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
       if (window.fetch && billingBase) {
         var statusEndpoint = billingBase + '/api/vouchers/status?code=' + encodeURIComponent(username);
+        var rId = (CFG.ROUTER_ID || '').trim();
+        if (!rId) {
+          var mtIdentity = '$(identity)';
+          if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
+        }
+        if (rId) {
+          statusEndpoint += '&router_id=' + encodeURIComponent(rId);
+        }
         
         fetch(statusEndpoint, { method: 'GET', cache: 'no-cache' })
           .then(function(res) {
@@ -656,6 +692,8 @@
           .then(function(data) {
             if (data && data.success && data.voucher) {
               var v = data.voucher;
+              try { localStorage.setItem(keyStatus, JSON.stringify(v)); } catch(e) {}
+
               if (v.expired_at) {
                 var bDate = new Date(v.expired_at);
                 if (!isNaN(bDate.getTime())) {
@@ -743,7 +781,22 @@
         container.innerHTML = html;
       }
 
-      renderList(plans);
+      // Cek cache paket di LocalStorage lebih dulu (SWR)
+      var hasRenderedCache = false;
+      try {
+        var cachedPkgRaw = localStorage.getItem('arbill_cached_packages');
+        if (cachedPkgRaw) {
+          var cachedPkgData = JSON.parse(cachedPkgRaw);
+          if (cachedPkgData && cachedPkgData.packages && cachedPkgData.packages.length > 0) {
+            renderList(cachedPkgData.packages);
+            hasRenderedCache = true;
+          }
+        }
+      } catch(e) {}
+
+      if (!hasRenderedCache) {
+        renderList(plans);
+      }
 
       // Coba sinkronisasi paket dari live billing jika server terhubung
       var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
@@ -751,7 +804,17 @@
         var controller = window.AbortController ? new AbortController() : null;
         var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 3000) : null;
 
-        fetch(billingBase + '/api/vouchers/available', {
+        var availEndpoint = billingBase + '/api/vouchers/available';
+        var rId = (CFG.ROUTER_ID || '').trim();
+        if (!rId) {
+          var mtIdentity = '$(identity)';
+          if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
+        }
+        if (rId) {
+          availEndpoint += (availEndpoint.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
+        }
+
+        fetch(availEndpoint, {
           method: 'GET',
           cache: 'no-cache',
           signal: controller ? controller.signal : undefined
@@ -763,11 +826,12 @@
         })
         .then(function(data) {
           if (data && data.success && data.packages && data.packages.length > 0) {
+            try { localStorage.setItem('arbill_cached_packages', JSON.stringify(data)); } catch(e) {}
             renderList(data.packages);
           }
         })
         .catch(function(err) {
-          // Tetap gunakan fallback yang sudah dirender
+          // Tetap gunakan data yang sudah dirender (cache / fallback)
         });
       }
     }
@@ -845,6 +909,14 @@
 
     function openArbillPortal() {
       var url = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '') + '/#/portal';
+      var rId = (CFG.ROUTER_ID || '').trim();
+      if (!rId) {
+        var mtIdentity = '$(identity)';
+        if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
+      }
+      if (rId) {
+        url += (url.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
+      }
       window.open(url, '_blank');
       closeModal('pkg-modal');
     }
