@@ -14,6 +14,10 @@ window.APP_CONFIG = {
   //   Atau domain jika pakai Cloudflare/VPN: 'https://billing.arab.net'
   BILLING_URL: 'https://arbill.arabpay.my.id',
 
+  // 1.5. URL PEMINDAI KAMERA QR CODE VOUCHER (HTTPS)
+  // Browser HP wajib membuka scanner lewat HTTPS agar diizinkan akses kamera
+  QR_SCAN_URL: 'https://arbill.arabpay.my.id/myqr/',
+
   // 2. IDENTITAS & BRANDING WIFi
   BRAND_NAME: 'WIFI ARABPAY',
   BRAND_SUBTITLE: 'Super Fast & Secure Internet',
