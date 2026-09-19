@@ -646,7 +646,7 @@
       // 3. Sinkronisasi Resmi dari Server Billing Arbill (Jika Online)
       var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
       if (window.fetch && billingBase) {
-        var statusEndpoint = billingBase + '/api/vouchers/status?code=' + encodeURIComponent(username) + '&mac=' + encodeURIComponent('$(mac)');
+        var statusEndpoint = billingBase + '/api/vouchers/status?code=' + encodeURIComponent(username);
         
         fetch(statusEndpoint, { method: 'GET', cache: 'no-cache' })
           .then(function(res) {
