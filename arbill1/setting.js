@@ -12,7 +12,7 @@ window.APP_CONFIG = {
   // - Saat dipasang di router MikroTik fisik:
   //   Ganti dengan IP Komputer Server Billing Anda, misalnya: 'http://192.168.1.100:3006'
   //   Atau domain jika pakai Cloudflare/VPN: 'https://billing.arab.net'
-  BILLING_URL: 'http://localhost:3006',
+  BILLING_URL: 'https://arbill.arabpay.my.id',
 
   // 2. IDENTITAS & BRANDING WIFi
   BRAND_NAME: 'WIFI ARABPAY',
@@ -24,6 +24,11 @@ window.APP_CONFIG = {
   WHATSAPP_ADMIN: '6281234567890',
   WHATSAPP_DISPLAY: '0812-3456-7890', // Tampilan nomor di footer
 
+  // 4. SCANNER QR / BARCODE HTTPS (ARBILL CYBER SCANNER)
+  // Menghubungkan ke scanner kamera HTTPS agar kamera langsung aktif di HP Android/iOS
+  // tanpa peringatan browser memblokir kamera di jaringan HTTP.
+  QR_SCANNER_URL: 'https://arbill.arabpay.my.id/myqr/',
+
   // 4. PENGATURAN JADWAL SHOLAT (100% OFFLINE)
   PRAYER_TIMES: {
     ENABLED: true, // true: tampilkan widget jadwal sholat, false: sembunyikan
@@ -34,7 +39,11 @@ window.APP_CONFIG = {
     LONGITUDE: 106.8456
   },
 
-  // 5. FITUR-FITUR TAMPILAN
+  // 5. FORMAT KODE VOUCHER
+  // Pilihan: 'lowercase' (huruf kecil - default Arbill Baru), 'uppercase' (huruf besar), atau 'none' (sesuai ketikan pelanggan)
+  VOUCHER_CASE: 'lowercase',
+
+  // 6. FITUR-FITUR TAMPILAN
   FEATURES: {
     ENABLE_FLASH_SALE: true, // Tampilkan banner promo Flash Sale jika aktif di billing
     ENABLE_LIVE_CLOCK: true, // Jam digital realtime di sudut atas

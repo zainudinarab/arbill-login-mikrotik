@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <meta http-equiv="refresh" content="2; url=$(link-redirect)">
+  <title>Login Berhasil - WiFi Hotspot</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="setting.js"></script>
+  <script>
+    function startClock() {
+      $(if popup == 'true')
+      open('$(link-status)', 'hotspot_status', 'toolbar=0,location=0,directories=0,status=0,menubars=0,resizable=1,width=300,height=260');
+      $(endif)
+      setTimeout(function() {
+        location.href = unescape('$(link-redirect-esc)');
+      }, 1500);
+    }
+  </script>
+</head>
+<body onload="startClock()">
+
+  <!-- Dynamic Floating Orbs Background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <div class="wrapper" style="text-align: center;">
+
+    <!-- Success Icon -->
+    <div class="brand-header">
+      <div class="brand-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 0 30px rgba(16, 185, 129, 0.45);">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="#ffffff">
+          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+        </svg>
+      </div>
+      <h1 class="brand-title" id="brand-title-display">KONEKSI BERHASIL!</h1>
+      <div class="brand-subtitle" id="brand-subtitle-display">
+        Selamat datang, <strong>$(username)</strong>. Akses internet Anda telah aktif.
+      </div>
+    </div>
+
+    <!-- Status Notice Card -->
+    <div class="status-grid" style="grid-template-columns: 1fr; margin-bottom: 20px;">
+      <div class="status-card" style="padding: 16px;">
+        <div class="status-label">IP Perangkat Anda</div>
+        <div class="status-value highlight">$(ip)</div>
+        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 6px;">
+          Sedang mengalihkan ke halaman tujuan secara otomatis...
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Button -->
+    <a href="$(link-redirect)" class="btn-submit" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+      <span>MULAI BROWSING SEKARANG</span>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+      </svg>
+    </a>
+
+    <!-- Footer -->
+    <div class="footer-text" style="margin-top: 24px;">
+      <strong id="footer-brand">WiFi ARABPAY Hotspot</strong><br>
+      Bantuan Pelanggan WhatsApp: <strong id="footer-wa">0812-3456-7890</strong>
+    </div>
+
+  </div>
+
+  <script>
+    // Terapkan branding dari setting.js
+    (function() {
+      var cfg = window.APP_CONFIG || {};
+      if (cfg.BRAND_NAME) {
+        document.title = 'Login Berhasil - ' + cfg.BRAND_NAME;
+        var ftBrand = document.getElementById('footer-brand');
+        if (ftBrand) ftBrand.innerText = cfg.BRAND_NAME + ' Hotspot';
+      }
+      if (cfg.WHATSAPP_DISPLAY) {
+        var ftWa = document.getElementById('footer-wa');
+        if (ftWa) ftWa.innerText = cfg.WHATSAPP_DISPLAY;
+      }
+    })();
+  </script>
+
+</body>
+</html>

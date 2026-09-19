@@ -2,14 +2,15 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="-1">
   $(if refresh-timeout)
   <meta http-equiv="refresh" content="$(refresh-timeout-secs)">
   $(endif)
-  <title>Status Koneksi - WiFi ARABPAY</title>
+  <title>Status Koneksi - WiFi Hotspot</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="setting.js"></script>
   <script>
     $(if advert-pending == 'yes')
       var popup = '';
@@ -23,102 +24,415 @@
     $(endif)
     function openLogout() {
       if (window.name != 'hotspot_status') return true;
-      open('$(link-logout)', 'hotspot_logout', 'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=1,width=280,height=250');
+      open('$(link-logout)', 'hotspot_logout', 'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=1,width=300,height=270');
       window.close();
       return false;
     }
   </script>
 </head>
-<body $(if advert-pending == 'yes') onLoad="openAdvert()" $(endif)>
+<body class="has-bottom-nav" $(if advert-pending == 'yes') onLoad="openAdvert()" $(endif)>
 
-  <div class="bg-glow-1"></div>
-  <div class="bg-glow-2"></div>
+  <!-- Dynamic Floating Orbs Background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
 
-  <div class="wrapper">
+  <div class="wrapper" style="max-width: 440px;">
+
+    <!-- Top Action Bar (Live Time & Theme Switcher) -->
+    <div class="top-action-bar">
+      <div class="live-time-widget">
+        <span class="live-dot" style="background:#10b981; box-shadow:0 0 10px #10b981;"></span>
+        <span id="live-time-display">--:--:--</span>
+      </div>
+
+      <div class="theme-switcher-btns">
+        <button type="button" class="theme-btn active" title="Cyber Dark" onclick="setTheme('cyber', this)">🌙</button>
+        <button type="button" class="theme-btn" title="Gold Luxury" onclick="setTheme('gold', this)">👑</button>
+        <button type="button" class="theme-btn" title="Clean Light" onclick="setTheme('light', this)">☀️</button>
+      </div>
+    </div>
 
     <!-- Status Header -->
-    <div class="brand-header">
-      <div class="brand-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); shadow: 0 0 25px rgba(16,185,129,0.4);">
-        <svg viewBox="0 0 24 24">
+    <div class="brand-header" style="margin-bottom: 20px;">
+      <div class="brand-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); box-shadow: 0 0 30px rgba(16, 185, 129, 0.45); position: relative;">
+        <svg viewBox="0 0 24 24" width="34" height="34" fill="#ffffff">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
         </svg>
       </div>
-      <h1 class="brand-title">WIFI ARABPAY</h1>
-      <div class="brand-subtitle">
-        Selamat Datang, <strong>$(username)</strong>
-        <span class="ssl-badge">Online 🟢</span>
+      <h1 class="brand-title" id="brand-title-display">WIFI ARABPAY</h1>
+      <div class="brand-subtitle" style="display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap;">
+        <span>Selamat Datang, <strong>$(username)</strong></span>
+        <span class="ssl-badge" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981; background: rgba(16, 185, 129, 0.12); padding: 3px 10px;">
+          🟢 ONLINE
+        </span>
       </div>
     </div>
 
-    <!-- Status Cards Grid -->
-    <div class="status-grid">
+    <!-- Hero Session Card -->
+    <div class="status-card" style="margin-bottom: 14px; background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%); border: 1px solid rgba(6, 182, 212, 0.3); box-shadow: 0 10px 25px rgba(0,0,0,0.4);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 0.75rem; font-weight: 700; color: var(--accent-cyan); text-transform: uppercase; letter-spacing: 0.5px;">
+          ⚡ Masa Aktif Sesi
+        </span>
+        <span style="font-size: 0.75rem; color: var(--text-secondary);">
+          Uptime: <strong style="color: #fff;">$(uptime)</strong>
+        </span>
+      </div>
+      <div style="font-size: 1.6rem; font-weight: 800; color: #fbbf24; text-shadow: 0 0 15px rgba(251, 191, 36, 0.4); margin-bottom: 4px;">
+        $(if session-time-left)
+          $(session-time-left)
+        $(else)
+          Tak Terbatas (Loss)
+        $(endif)
+      </div>
+      <div style="font-size: 0.78rem; color: var(--text-secondary);">
+        $(if session-time-left)Sisa durasi waktu voucher Anda sebelum expired$(else)Koneksi tanpa batas waktu aktif$(endif)
+      </div>
+    </div>
+
+    <!-- Data Usage & Network Cards -->
+    <div class="status-grid" style="margin-bottom: 14px;">
+      
+      <!-- Upload Card -->
+      <div class="status-card" style="border-left: 3px solid #10b981;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div class="status-label">Upload</div>
+          <span style="color: #10b981; font-weight: 800; font-size: 0.85rem;">⬆</span>
+        </div>
+        <div class="status-value highlight" style="color: #10b981; font-size: 1.05rem;">$(bytes-in-nice)</div>
+        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">Terkirim</div>
+      </div>
+
+      <!-- Download Card -->
+      <div class="status-card" style="border-left: 3px solid #06b6d4;">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+          <div class="status-label">Download</div>
+          <span style="color: #06b6d4; font-weight: 800; font-size: 0.85rem;">⬇</span>
+        </div>
+        <div class="status-value highlight" style="color: #06b6d4; font-size: 1.05rem;">$(bytes-out-nice)</div>
+        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">Diterima</div>
+      </div>
+
+      <!-- IP Address -->
       <div class="status-card">
         <div class="status-label">IP Address</div>
-        <div class="status-value highlight">$(ip)</div>
+        <div class="status-value highlight" style="font-size: 0.95rem;">$(ip)</div>
+        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">Gateway: ar.net</div>
       </div>
-      
+
+      <!-- MAC Address -->
       <div class="status-card">
         <div class="status-label">MAC Address</div>
-        <div class="status-value" style="font-size:0.85rem">$(mac)</div>
-      </div>
-
-      <div class="status-card">
-        <div class="status-label">Durasi Terhubung</div>
-        <div class="status-value">$(uptime)</div>
-      </div>
-
-      <div class="status-card">
-        <div class="status-label">Sisa Waktu</div>
-        <div class="status-value highlight">
-          $(if session-time-left)
-            $(session-time-left)
-          $(else)
-            Tak Terbatas
-          $(endif)
-        </div>
-      </div>
-
-      <div class="status-card">
-        <div class="status-label">Upload</div>
-        <div class="status-value">$(bytes-out-nice)</div>
-      </div>
-
-      <div class="status-card">
-        <div class="status-label">Download</div>
-        <div class="status-value">$(bytes-in-nice)</div>
+        <div class="status-value" style="font-size: 0.8rem; font-family: monospace;">$(mac)</div>
+        <div style="font-size: 0.7rem; color: var(--text-secondary); margin-top: 2px;">Perangkat Anda</div>
       </div>
 
       $(if remain-bytes-total)
-      <div class="status-card status-card-full">
-        <div class="status-label">Sisa Kuota Data</div>
-        <div class="status-value highlight">$(remain-bytes-total-nice)</div>
+      <!-- Sisa Kuota (Jika Ada) -->
+      <div class="status-card status-card-full" style="border-left: 3px solid #fbbf24;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div class="status-label">Sisa Kuota Data</div>
+          <span style="font-size: 0.75rem; color: #fbbf24; font-weight: 700;">Volume Based</span>
+        </div>
+        <div class="status-value highlight" style="color: #fbbf24; font-size: 1.3rem;">$(remain-bytes-total-nice)</div>
       </div>
       $(endif)
+
     </div>
 
-    <!-- Action Forms -->
-    <form action="$(link-logout)" name="logout" onSubmit="return openLogout()">
-      <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);">
+    <!-- Quick Action Buttons -->
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+      
+      <!-- Mulai Internetan -->
+      <a href="https://www.google.com" target="_blank" class="btn-submit" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
         </svg>
-        <span>PUTUSKAN KONEKSI (LOGOUT)</span>
-      </button>
-    </form>
-
-    <div style="margin-top: 14px;">
-      <a href="https://www.google.com" class="btn-trial" style="border-color: var(--border-color); color: var(--text-primary); display: block; text-decoration:none;">
-        🌐 Buka Browser / Mulai Browsing
+        <span>MULAI BROWSING / BUKA INTERNET</span>
       </a>
+
+      <!-- Beli Paket / Bantuan WA -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <button type="button" class="btn-trial" style="border-color: rgba(6, 182, 212, 0.4); color: var(--accent-cyan); display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 0.82rem;" onclick="openPkgModal()">
+          <span>💳 Beli Paket</span>
+        </button>
+
+        <a id="btn-wa-link" href="#" target="_blank" class="btn-trial" style="border-color: rgba(37, 211, 102, 0.4); color: #25d366; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 0.82rem; text-decoration: none;">
+          <span>📲 Bantuan WA</span>
+        </a>
+      </div>
+
+      <!-- Logout Trigger Button -->
+      <button type="button" class="btn-trial" style="border-color: rgba(239, 68, 68, 0.4); color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 700; font-size: 0.82rem;" onclick="openLogoutModal()">
+        <span>🚪 Putuskan Koneksi (Logout)</span>
+      </button>
+
     </div>
 
-    <!-- Footer -->
-    <div class="footer-text">
-      <strong>WiFi ARABPAY Hotspot Digital</strong><br>
-      Bantuan Pelanggan WhatsApp: 0812-3456-7890
+    <!-- Footer Info -->
+    <div class="footer-text" style="margin-bottom: 10px;">
+      <strong id="footer-brand">WiFi ARABPAY Hotspot Digital</strong><br>
+      Layanan Pelanggan WhatsApp: <strong id="footer-wa">0812-3456-7890</strong>
     </div>
 
   </div>
+
+  <!-- ============================================================== -->
+  <!-- BOTTOM NAVIGATION BAR (STATUS, PAKET, BANTUAN, LOGOUT)         -->
+  <!-- ============================================================== -->
+  <div class="bottom-nav-bar">
+    
+    <!-- Tab 1: Status (Active) -->
+    <button type="button" class="nav-item active" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 3C6.95 3 2.55 5.37 0 9l2.24 2.98C4.34 8.7 8.01 6.5 12 6.5s7.66 2.2 9.76 5.48L24 9c-2.55-3.63-6.95-6-12-6zm0 6c-3.31 0-6.19 1.55-7.91 3.96l2.24 2.98C7.38 14.47 9.57 13 12 13s4.62 1.47 5.67 2.94l2.24-2.98C18.19 10.55 15.31 9 12 9zm0 6c-1.66 0-3.08.77-3.95 1.96L12 22l3.95-5.04C15.08 15.77 13.66 15 12 15z"/>
+      </svg>
+      <span>Status</span>
+    </button>
+
+    <!-- Tab 2: Paket / Billing -->
+    <button type="button" class="nav-item" onclick="openPkgModal()">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 12 7.4 15.38 12 17 10.83 14.92 8H20v6z"/>
+      </svg>
+      <span>Paket</span>
+    </button>
+
+    <!-- Tab 3: Bantuan CS / WhatsApp -->
+    <button type="button" class="nav-item" onclick="openHelpModal()">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.42a8.225 8.225 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.196 8.196 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.24-8.24m4.52 11.66c-.19-.09-1.12-.55-1.3-.61-.17-.06-.3-.09-.43.09-.13.19-.49.61-.6.74-.11.13-.23.15-.41.06-.19-.09-.79-.29-1.51-.93-.56-.5-1.07-1.11-1.2-1.33-.13-.22-.01-.34.08-.43.08-.08.19-.22.28-.34.09-.11.13-.19.19-.32.06-.13.03-.25-.01-.34-.05-.09-.43-1.04-.59-1.43-.16-.37-.31-.32-.43-.33-.11-.01-.24-.01-.36-.01s-.32.05-.49.23c-.17.19-.65.64-.65 1.56 0 .92.67 1.81.76 1.94.09.13 1.31 2 3.17 2.81.44.19.79.31 1.06.4.45.14.86.12 1.18.07.36-.05 1.12-.46 1.28-.9.16-.45.16-.83.11-.91-.04-.09-.17-.15-.36-.25z"/>
+      </svg>
+      <span>Bantuan</span>
+    </button>
+
+    <!-- Tab 4: Logout / Keluar -->
+    <button type="button" class="nav-item" onclick="openLogoutModal()" style="color: #ef4444;">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/>
+      </svg>
+      <span style="color: #ef4444; font-weight: 700;">Logout</span>
+    </button>
+
+  </div>
+
+  <!-- Logout Confirmation Modal -->
+  <div id="logout-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title" style="color: #ef4444;">Konfirmasi Logout</div>
+        <button class="btn-close-modal" onclick="closeModal('logout-modal')">✕</button>
+      </div>
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="font-size: 2.2rem; margin-bottom: 10px;">⚠️</div>
+        <p style="font-size: 0.95rem; color: #fff; margin-bottom: 8px; font-weight: 700;">
+          Putuskan koneksi internet sekarang?
+        </p>
+        <p style="font-size: 0.82rem; color: var(--text-secondary); line-height: 1.5;">
+          Sisa kuota dan durasi waktu voucher Anda akan tetap tersimpan dan dapat digunakan kembali nanti.
+        </p>
+      </div>
+      <form action="$(link-logout)" name="logout" onSubmit="return openLogout()">
+        <button type="submit" class="btn-submit" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);">
+          YA, PUTUSKAN KONEKSI (LOGOUT)
+        </button>
+      </form>
+      <button type="button" class="btn-trial" style="width: 100%; margin-top: 8px; border-color: var(--border-color); color: var(--text-secondary);" onclick="closeModal('logout-modal')">
+        Batal
+      </button>
+    </div>
+  </div>
+
+  <!-- Package Purchase Modal (Daftar Pilihan Paket) -->
+  <div id="pkg-modal" class="modal-overlay">
+    <div class="modal-card modal-card-wide">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">📋 Pilihan Paket Voucher</div>
+          <div style="font-size: 0.72rem; color: var(--accent-cyan); margin-top: 2px;">⚡ Pembelian Instan Online 24 Jam</div>
+        </div>
+        <button class="btn-close-modal" onclick="closeModal('pkg-modal')">✕</button>
+      </div>
+
+      <!-- Container Daftar Paket Dinamis -->
+      <div id="status-packages-container" class="modal-package-list">
+        <!-- Paket-paket dirender otomatis di sini -->
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+        <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); font-weight: 800; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);" onclick="openArbillPortal()">
+          💳 Beli & Bayar Online di Portal (QRIS)
+        </button>
+        <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); font-weight: 600; font-size: 0.85rem;" onclick="openWhatsAppChat()">
+          📲 Pesan Langsung via WhatsApp Admin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive FAQ & Help Modal -->
+  <div id="help-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Bantuan & Layanan Pelanggan</div>
+        <button class="btn-close-modal" onclick="closeModal('help-modal')">✕</button>
+      </div>
+      <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
+        <p style="margin-bottom:10px;">
+          <strong>1. Masa Aktif Voucher:</strong><br>
+          Waktu sesi berjalan saat Anda terhubung. Jika disconnect atau logout, sisa durasi tetap tersimpan.
+        </p>
+        <p style="margin-bottom:10px;">
+          <strong>2. Perpanjang / Tambah Paket:</strong><br>
+          Klik tab <strong>Paket</strong> di bawah untuk memilih voucher baru secara instan via QRIS atau WhatsApp.
+        </p>
+        <p style="margin-bottom:14px;">
+          <strong>3. Butuh Bantuan Admin?</strong><br>
+          Hubungi Customer Service kami melalui tombol WhatsApp di bawah.
+        </p>
+        <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); font-weight: 700;" onclick="openWhatsAppChat()">
+          📲 Chat WhatsApp Admin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var CFG = window.APP_CONFIG || {};
+
+    // 1. Sinkronisasi Tema & Pengaturan Brand
+    function applyStatusConfig() {
+      var savedTheme = localStorage.getItem('arbill_theme');
+      if (savedTheme) setTheme(savedTheme);
+
+      if (CFG.BRAND_NAME) {
+        document.title = 'Status Koneksi - ' + CFG.BRAND_NAME;
+        var bTitle = document.getElementById('brand-title-display');
+        if (bTitle) bTitle.innerText = CFG.BRAND_NAME;
+        var ftBrand = document.getElementById('footer-brand');
+        if (ftBrand) ftBrand.innerText = CFG.BRAND_NAME + ' Hotspot Digital';
+      }
+
+      var waAdmin = (CFG.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
+      var waDisplay = CFG.WHATSAPP_DISPLAY || '0812-3456-7890';
+      var ftWa = document.getElementById('footer-wa');
+      if (ftWa) ftWa.innerText = waDisplay;
+
+      var waLink = document.getElementById('btn-wa-link');
+      if (waLink) {
+        var msg = encodeURIComponent('Halo Admin ' + (CFG.BRAND_NAME || 'WiFi ARABPAY') + ', saya pengguna hotspot ($(username)), butuh bantuan.');
+        waLink.href = 'https://wa.me/' + waAdmin + '?text=' + msg;
+      }
+
+      renderStatusPackages();
+    }
+
+    // Render Paket di Modal Status
+    function renderStatusPackages() {
+      var container = document.getElementById('status-packages-container');
+      if (!container) return;
+
+      var plans = (CFG.PRICING_PLANS && CFG.PRICING_PLANS.length > 0) 
+        ? CFG.PRICING_PLANS 
+        : (CFG.FALLBACK_PACKAGES || [
+            { name: '1 JAM', price: 2000, speed: '5 Mbps', badge: '' },
+            { name: '24 JAM', price: 5000, speed: '10 Mbps', badge: 'POPULER' },
+            { name: '7 HARI', price: 20000, speed: '15 Mbps', badge: 'HEMAT' }
+          ]);
+
+      var html = '';
+      plans.forEach(function(pkg) {
+        var formattedPrice = 'Rp ' + Number(pkg.price).toLocaleString('id-ID');
+        var badgeHtml = pkg.badge ? '<span class="modal-pkg-badge">' + pkg.badge + '</span>' : '';
+        var speedText = pkg.speed ? '⚡ ' + pkg.speed : '⚡ Kecepatan Tinggi';
+
+        html += '<div class="modal-pkg-item">' +
+          '<div class="modal-pkg-left">' +
+            '<div class="modal-pkg-name-row">' +
+              '<span class="modal-pkg-name">' + pkg.name + '</span>' +
+              badgeHtml +
+            '</div>' +
+            '<div class="modal-pkg-sub">' + speedText + ' &bull; Aktif 24 Jam</div>' +
+          '</div>' +
+          '<div class="modal-pkg-right">' +
+            '<div class="modal-pkg-price">' + formattedPrice + '</div>' +
+            '<button type="button" class="modal-pkg-btn" onclick="orderPkgDirect(\'' + pkg.name + '\', \'' + formattedPrice + '\')">Beli</button>' +
+          '</div>' +
+        '</div>';
+      });
+
+      container.innerHTML = html;
+    }
+
+    function orderPkgDirect(name, price) {
+      var waAdmin = (CFG.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
+      var msg = encodeURIComponent('Halo Admin ' + (CFG.BRAND_NAME || 'WiFi ARABPAY') + ', saya pengguna hotspot ($(username)), saya ingin membeli Paket: ' + name + ' (' + price + ').');
+      window.open('https://wa.me/' + waAdmin + '?text=' + msg, '_blank');
+      closeModal('pkg-modal');
+    }
+
+    // Theme Switcher
+    function setTheme(theme, btn) {
+      document.querySelectorAll('.theme-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        var matchBtn = document.querySelector('.theme-btn[onclick*="' + theme + '"]');
+        if (matchBtn) matchBtn.classList.add('active');
+      }
+      document.body.className = 'has-bottom-nav';
+      if (theme === 'gold') document.body.classList.add('theme-gold');
+      if (theme === 'light') document.body.classList.add('theme-light');
+      try { localStorage.setItem('arbill_theme', theme); } catch(e) {}
+    }
+
+    // Live Clock Update
+    function updateClock() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      var s = String(now.getSeconds()).padStart(2, '0');
+      var el = document.getElementById('live-time-display');
+      if (el) el.innerText = h + ':' + m + ':' + s;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function openLogoutModal() {
+      document.getElementById('logout-modal').classList.add('active');
+    }
+
+    function openPkgModal() {
+      document.getElementById('pkg-modal').classList.add('active');
+    }
+
+    function openHelpModal() {
+      document.getElementById('help-modal').classList.add('active');
+    }
+
+    function closeModal(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    }
+
+    function openArbillPortal() {
+      var url = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '') + '/#/portal';
+      window.open(url, '_blank');
+      closeModal('pkg-modal');
+    }
+
+    function openWhatsAppChat() {
+      var waAdmin = (CFG.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
+      var msg = encodeURIComponent('Halo Admin ' + (CFG.BRAND_NAME || 'WiFi ARABPAY') + ', saya pengguna hotspot ($(username)), butuh bantuan / perpanjang paket.');
+      window.open('https://wa.me/' + waAdmin + '?text=' + msg, '_blank');
+      closeModal('pkg-modal');
+      closeModal('help-modal');
+    }
+
+    // Init Config
+    document.addEventListener('DOMContentLoaded', applyStatusConfig);
+    applyStatusConfig();
+  </script>
 
 </body>
 </html>

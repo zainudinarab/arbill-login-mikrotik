@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="2; url=$(link-orig)">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <title>Informasi Hotspot</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    var popup = '';
+    function openOrig() {
+      if (window.focus) popup.focus();
+      location.href = unescape('$(link-orig-esc)');
+    }
+    function openAd() {
+      location.href = unescape('$(link-redirect-esc)');
+    }
+    function openAdvert() {
+      if (window.name != 'hotspot_advert') {
+        popup = open('$(link-redirect)', 'hotspot_advert', '');
+        setTimeout(openOrig, 1000);
+        return;
+      }
+      setTimeout(openAd, 1000);
+    }
+  </script>
+</head>
+<body onload="openAdvert()">
+
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <div class="wrapper" style="text-align: center;">
+    <div class="brand-header">
+      <div class="brand-icon" style="background: var(--gradient-main);">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="#ffffff">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+        </svg>
+      </div>
+      <h1 class="brand-title">PENGALIHAN INFORMASI</h1>
+      <div class="brand-subtitle">
+        Jika browser tidak mengalihkan secara otomatis, silakan klik tombol di bawah:
+      </div>
+    </div>
+
+    <a href="$(link-redirect)" target="hotspot_advert" class="btn-submit" style="text-decoration: none; margin-top: 16px;">
+      <span>BUKA HALAMAN TUJUAN</span>
+    </a>
+  </div>
+
+</body>
+</html>

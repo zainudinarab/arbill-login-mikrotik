@@ -1,0 +1,37 @@
+$(if http-status == 302)Hotspot login required$(endif)
+$(if http-header == "Location")$(link-redirect)$(endif)
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <meta http-equiv="refresh" content="0; url=$(link-redirect)">
+  <title>Mengarahkan ke Login Hotspot...</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body onload="location.href='$(link-redirect)'">
+
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+
+  <div class="wrapper" style="text-align: center;">
+    <div class="brand-header">
+      <div class="brand-icon" style="background: var(--gradient-main);">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="#ffffff">
+          <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+        </svg>
+      </div>
+      <h1 class="brand-title">MENGHUBUNGKAN...</h1>
+      <div class="brand-subtitle">
+        Mohon tunggu sebentar, Anda sedang diarahkan ke halaman login.
+      </div>
+    </div>
+
+    <a href="$(link-redirect)" class="btn-submit" style="text-decoration: none; margin-top: 16px;">
+      <span>KLIK DI SINI JIKA TIDAK DIARAHKAN</span>
+    </a>
+  </div>
+
+</body>
+</html>

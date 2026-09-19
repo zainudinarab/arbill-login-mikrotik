@@ -1,4 +1,4 @@
-﻿# arbill-login-mikrotik
+# arbill-login-mikrotik
 
 Koleksi Template Login Hotspot MikroTik Modern & Responsive untuk Arbill / ArabPay.
 
@@ -10,7 +10,8 @@ Koleksi Template Login Hotspot MikroTik Modern & Responsive untuk Arbill / ArabP
 - 🕌 **Fitur Jadwal Sholat Offline & Jam Digital**: Widget jadwal sholat otomatis berbasis koordinat lokal tanpa memerlukan akses internet tambahan.
 
 ## 📁 Struktur Direktori
-- `arbill1/`: Tema hotspot default dengan desain Neon Glassmorphism, tab login Member & Voucher, widget promo/flash sale, dan panduan lengkap instalasi.
+- `arbill1/`: Tema Neon & Cyber Glassmorphism (Fitur lengkap: Tab Voucher/Member, Jadwal Sholat Offline, Live Billing Arbill/ArabPay, Theme Switcher, RFC 8908 Captive Portal API, Error terjemahan bahasa Indonesia, dan dukungan dual HTTP/HTTPS).
+- `arbill2/`: Tema alternatif hotspot MikroTik.
 
 ## 🚀 Panduan Penggunaan
 1. Buka folder template pilihan Anda (misalnya `arbill1/`).

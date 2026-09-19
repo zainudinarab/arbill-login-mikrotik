@@ -7,17 +7,26 @@ Dokumen ini berisi panduan langkah demi langkah pengunggahan tema login hotspot 
 ## 📁 Struktur Berkas Template Hotspot
 
 ```text
-mikrotik/
+arbill1/
 ├── css/
-│   └── style.css         # Styling Glassmorphism & UI Design System
+│   └── style.css            # Styling Glassmorphism & UI Design System
 ├── js/
-│   └── md5.js            # Standard Enkripsi CHAP MD5 MikroTik
-├── login.html            # Halaman Login Utama (HTTPS & CHAP MD5, Tab Voucher/Member)
-├── status.html           # Halaman Dashboard Informasi Koneksi Pengguna
-├── logout.html           # Halaman Konfirmasi Logout
-├── errors.html           # Halaman Penanganan Pesan Error
-├── redirect.html         # Halaman Pengalihan Otomatis
-└── README.md             # Panduan Konfigurasi ini
+│   └── md5.js               # Enkripsi CHAP MD5 MikroTik (hex_md5 & hexMD5)
+├── setting.js               # Pengaturan Branding, URL Billing Arbill, WA, & Jadwal Sholat
+├── api.json                 # RFC 8908 Captive Portal API untuk HP Android & iOS
+├── login.html               # Halaman Login Utama (Dual HTTP/HTTPS, Voucher & Member)
+├── alogin.html              # Halaman Sukses Login & Pengalihan Otomatis
+├── status.html              # Halaman Dashboard Informasi Koneksi & Kuota
+├── logout.html              # Halaman Konfirmasi Logout
+├── error.html               # Halaman Penanganan Pesan Error MikroTik
+├── errors.html              # Halaman Error Alternatif
+├── errors.txt               # Terjemahan Bahasa Indonesia Pesan Error MikroTik
+├── redirect.html            # Halaman Pengalihan URL Tujuan
+├── rlogin.html              # Pengalihan Autoredirect Hotspot
+├── radvert.html             # Halaman Iklan Hotspot
+├── favicon.ico              # Ikon Tab Browser
+├── cloudflare_ssl_guide.md  # Panduan Integrasi SSL Cloudflare Origin CA
+└── README.md                # Panduan Konfigurasi ini
 ```
 
 ---

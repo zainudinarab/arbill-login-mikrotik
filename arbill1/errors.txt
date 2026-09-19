@@ -1,0 +1,52 @@
+# ====================================================================
+# TERJEMAHAN PESAN KESALAHAN HOTSPOT MIKROTIK (BAHASA INDONESIA)
+# WIFI ARABPAY / ARBILL
+# ====================================================================
+
+# internal-error
+internal-error = Terjadi kesalahan sistem internal ($(error-orig)). Silakan coba sesaat lagi.
+
+# config-error
+config-error = Kesalahan konfigurasi server hotspot ($(error-orig)). Silakan hubungi admin.
+
+# not-logged-in
+not-logged-in = Anda belum terhubung atau sesi login Anda telah berakhir.
+
+# ippool-empty
+ippool-empty = Alamat IP jaringan penuh. Tidak dapat mengalokasikan koneksi baru saat ini.
+
+# shutting-down
+shutting-down = Layanan hotspot sedang dalam pemeliharaan (restart/shutdown).
+
+# user-session-limit
+user-session-limit = Kode voucher atau akun '$(username)' sudah aktif digunakan di perangkat lain.
+
+# license-session-limit
+license-session-limit = Batas kapasitas pengguna hotspot telah tercapai ($(error-orig)).
+
+# wrong-mac-username
+wrong-mac-username = Kode voucher '$(username)' terkunci pada perangkat/MAC address lain.
+
+# chap-missing
+chap-missing = Browser Anda tidak mengirim enkripsi password yang sesuai. Silakan muat ulang halaman.
+
+# invalid-username
+invalid-username = Kode voucher atau username / password salah. Mohon periksa kembali.
+
+# invalid-mac
+invalid-mac = Format alamat MAC perangkat Anda tidak valid ($(error-orig)).
+
+# uptime-limit
+uptime-limit = Masa aktif voucher '$(username)' telah habis (waktu habis). Silakan beli voucher baru.
+
+# traffic-limit
+traffic-limit = Kuota data internet voucher '$(username)' telah habis. Silakan isi ulang / beli voucher baru.
+
+# radius-timeout
+radius-timeout = Server autentikasi billing tidak merespons (timeout). Silakan hubungi admin.
+
+# auth-in-progress
+auth-in-progress = Proses autentikasi sedang berjalan, mohon tunggu beberapa detik...
+
+# radius-reply
+radius-reply = $(error-orig)
