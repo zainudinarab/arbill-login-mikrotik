@@ -392,12 +392,9 @@
         <!-- Paket-paket dirender otomatis dari config -->
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+      <div style="margin-top: 12px;">
         <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); font-weight: 800; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);" onclick="openArbillPortal()">
           💳 Beli & Bayar Online di Portal (QRIS)
-        </button>
-        <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); font-weight: 600; font-size: 0.85rem;" onclick="openWhatsAppChat()">
-          📲 Pesan Langsung via WhatsApp Admin
         </button>
       </div>
     </div>
@@ -564,10 +561,7 @@
     }
 
     function orderPkgDirect(name, price) {
-      var waAdmin = (CFG.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
-      var msg = encodeURIComponent('Halo Admin ' + (CFG.BRAND_NAME || 'WiFi ARABPAY') + ', saya pengguna hotspot ($(username)), saya ingin membeli Paket: ' + name + ' (' + price + ').');
-      window.open('https://wa.me/' + waAdmin + '?text=' + msg, '_blank');
-      closeModal('pkg-modal');
+      openArbillPortal();
     }
 
     // 5. Theme Switcher
