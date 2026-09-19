@@ -57,19 +57,57 @@ window.APP_CONFIG = {
       name: '1 JAM',
       price: 2000,
       badge: '',
-      speed: '5 Mbps'
+      speed: '5 Mbps',
+      desc: 'Cocok browsing cepat & sosmed'
+    },
+    {
+      name: '3 JAM',
+      price: 3000,
+      badge: '',
+      speed: '7 Mbps',
+      desc: 'Nonton YouTube & streaming lancar'
+    },
+    {
+      name: '12 JAM',
+      price: 5000,
+      badge: '',
+      speed: '10 Mbps',
+      desc: 'Aktif setengah hari full speed'
     },
     {
       name: '24 JAM',
-      price: 5000,
+      price: 7000,
       badge: 'POPULER',
-      speed: '10 Mbps'
+      speed: '12 Mbps',
+      desc: 'Paket harian paling diminati'
+    },
+    {
+      name: '3 HARI',
+      price: 15000,
+      badge: '',
+      speed: '15 Mbps',
+      desc: 'Akses 3 hari tanpa batas kuota'
     },
     {
       name: '7 HARI',
       price: 25000,
       badge: 'HEMAT',
-      speed: '15 Mbps'
+      speed: '15 Mbps',
+      desc: 'Paket mingguan hemat & stabil'
+    },
+    {
+      name: '14 HARI',
+      price: 45000,
+      badge: '',
+      speed: '20 Mbps',
+      desc: 'Dua pekan online ngebut'
+    },
+    {
+      name: '30 HARI',
+      price: 75000,
+      badge: 'BEST VALUE',
+      speed: '25 Mbps',
+      desc: 'Paket bulanan full unlimited'
     }
   ]
 };
