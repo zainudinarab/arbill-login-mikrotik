@@ -60,11 +60,14 @@ window.APP_CONFIG = {
     ENABLE_THEME_SWITCHER: true // Tombol pilihan tema Gelap / Gold / Terang
   },
 
-  // 7. LIVE CHAT TELEGRAM (INTERGRAM)
-  // Menghubungkan obrolan pelanggan di hotspot langsung ke Bot / Chat Telegram Admin
+  // 7. LIVE CHAT WIDGET
+  // Menghubungkan obrolan pelanggan di hotspot langsung ke sistem Live Chat
   LIVE_CHAT: {
     ENABLED: true, // true: tampilkan widget chat admin di pojok layar, false: matikan
-    CHAT_ID: "-4034685266", // Telegram Chat ID atau Group ID Anda (contoh: -4034685266)
+    PROVIDER: 'areza', // Pilihan: 'areza' (chat.areza.my.id) atau 'intergram' (Telegram Bot)
+    AREZA_URL: 'https://chat.areza.my.id/js/widget.js',
+    AREZA_GROUP: 'wifinet',
+    CHAT_ID: "-4034685266", // Telegram Chat ID jika memakai provider 'intergram'
     TITLE_CLOSED: 'Chat Admin',
     TITLE_OPEN: 'Sedang Chat',
     INTRO_MESSAGE: 'Assalamualaikum, Selamat Datang di WiFi Hotspot.',

@@ -1715,7 +1715,22 @@
     function initLiveChat() {
       try {
         var cfg = window.APP_CONFIG && window.APP_CONFIG.LIVE_CHAT;
-        if (cfg && cfg.ENABLED && cfg.CHAT_ID) {
+        if (!cfg || !cfg.ENABLED) return;
+
+        // Model 1: Widget Chat (chat.areza.my.id)
+        if (cfg.PROVIDER === 'areza' || (!cfg.PROVIDER && cfg.AREZA_URL)) {
+          if (!document.getElementById('chat-widget')) {
+            var s = document.createElement('script');
+            s.id = 'chat-widget';
+            s.src = cfg.AREZA_URL || 'https://chat.areza.my.id/js/widget.js';
+            s.setAttribute('data-group', cfg.AREZA_GROUP || 'wifinet');
+            document.body.appendChild(s);
+          }
+          return;
+        }
+
+        // Model 2: Telegram Intergram
+        if (cfg.CHAT_ID) {
           window.intergramId = cfg.CHAT_ID;
           window.intergramCustomizations = {
             titleClosed: cfg.TITLE_CLOSED || 'Chat Admin',
@@ -1727,10 +1742,10 @@
             alwaysUseFloatingButton: cfg.ALWAYS_USE_FLOATING_BUTTON || false
           };
           if (!document.getElementById('intergram')) {
-            var s = document.createElement('script');
-            s.id = 'intergram';
-            s.src = 'https://www.intergram.xyz/js/widget.js';
-            document.body.appendChild(s);
+            var s2 = document.createElement('script');
+            s2.id = 'intergram';
+            s2.src = 'https://www.intergram.xyz/js/widget.js';
+            document.body.appendChild(s2);
           }
         }
       } catch(e) {}
