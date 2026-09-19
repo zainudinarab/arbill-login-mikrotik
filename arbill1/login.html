@@ -1712,6 +1712,30 @@
       if (hintEl) hintEl.remove();
     }
 
+    function initLiveChat() {
+      try {
+        var cfg = window.APP_CONFIG && window.APP_CONFIG.LIVE_CHAT;
+        if (cfg && cfg.ENABLED && cfg.CHAT_ID) {
+          window.intergramId = cfg.CHAT_ID;
+          window.intergramCustomizations = {
+            titleClosed: cfg.TITLE_CLOSED || 'Chat Admin',
+            titleOpen: cfg.TITLE_OPEN || 'Sedang Chat',
+            introMessage: cfg.INTRO_MESSAGE || 'Assalamualaikum, Selamat Datang di Layanan WiFi.',
+            autoResponse: cfg.AUTO_RESPONSE || 'Terima kasih telah menghubungi kami. Pesan Anda segera dibalas.',
+            autoNoResponse: cfg.AUTO_NO_RESPONSE || 'Mohon tunggu sebentar, admin segera membalas pesan Anda.',
+            mainColor: cfg.MAIN_COLOR || '#06b6d4',
+            alwaysUseFloatingButton: cfg.ALWAYS_USE_FLOATING_BUTTON || false
+          };
+          if (!document.getElementById('intergram')) {
+            var s = document.createElement('script');
+            s.id = 'intergram';
+            s.src = 'https://www.intergram.xyz/js/widget.js';
+            document.body.appendChild(s);
+          }
+        }
+      } catch(e) {}
+    }
+
     // Auto initialize live vouchers & settings
     function initApp() {
       try {
@@ -1723,6 +1747,7 @@
       restoreLastVoucher();
       loadLiveVoucherPackages();
       checkUrlVoucherLogin();
+      initLiveChat();
     }
     document.addEventListener('DOMContentLoaded', initApp);
     initApp();

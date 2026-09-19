@@ -60,7 +60,21 @@ window.APP_CONFIG = {
     ENABLE_THEME_SWITCHER: true // Tombol pilihan tema Gelap / Gold / Terang
   },
 
-  // 6. DAFTAR PAKET CADANGAN (FALLBACK)
+  // 7. LIVE CHAT TELEGRAM (INTERGRAM)
+  // Menghubungkan obrolan pelanggan di hotspot langsung ke Bot / Chat Telegram Admin
+  LIVE_CHAT: {
+    ENABLED: true, // true: tampilkan widget chat admin di pojok layar, false: matikan
+    CHAT_ID: "-4034685266", // Telegram Chat ID atau Group ID Anda (contoh: -4034685266)
+    TITLE_CLOSED: 'Chat Admin',
+    TITLE_OPEN: 'Sedang Chat',
+    INTRO_MESSAGE: 'Assalamualaikum, Selamat Datang di WiFi Hotspot.',
+    AUTO_RESPONSE: 'Terima kasih telah menghubungi kami. Ada yang bisa kami bantu? Jika baru beli voucher ketik kodenya secara manual. Admin segera membalas pesan Anda.',
+    AUTO_NO_RESPONSE: 'Mohon tunggu sebentar, admin segera membalas pesan Anda.',
+    MAIN_COLOR: '#06b6d4', // Warna utama tombol chat (Cyan / Hex color)
+    ALWAYS_USE_FLOATING_BUTTON: false
+  },
+
+  // 8. DAFTAR PAKET CADANGAN (FALLBACK)
   // Tampil jika server billing sedang offline atau belum terhubung
   FALLBACK_PACKAGES: [
     {
