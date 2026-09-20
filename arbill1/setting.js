@@ -60,13 +60,19 @@ window.APP_CONFIG = {
     ENABLE_THEME_SWITCHER: true // Tombol pilihan tema Gelap / Gold / Terang
   },
 
-  // 7. LIVE CHAT WIDGET
+  // 7. LIVE CHAT WIDGET (ARBILL-CHAT & AREZA)
   // Menghubungkan obrolan pelanggan di hotspot langsung ke sistem Live Chat
   LIVE_CHAT: {
-    ENABLED: true, // true: tampilkan widget chat admin di pojok layar, false: matikan
-    PROVIDER: 'areza', // Pilihan: 'areza' (chat.areza.my.id) atau 'intergram' (Telegram Bot)
-    AREZA_URL: 'https://chat.areza.my.id/js/widget.js',
-    AREZA_GROUP: 'wifinet',
+    ENABLED: true, // true: tampilkan tombol widget chat melayang, false: sembunyikan
+    PROVIDER: 'areza', // 'areza' untuk Arbill-Chat / Areza, atau 'intergram' untuk Telegram Bot
+    // URL script widget dari server Arbill-Chat Golang Anda:
+    // - Produksi Cloudflare Tunnel: 'https://chat.arabpay.my.id/js/widget.js'
+    // - Saat uji coba lokal: 'http://localhost:8000/js/widget.js'
+    AREZA_URL: 'https://chat.arabpay.my.id/js/widget.js',
+    // Nama Group/Room Obrolan:
+    // - Jika dikosongkan (''), sistem otomatis memakai nama router MikroTik $(identity)
+    // - Atau isi nama grup kustom, misalnya: 'wifinet'
+    AREZA_GROUP: '',
     CHAT_ID: "-4034685266", // Telegram Chat ID jika memakai provider 'intergram'
     TITLE_CLOSED: 'Chat Admin',
     TITLE_OPEN: 'Sedang Chat',
