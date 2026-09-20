@@ -516,7 +516,11 @@
           if (!document.getElementById('chat-widget')) {
             var s = document.createElement('script');
             s.id = 'chat-widget';
-            s.src = cfg.AREZA_URL || 'https://chat.areza.my.id/js/widget.js';
+            var widgetUrl = cfg.AREZA_URL || 'https://chat.arabpay.my.id/js/widget.js';
+            if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && widgetUrl.indexOf('chat.arabpay.my.id') !== -1) {
+              widgetUrl = 'http://localhost:8000/js/widget.js';
+            }
+            s.src = widgetUrl;
             var grp = (cfg.AREZA_GROUP || '').trim();
             if (!grp) {
               var mtId = '$(identity)';
