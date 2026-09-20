@@ -72,7 +72,7 @@ window.APP_CONFIG = {
     // Nama Group/Room Obrolan:
     // - Jika dikosongkan (''), sistem otomatis memakai nama router MikroTik $(identity)
     // - Atau isi nama grup kustom, misalnya: 'wifinet'
-    AREZA_GROUP: '',
+    AREZA_GROUP: 'arbill1',
     CHAT_ID: "-4034685266", // Telegram Chat ID jika memakai provider 'intergram'
     TITLE_CLOSED: 'Chat Admin',
     TITLE_OPEN: 'Sedang Chat',
