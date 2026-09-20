@@ -1727,11 +1727,7 @@
               widgetUrl = 'http://localhost:8000/js/widget.js';
             }
             s.src = widgetUrl;
-            var grp = (cfg.AREZA_GROUP || '').trim();
-            if (!grp) {
-              var mtId = '$(identity)';
-              grp = (mtId && mtId.indexOf('$') === -1) ? mtId.trim() : 'wifinet';
-            }
+            var grp = (cfg.AREZA_GROUP || 'wifinet').trim();
             s.setAttribute('data-group', grp);
             document.body.appendChild(s);
           }

@@ -69,9 +69,9 @@ window.APP_CONFIG = {
     // - Produksi Cloudflare Tunnel: 'https://chat.arabpay.my.id/js/widget.js'
     // - Saat uji coba lokal: 'http://localhost:8000/js/widget.js'
     AREZA_URL: 'https://chat.arabpay.my.id/js/widget.js',
-    // Nama Group/Room Obrolan:
-    // - Jika dikosongkan (''), sistem otomatis memakai nama router MikroTik $(identity)
-    // - Atau isi nama grup kustom, misalnya: 'wifinet'
+    // Nama Group/Room Obrolan (WAJIB DIISI):
+    // - Isi sesuai nama group yang sudah terdaftar di server Arbill-Chat
+    // - Contoh: 'arbill1', 'wifinet', 'global'
     AREZA_GROUP: 'arbill1',
     CHAT_ID: "-4034685266", // Telegram Chat ID jika memakai provider 'intergram'
     TITLE_CLOSED: 'Chat Admin',
