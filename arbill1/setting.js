@@ -71,8 +71,8 @@ window.APP_CONFIG = {
     AREZA_URL: 'https://chat.arabpay.my.id/js/widget.js',
     // Nama Group/Room Obrolan (WAJIB DIISI):
     // - Isi sesuai nama group yang sudah terdaftar di server Arbill-Chat
-    // - Contoh: 'arbill1', 'wifinet', 'global'
-    AREZA_GROUP: 'arbill1',
+    // - Contoh: 'pmb-unipdu', 'wifinet', 'global'
+    AREZA_GROUP: 'pmb-unipdu',
     CHAT_ID: "-4034685266", // Telegram Chat ID jika memakai provider 'intergram'
     TITLE_CLOSED: 'Chat Admin',
     TITLE_OPEN: 'Sedang Chat',
