@@ -60,28 +60,9 @@ window.APP_CONFIG = {
     ENABLE_THEME_SWITCHER: true // Tombol pilihan tema Gelap / Gold / Terang
   },
 
-  // 7. LIVE CHAT WIDGET (ARBILL-CHAT & AREZA)
-  // Menghubungkan obrolan pelanggan di hotspot langsung ke sistem Live Chat
-  LIVE_CHAT: {
-    ENABLED: true, // true: tampilkan tombol widget chat melayang, false: sembunyikan
-    PROVIDER: 'areza', // 'areza' untuk Arbill-Chat / Areza, atau 'intergram' untuk Telegram Bot
-    // URL script widget dari server Arbill-Chat Golang Anda:
-    // - Produksi Cloudflare Tunnel: 'https://chat.arabpay.my.id/js/widget.js'
-    // - Saat uji coba lokal: 'http://localhost:8000/js/widget.js'
-    AREZA_URL: 'https://chat.arabpay.my.id/js/widget.js',
-    // Nama Group/Room Obrolan (WAJIB DIISI):
-    // - Isi sesuai nama group yang sudah terdaftar di server Arbill-Chat
-    // - Contoh: 'pmb-unipdu', 'wifinet', 'global'
-    AREZA_GROUP: 'pmb-unipdu',
-    CHAT_ID: "-4034685266", // Telegram Chat ID jika memakai provider 'intergram'
-    TITLE_CLOSED: 'Chat Admin',
-    TITLE_OPEN: 'Sedang Chat',
-    INTRO_MESSAGE: 'Assalamualaikum, Selamat Datang di WiFi Hotspot.',
-    AUTO_RESPONSE: 'Terima kasih telah menghubungi kami. Ada yang bisa kami bantu? Jika baru beli voucher ketik kodenya secara manual. Admin segera membalas pesan Anda.',
-    AUTO_NO_RESPONSE: 'Mohon tunggu sebentar, admin segera membalas pesan Anda.',
-    MAIN_COLOR: '#06b6d4', // Warna utama tombol chat (Cyan / Hex color)
-    ALWAYS_USE_FLOATING_BUTTON: false
-  },
+  // 7. LIVE CHAT WIDGET (ARBILL-CHAT)
+  // Pengaturan obrolan langsung diedit lewat tag <script id="chat-widget"> 
+  // di baris paling bawah file login.html & status.html
 
   // 8. DAFTAR PAKET CADANGAN (FALLBACK)
   // Tampil jika server billing sedang offline atau belum terhubung

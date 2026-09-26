@@ -12,16 +12,23 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="setting.js"></script>
   <script>
+    /*
     $(if advert-pending == 'yes')
-      var popup = '';
-      function focusAdvert() {
-        if (window.focus) popup.focus();
+    */
+    var popup = '';
+    function focusAdvert() {
+      if (window.focus && popup) popup.focus();
+    }
+    function openAdvert() {
+      var advUrl = '$(link-advert)';
+      if (advUrl && advUrl.indexOf('$') === -1) {
+        popup = open(advUrl, 'advert', 'toolbar=1,location=1,directories=1,status=1,menubar=1,scrollbars=1,resizable=1');
+        setTimeout(focusAdvert, 1000);
       }
-      function openAdvert() {
-        popup = open('$(link-advert)', 'advert', 'toolbar=1,location=1,directories=1,status=1,menubar=1,scrollbars=1,resizable=1');
-        setTimeout("focusAdvert()", 1000);
-      }
+    }
+    /*
     $(endif)
+    */
     function openLogout() {
       if (window.name != 'hotspot_status') return true;
       open('$(link-logout)', 'hotspot_logout', 'toolbar=0,location=0,directories=0,status=0,menubar=0,scrollbars=0,resizable=1,width=300,height=270');
@@ -30,7 +37,7 @@
     }
   </script>
 </head>
-<body class="has-bottom-nav" $(if advert-pending == 'yes') onLoad="openAdvert()" $(endif)>
+<body class="has-bottom-nav" onload="if (typeof openAdvert === 'function') openAdvert();">
 
   <!-- Dynamic Floating Orbs Background -->
   <div class="bg-orb orb-1"></div>
@@ -506,56 +513,10 @@
   <script>
     var CFG = window.APP_CONFIG || {};
 
-    function initLiveChat() {
-      try {
-        var cfg = CFG && CFG.LIVE_CHAT;
-        if (!cfg || !cfg.ENABLED) return;
-
-        // Model 1: Widget Chat (chat.areza.my.id / arbill-chat)
-        if (cfg.PROVIDER === 'areza' || (!cfg.PROVIDER && cfg.AREZA_URL)) {
-          if (!document.getElementById('chat-widget')) {
-            var s = document.createElement('script');
-            s.id = 'chat-widget';
-            var widgetUrl = cfg.AREZA_URL || 'https://chat.arabpay.my.id/js/widget.js';
-            if ((window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') && widgetUrl.indexOf('chat.arabpay.my.id') !== -1) {
-              widgetUrl = 'http://localhost:8000/js/widget.js';
-            }
-            s.src = widgetUrl;
-            var grp = (cfg.AREZA_GROUP || '').trim();
-            if (!grp) {
-              var mtId = '$(identity)';
-              grp = (mtId && mtId.indexOf('$') === -1) ? mtId.trim() : 'wifinet';
-            }
-            s.setAttribute('data-group', grp);
-            document.body.appendChild(s);
-          }
-          return;
-        }
-
-        // Model 2: Telegram Intergram
-        if (cfg.CHAT_ID) {
-          window.intergramId = cfg.CHAT_ID;
-          window.intergramCustomizations = {
-            titleClosed: cfg.TITLE_CLOSED || 'Chat Admin',
-            titleOpen: cfg.TITLE_OPEN || 'Sedang Chat',
-            introMessage: cfg.INTRO_MESSAGE || 'Assalamualaikum, Selamat Datang di Layanan WiFi.',
-            autoResponse: cfg.AUTO_RESPONSE || 'Terima kasih telah menghubungi kami. Pesan Anda segera dibalas.',
-            autoNoResponse: cfg.AUTO_NO_RESPONSE || 'Mohon tunggu sebentar, admin segera membalas pesan Anda.',
-            mainColor: cfg.MAIN_COLOR || '#06b6d4',
-            alwaysUseFloatingButton: cfg.ALWAYS_USE_FLOATING_BUTTON || false
-          };
-          if (!document.getElementById('intergram')) {
-            var s2 = document.createElement('script');
-            s2.id = 'intergram';
-            s2.src = 'https://www.intergram.xyz/js/widget.js';
-            document.body.appendChild(s2);
-          }
-        }
-      } catch(e) {}
-    }
-
     // 1. Terapkan Konfigurasi Brand & Paket
     function applyStatusConfig() {
+      if (window.__STATUS_CONFIG_INITIALIZED__) return;
+      window.__STATUS_CONFIG_INITIALIZED__ = true;
       var savedTheme = localStorage.getItem('arbill_theme') || 'cyber';
       setTheme(savedTheme);
 
@@ -578,7 +539,6 @@
       renderStatusPackages();
       initLiveStatus();
       initMasaAktif();
-      initLiveChat();
     }
 
     // 2. Format Timestamp RouterOS ke Format Indonesia (Persis Arbill3)
@@ -981,6 +941,12 @@
     // Init Config
     document.addEventListener('DOMContentLoaded', applyStatusConfig);
     applyStatusConfig();
+  </script>
+
+  <!-- ARBILL-CHAT WIDGET UNTUK MIKROTIK (Group: pmb-unipdu) -->
+  <script id="chat-widget" 
+          src="https://chat.arabpay.my.id/js/widget.js" 
+          data-group="pmb-unipdu">
   </script>
 
 </body>
