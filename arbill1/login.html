@@ -419,7 +419,7 @@
       </div>
       <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
         <p style="margin-bottom:10px;"><strong>1. Cara Pakai Voucher:</strong><br>Ketik kode voucher yang Anda beli dari Admin di kolom "Kode Voucher", atau tekan tombol bulat <strong>SCAN</strong> di bawah untuk memindai barcode voucher.</p>
-        <p style="margin-bottom:10px;"><strong>2. Cara Beli Voucher:</strong><br>Klik tab <strong>Paket</strong> di bawah atau pilih salah satu kartu paket harga untuk membeli voucher instan secara online (QRIS) atau via WhatsApp.</p>
+        <p style="margin-bottom:10px;"><strong>2. Cara Beli Voucher:</strong><br>Klik tab <strong>Paket</strong> di bawah atau pilih salah satu kartu paket harga untuk membeli voucher instan secara online (QRIS / E-Wallet).</p>
         <p><strong>3. Kendala Koneksi:</strong><br>Jika koneksi terputus, pastikan Anda berada dalam jangkauan sinyal WiFi ARABPAY.</p>
       </div>
     </div>
@@ -1002,14 +1002,9 @@
                 '<span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>' +
                 '<span class="pkg-card-price">' + formattedPrice + '</span>' +
               '</div>' +
-              '<div style="display:flex; gap:6px; margin-top:8px;">' +
-                '<button type="button" class="pkg-card-buy-btn" style="flex:1;" onclick="orderPkgDirect(\'' + name.replace(/'/g, "\\'") + '\', \'' + formattedPrice + '\', \'' + pkgId + '\', \'' + fsId + '\')">' +
-                  '<span>🛒 Beli Sekarang</span>' +
-                '</button>' +
-                '<button type="button" class="pkg-card-buy-btn" style="flex:0 0 auto; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); padding:8px 12px;" title="Pesan via WhatsApp Admin" onclick="orderPkgWA(\'' + name.replace(/'/g, "\\'") + '\', \'' + formattedPrice + '\')">' +
-                  '<span>📲 WA</span>' +
-                '</button>' +
-              '</div>' +
+              '<button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect(\'' + name.replace(/'/g, "\\'") + '\', \'' + formattedPrice + '\', \'' + pkgId + '\', \'' + fsId + '\')">' +
+                '<span>🛒 Beli Sekarang</span>' +
+              '</button>' +
             '</div>' +
           '</div>';
         });
