@@ -322,7 +322,7 @@
           <div class="price-amount">Rp 2.000</div>
           <div class="price-meta-box">
             <span class="price-meta-item">⏳ Aktif: <strong>1 Hari</strong></span>
-            <span class="price-meta-item">⏱️ Pakai: <strong>1 Jam</strong></span>
+            <span class="price-meta-item">📦 Kuota: <strong>Unlimited</strong></span>
           </div>
         </div>
         <div class="price-card selected" onclick="openPackageListModal()">
@@ -331,7 +331,7 @@
           <div class="price-amount">Rp 3.000</div>
           <div class="price-meta-box">
             <span class="price-meta-item">⏳ Aktif: <strong>1 Hari</strong></span>
-            <span class="price-meta-item">⏱️ Pakai: <strong>3 Jam</strong></span>
+            <span class="price-meta-item">📦 Kuota: <strong>Unlimited</strong></span>
           </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
@@ -339,7 +339,7 @@
           <div class="price-amount">Rp 5.000</div>
           <div class="price-meta-box">
             <span class="price-meta-item">⏳ Aktif: <strong>1 Hari</strong></span>
-            <span class="price-meta-item">⏱️ Pakai: <strong>12 Jam</strong></span>
+            <span class="price-meta-item">📦 Kuota: <strong>Unlimited</strong></span>
           </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
@@ -347,7 +347,7 @@
           <div class="price-amount">Rp 7.000</div>
           <div class="price-meta-box">
             <span class="price-meta-item">⏳ Aktif: <strong>2 Hari</strong></span>
-            <span class="price-meta-item">⏱️ Pakai: <strong>24 Jam</strong></span>
+            <span class="price-meta-item">📦 Kuota: <strong>Unlimited</strong></span>
           </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
@@ -355,7 +355,7 @@
           <div class="price-amount">Rp 15.000</div>
           <div class="price-meta-box">
             <span class="price-meta-item">⏳ Aktif: <strong>3 Hari</strong></span>
-            <span class="price-meta-item">⏱️ Pakai: <strong>Bebas</strong></span>
+            <span class="price-meta-item">📦 Kuota: <strong>Unlimited</strong></span>
           </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
@@ -364,7 +364,7 @@
           <div class="price-amount">Rp 25.000</div>
           <div class="price-meta-box">
             <span class="price-meta-item">⏳ Aktif: <strong>7 Hari</strong></span>
-            <span class="price-meta-item">⏱️ Pakai: <strong>Bebas</strong></span>
+            <span class="price-meta-item">📦 Kuota: <strong>Unlimited</strong></span>
           </div>
         </div>
       </div>
@@ -896,6 +896,14 @@
         masaAktif = formatIsoDuration(pkg.validity);
       }
 
+      var kuota = 'Unlimited';
+      if (pkg.quota_mb && Number(pkg.quota_mb) > 0) {
+        var qmb = Number(pkg.quota_mb);
+        kuota = qmb >= 1024 ? ((qmb / 1024).toFixed(qmb % 1024 === 0 ? 0 : 1) + ' GB') : (qmb + ' MB');
+      } else if (pkg.quota && String(pkg.quota).trim() !== '') {
+        kuota = String(pkg.quota);
+      }
+
       var masaPakai = '';
       if (pkg.uptime_limit && String(pkg.uptime_limit).trim() !== '') {
         masaPakai = formatIsoDuration(pkg.uptime_limit);
@@ -918,7 +926,8 @@
 
       return {
         aktif: masaAktif || '1 Hari',
-        pakai: masaPakai || 'Bebas Pakai'
+        pakai: masaPakai || 'Bebas Pakai',
+        kuota: kuota || 'Unlimited'
       };
     }
 
@@ -1087,7 +1096,7 @@
               '<div class="pkg-card-duration">' + name + '</div>' +
               '<div class="pkg-card-meta-grid">' +
                 '<div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">' + meta.aktif + '</span></div>' +
-                '<div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">' + meta.pakai + '</span></div>' +
+                '<div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">' + meta.kuota + '</span></div>' +
               '</div>' +
               '<div class="pkg-card-desc">' + descText + '</div>' +
             '</div>' +
@@ -1124,7 +1133,7 @@
           cHtml += '<div class="price-amount">' + formattedPrice + '</div>';
           cHtml += '<div class="price-meta-box">' +
             '<span class="price-meta-item">⏳ Aktif: <strong>' + meta.aktif + '</strong></span>' +
-            '<span class="price-meta-item">⏱️ Pakai: <strong>' + meta.pakai + '</strong></span>' +
+            '<span class="price-meta-item">📦 Kuota: <strong>' + meta.kuota + '</strong></span>' +
           '</div>';
 
           card.innerHTML = cHtml;
