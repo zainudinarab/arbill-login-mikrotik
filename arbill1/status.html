@@ -926,16 +926,17 @@
       if (rId) {
         url += (url.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
       }
-      window.open(url, '_blank');
       closeModal('pkg-modal');
+      window.location.href = url;
     }
 
     function openWhatsAppChat() {
       var waAdmin = (CFG.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
       var msg = encodeURIComponent('Halo Admin ' + (CFG.BRAND_NAME || 'WiFi ARABPAY') + ', saya pengguna hotspot ($(username)), butuh bantuan / perpanjang paket.');
-      window.open('https://wa.me/' + waAdmin + '?text=' + msg, '_blank');
+      var waUrl = 'https://wa.me/' + waAdmin + '?text=' + msg;
       closeModal('pkg-modal');
       closeModal('help-modal');
+      window.location.href = waUrl;
     }
 
     // Init Config

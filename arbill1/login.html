@@ -890,9 +890,10 @@
       var brand = cfg.BRAND_NAME || 'WiFi ARABPAY';
       var note = currentPkg.isFlashSale ? (" (⚡ Promo Flash Sale: " + (currentPkg.promoDetails && currentPkg.promoDetails.badge_label ? currentPkg.promoDetails.badge_label : 'Diskon Terbatas') + ")") : "";
       var msg = encodeURIComponent("Halo Admin " + brand + ", saya ingin membeli Paket Voucher " + currentPkg.dur + " (" + currentPkg.price + ")" + note + ". Mohon info cara pembayarannya.");
-      window.open("https://wa.me/" + waNum + "?text=" + msg, "_blank");
+      var waUrl = "https://wa.me/" + waNum + "?text=" + msg;
       closeModal('pkg-modal');
       closeModal('pkg-list-modal');
+      window.location.href = waUrl;
     }
 
     // Buka Halaman Billing ArbilBaru & Langsung Munculkan Modal Konfirmasi Pembelian
@@ -916,9 +917,9 @@
       if (params.length > 0) {
         url += '?' + params.join('&');
       }
-      window.open(url, '_blank');
       closeModal('pkg-modal');
       closeModal('pkg-list-modal');
+      window.location.href = url;
     }
 
     // ==============================================================
