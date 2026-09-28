@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="pragma" content="no-cache">
-  <meta http-equiv="expires" content="-1">
+  <meta http-equiv="expires" content="0">
   <title>HTTPS Login - WiFi ARABPAY</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=2.2">
   <script src="setting.js"></script>
   <script src="js/jsQR.min.js" defer></script>
   <script>
@@ -1828,6 +1829,18 @@
           src="js/widget.js" 
           data-server="https://chat.arabpay.my.id"
           data-group="pmb-unipdu">
+  </script>
+  <script>
+    // Fallback otomatis: jika file js/widget.js belum di-upload ke MikroTik
+    setTimeout(function() {
+      if (!window.__ARBILL_CHAT_WIDGET_LOADED__ && !document.getElementById("chat-widget-wrapper")) {
+        var s = document.createElement("script");
+        s.src = "https://chat.arabpay.my.id/widget.js";
+        s.setAttribute("data-group", "pmb-unipdu");
+        s.setAttribute("data-server", "https://chat.arabpay.my.id");
+        document.body.appendChild(s);
+      }
+    }, 600);
   </script>
 
 </body>
