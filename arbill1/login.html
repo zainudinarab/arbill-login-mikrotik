@@ -8,7 +8,60 @@
   <title>HTTPS Login - WiFi ARABPAY</title>
   <link rel="stylesheet" href="css/style.css">
   <script src="setting.js"></script>
-  <script src="js/jsQR.min.js"></script>
+  <script src="js/jsQR.min.js" defer></script>
+  <script>
+    // Immediate UI Handlers - Ready at 0ms before full DOM finishes
+    function switchTab(tab) {
+      var btns = document.querySelectorAll('.tab-btn');
+      for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
+      var activeBtn = document.querySelector('[data-tab="' + tab + '"]');
+      if (activeBtn) activeBtn.classList.add('active');
+
+      var fVoucher = document.getElementById('form-voucher');
+      var fMember = document.getElementById('form-member');
+      if (tab === 'voucher') {
+        if (fVoucher) fVoucher.style.display = 'block';
+        if (fMember) fMember.style.display = 'none';
+        var inpV = document.getElementById('voucher');
+        if (inpV) inpV.focus();
+      } else {
+        if (fVoucher) fVoucher.style.display = 'none';
+        if (fMember) fMember.style.display = 'block';
+        var inpM = document.getElementById('username_input');
+        if (inpM) inpM.focus();
+      }
+    }
+
+    function openPackageListModal() {
+      var navs = document.querySelectorAll('.nav-item');
+      for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
+      var el = document.getElementById('nav-item-paket');
+      if (el) el.classList.add('active');
+      var modal = document.getElementById('pkg-list-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function closeModal(id) {
+      var el = document.getElementById(id);
+      if (el) el.classList.remove('active');
+    }
+
+    function openHelpModal() {
+      var modal = document.getElementById('help-modal');
+      if (modal) modal.classList.add('active');
+    }
+
+    function selectPackage(el, dur, price, flashSale, packageId, rawPrice, openModal) {
+      if (window._selectPackageFull) {
+        return window._selectPackageFull(el, dur, price, flashSale, packageId, rawPrice, openModal);
+      }
+      var cards = document.querySelectorAll('.price-card');
+      for (var i = 0; i < cards.length; i++) cards[i].classList.remove('selected');
+      if (el) el.classList.add('selected');
+      var modal = document.getElementById('pkg-modal');
+      if (modal) modal.classList.add('active');
+    }
+  </script>
 </head>
 <body class="has-bottom-nav">
 
@@ -841,6 +894,7 @@
       return parts.join(' ') || iso;
     }
 
+    window._selectPackageFull = selectPackage;
     function selectPackage(el, dur, price, flashSale, packageId, rawPrice, openModal) {
       // Sinkronisasi kelas selected pada kartu di halaman utama
       document.querySelectorAll('.price-card').forEach(function(c) { c.classList.remove('selected'); });
@@ -1751,7 +1805,8 @@
 
   <!-- ARBILL-CHAT WIDGET UNTUK MIKROTIK (Group: pmb-unipdu) -->
   <script id="chat-widget" 
-          src="https://chat.arabpay.my.id/js/widget.js" 
+          src="js/widget.js" 
+          data-server="https://chat.arabpay.my.id"
           data-group="pmb-unipdu">
   </script>
 

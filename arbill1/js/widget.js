@@ -8,11 +8,13 @@
   // 1. Ambil identitas group dari tag script
   const scriptTag = document.getElementById("chat-widget") || document.currentScript;
   const groupID = (scriptTag && scriptTag.getAttribute("data-group")) ? scriptTag.getAttribute("data-group").trim() : "global";
-  let serverUrl = "https://chat.arabpay.my.id";
+  let serverUrl = (scriptTag && scriptTag.getAttribute("data-server")) || "https://chat.arabpay.my.id";
   try {
-    if (scriptTag && scriptTag.src) {
+    if (scriptTag && scriptTag.src && !scriptTag.getAttribute("data-server")) {
       const parsed = new URL(scriptTag.src, window.location.href);
-      if (parsed.origin && parsed.origin !== "null" && parsed.origin.startsWith("http")) {
+      if (parsed.origin && parsed.origin !== "null" && parsed.origin.startsWith("http") && 
+          !parsed.hostname.startsWith("10.") && !parsed.hostname.startsWith("192.168.") && 
+          parsed.hostname !== "localhost" && parsed.hostname !== "127.0.0.1") {
         serverUrl = parsed.origin;
       }
     }
