@@ -513,6 +513,22 @@
   <script>
     var CFG = window.APP_CONFIG || {};
 
+    function pad2(n) {
+      var s = String(n);
+      return s.length < 2 ? '0' + s : s;
+    }
+    if (!String.prototype.padStart) {
+      String.prototype.padStart = function(targetLength, padString) {
+        targetLength = targetLength >> 0;
+        padString = String(typeof padString !== 'undefined' ? padString : ' ');
+        if (this.length > targetLength) return String(this);
+        var target = targetLength - this.length;
+        var pad = '';
+        while (pad.length < target) pad += padString;
+        return pad.slice(0, target) + String(this);
+      };
+    }
+
     // 1. Terapkan Konfigurasi Brand & Paket
     function applyStatusConfig() {
       if (window.__STATUS_CONFIG_INITIALIZED__) return;
@@ -733,8 +749,8 @@
       var tgl = d.getDate();
       var bln = bulanIndo[d.getMonth()];
       var thn = d.getFullYear();
-      var jam = String(d.getHours()).padStart(2, '0');
-      var mnt = String(d.getMinutes()).padStart(2, '0');
+      var jam = pad2(d.getHours());
+      var mnt = pad2(d.getMinutes());
       return tgl + ' ' + bln + ' ' + thn + ', ' + jam + ':' + mnt + ' WIB';
     }
 
@@ -867,9 +883,9 @@
     // 6. Live Clock Update
     function updateClock() {
       var now = new Date();
-      var h = String(now.getHours()).padStart(2, '0');
-      var m = String(now.getMinutes()).padStart(2, '0');
-      var s = String(now.getSeconds()).padStart(2, '0');
+      var h = pad2(now.getHours());
+      var m = pad2(now.getMinutes());
+      var s = pad2(now.getSeconds());
       var el = document.getElementById('live-time-display');
       if (el) el.innerText = h + ':' + m + ':' + s;
     }
