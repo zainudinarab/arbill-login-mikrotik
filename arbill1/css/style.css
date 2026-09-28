@@ -652,15 +652,84 @@ body.theme-light .btn-see-all-vouchers:hover {
   margin-top: 1px;
 }
 
-.price-speed-tag {
+.price-meta-box {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
   font-size: 0.58rem;
-  color: rgba(255, 255, 255, 0.75);
-  margin-top: 2px;
-  font-weight: 600;
+  line-height: 1.2;
+}
+
+.price-meta-item {
+  color: #94a3b8;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 2px;
+  white-space: nowrap;
+}
+
+.price-meta-item strong {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+body.theme-gold .price-meta-item strong {
+  color: #fbbf24;
+}
+
+body.theme-light .price-meta-item strong {
+  color: #4f46e5;
+}
+
+.pkg-card-meta-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.pkg-meta-badge {
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 0.72rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #e2e8f0;
+}
+
+.pkg-meta-badge .meta-label {
+  color: var(--text-secondary);
+}
+
+.pkg-meta-badge .meta-val {
+  color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+body.theme-gold .pkg-meta-badge {
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+body.theme-gold .pkg-meta-badge .meta-val {
+  color: #fbbf24;
+}
+
+body.theme-light .pkg-meta-badge {
+  background: #f1f5f9;
+  border-color: rgba(79, 70, 229, 0.2);
+  color: #0f172a;
+}
+
+body.theme-light .pkg-meta-badge .meta-val {
+  color: #4f46e5;
 }
 
 /* Flash Sale Live Banner Styles */

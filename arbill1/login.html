@@ -320,34 +320,52 @@
         <div class="price-card" onclick="openPackageListModal()">
           <div class="price-duration">1 JAM</div>
           <div class="price-amount">Rp 2.000</div>
-          <div class="price-speed-tag">⚡ 5 Mbps</div>
+          <div class="price-meta-box">
+            <span class="price-meta-item">⏳ Aktif: <strong>1 Hari</strong></span>
+            <span class="price-meta-item">⏱️ Pakai: <strong>1 Jam</strong></span>
+          </div>
         </div>
         <div class="price-card selected" onclick="openPackageListModal()">
           <span class="price-badge">POPULER</span>
           <div class="price-duration">3 JAM</div>
           <div class="price-amount">Rp 3.000</div>
-          <div class="price-speed-tag">⚡ 7 Mbps</div>
+          <div class="price-meta-box">
+            <span class="price-meta-item">⏳ Aktif: <strong>1 Hari</strong></span>
+            <span class="price-meta-item">⏱️ Pakai: <strong>3 Jam</strong></span>
+          </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
           <div class="price-duration">12 JAM</div>
           <div class="price-amount">Rp 5.000</div>
-          <div class="price-speed-tag">⚡ 10 Mbps</div>
+          <div class="price-meta-box">
+            <span class="price-meta-item">⏳ Aktif: <strong>1 Hari</strong></span>
+            <span class="price-meta-item">⏱️ Pakai: <strong>12 Jam</strong></span>
+          </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
           <div class="price-duration">24 JAM</div>
           <div class="price-amount">Rp 7.000</div>
-          <div class="price-speed-tag">⚡ 12 Mbps</div>
+          <div class="price-meta-box">
+            <span class="price-meta-item">⏳ Aktif: <strong>2 Hari</strong></span>
+            <span class="price-meta-item">⏱️ Pakai: <strong>24 Jam</strong></span>
+          </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
           <div class="price-duration">3 HARI</div>
           <div class="price-amount">Rp 15.000</div>
-          <div class="price-speed-tag">⚡ 15 Mbps</div>
+          <div class="price-meta-box">
+            <span class="price-meta-item">⏳ Aktif: <strong>3 Hari</strong></span>
+            <span class="price-meta-item">⏱️ Pakai: <strong>Bebas</strong></span>
+          </div>
         </div>
         <div class="price-card" onclick="openPackageListModal()">
           <span class="price-badge">HEMAT</span>
           <div class="price-duration">7 HARI</div>
           <div class="price-amount">Rp 25.000</div>
-          <div class="price-speed-tag">⚡ 15 Mbps</div>
+          <div class="price-meta-box">
+            <span class="price-meta-item">⏳ Aktif: <strong>7 Hari</strong></span>
+            <span class="price-meta-item">⏱️ Pakai: <strong>Bebas</strong></span>
+          </div>
         </div>
       </div>
 
@@ -844,18 +862,64 @@
       return 'Rp ' + Math.round(num).toLocaleString('id-ID');
     }
 
-    function parseIsoDuration(iso) {
+    function formatIsoDuration(iso) {
       if (!iso || typeof iso !== 'string') return '';
-      var matches = iso.match(/P(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?)?/i);
-      if (!matches) return iso;
-      var days = parseInt(matches[1] || 0, 10);
-      var hours = parseInt(matches[2] || 0, 10);
-      var mins = parseInt(matches[3] || 0, 10);
+      var s = iso.trim().toUpperCase();
+      if (!s.startsWith('P')) {
+        var clean = s.replace(/W/g, ' Minggu ').replace(/D/g, ' Hari ').replace(/H/g, ' Jam ').replace(/M/g, ' Menit ').replace(/S/g, ' Detik');
+        return clean.trim();
+      }
+      var m = s.match(/P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/);
+      if (!m) return iso;
+      var yrs = parseInt(m[1] || 0, 10);
+      var mos = parseInt(m[2] || 0, 10);
+      var wks = parseInt(m[3] || 0, 10);
+      var dys = parseInt(m[4] || 0, 10);
+      var hrs = parseInt(m[5] || 0, 10);
+      var mns = parseInt(m[6] || 0, 10);
       var parts = [];
-      if (days > 0) parts.push(days + ' HARI');
-      if (hours > 0) parts.push(hours + ' JAM');
-      if (mins > 0) parts.push(mins + ' MENIT');
+      if (yrs > 0) parts.push(yrs + ' Thn');
+      if (mos > 0) parts.push(mos + ' Bln');
+      if (wks > 0) parts.push(wks + ' Minggu');
+      if (dys > 0) parts.push(dys + ' Hari');
+      if (hrs > 0) parts.push(hrs + ' Jam');
+      if (mns > 0) parts.push(mns + ' Mnt');
       return parts.join(' ') || iso;
+    }
+    var parseIsoDuration = formatIsoDuration;
+
+    function getPackageValidityAndUptime(pkg) {
+      var masaAktif = '';
+      if (pkg.validity_iso) {
+        masaAktif = formatIsoDuration(pkg.validity_iso);
+      } else if (pkg.validity) {
+        masaAktif = formatIsoDuration(pkg.validity);
+      }
+
+      var masaPakai = '';
+      if (pkg.uptime_limit && String(pkg.uptime_limit).trim() !== '') {
+        masaPakai = formatIsoDuration(pkg.uptime_limit);
+      }
+
+      if (!masaAktif && !masaPakai) {
+        var n = (pkg.package_name || pkg.name || '').toUpperCase();
+        if (n.indexOf('JAM') !== -1 || n.indexOf('HARI') !== -1 || n.indexOf('BULAN') !== -1 || n.indexOf('MINGGU') !== -1) {
+          masaAktif = pkg.package_name || pkg.name;
+          masaPakai = masaAktif;
+        } else {
+          masaAktif = '1 Hari';
+          masaPakai = 'Bebas Pakai';
+        }
+      } else if (masaAktif && !masaPakai) {
+        masaPakai = 'Bebas Pakai';
+      } else if (!masaAktif && masaPakai) {
+        masaAktif = masaPakai;
+      }
+
+      return {
+        aktif: masaAktif || '1 Hari',
+        pakai: masaPakai || 'Bebas Pakai'
+      };
     }
 
     window._selectPackageFull = selectPackage;
@@ -1012,16 +1076,19 @@
           var name = pkg.package_name || pkg.name || 'Paket Internet';
           var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : '');
           var badgeHtml = badgeText ? '<span class="pkg-card-badge">' + badgeText + '</span>' : '';
-          var speedText = pkg.rate_limit || pkg.speed || 'Kecepatan Tinggi';
           var descText = pkg.desc || (pkg.quota_mb ? ('Kuota Data ' + (pkg.quota_mb >= 1024 ? (pkg.quota_mb / 1024 + ' GB') : (pkg.quota_mb + ' MB'))) : 'Akses internet tanpa batas kuota (Full Unlimited)');
           var pkgId = pkg.package_id || pkg.profile_id || pkg.id || '';
           var fsId = (pkg.is_flash_sale && pkg.flash_sale && pkg.flash_sale.id) ? pkg.flash_sale.id : '';
+          var meta = getPackageValidityAndUptime(pkg);
 
           html += '<div class="pkg-card-item">' +
             badgeHtml +
             '<div>' +
               '<div class="pkg-card-duration">' + name + '</div>' +
-              '<div class="pkg-card-speed">⚡ ' + speedText + '</div>' +
+              '<div class="pkg-card-meta-grid">' +
+                '<div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">' + meta.aktif + '</span></div>' +
+                '<div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">' + meta.pakai + '</span></div>' +
+              '</div>' +
               '<div class="pkg-card-desc">' + descText + '</div>' +
             '</div>' +
             '<div>' +
@@ -1047,15 +1114,19 @@
           var formattedPrice = 'Rp ' + numPrice.toLocaleString('id-ID');
           var name = pkg.package_name || pkg.name || 'Paket Internet';
           var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : (idx === 1 ? 'POPULER' : ''));
+          var meta = getPackageValidityAndUptime(pkg);
+
           var card = document.createElement('div');
           card.className = 'price-card' + (idx === 1 ? ' selected' : '');
           var cHtml = '';
           if (badgeText) cHtml += '<span class="price-badge">' + badgeText + '</span>';
           cHtml += '<div class="price-duration">' + name + '</div>';
           cHtml += '<div class="price-amount">' + formattedPrice + '</div>';
-          if (pkg.rate_limit || pkg.speed) {
-            cHtml += '<div class="price-speed-tag">⚡ ' + (pkg.rate_limit || pkg.speed) + '</div>';
-          }
+          cHtml += '<div class="price-meta-box">' +
+            '<span class="price-meta-item">⏳ Aktif: <strong>' + meta.aktif + '</strong></span>' +
+            '<span class="price-meta-item">⏱️ Pakai: <strong>' + meta.pakai + '</strong></span>' +
+          '</div>';
+
           card.innerHTML = cHtml;
           card.onclick = function() {
             openPackageListModal();
@@ -1083,14 +1154,14 @@
       var fallbackList = (CFG.FALLBACK_PACKAGES && CFG.FALLBACK_PACKAGES.length > 0)
         ? CFG.FALLBACK_PACKAGES
         : [
-            { name: '1 JAM', price: 2000, speed: '5 Mbps', badge: '', desc: 'Cocok browsing cepat & sosmed' },
-            { name: '3 JAM', price: 3000, speed: '7 Mbps', badge: '', desc: 'Nonton YouTube & streaming lancar' },
-            { name: '12 JAM', price: 5000, speed: '10 Mbps', badge: '', desc: 'Aktif setengah hari full speed' },
-            { name: '24 JAM', price: 7000, speed: '12 Mbps', badge: 'POPULER', desc: 'Paket harian paling diminati' },
-            { name: '3 HARI', price: 15000, speed: '15 Mbps', badge: '', desc: 'Akses 3 hari tanpa batas kuota' },
-            { name: '7 HARI', price: 25000, speed: '15 Mbps', badge: 'HEMAT', desc: 'Paket mingguan hemat & stabil' },
-            { name: '14 HARI', price: 45000, speed: '20 Mbps', badge: '', desc: 'Dua pekan online ngebut' },
-            { name: '30 HARI', price: 75000, speed: '25 Mbps', badge: 'BEST VALUE', desc: 'Paket bulanan full unlimited' }
+            { name: '1 JAM', price: 2000, validity_iso: 'P1D', uptime_limit: 'PT1H', badge: '', desc: 'Akses internet cepat & stabil' },
+            { name: '3 JAM', price: 3000, validity_iso: 'P1D', uptime_limit: 'PT3H', badge: 'POPULER', desc: 'Nonton YouTube & streaming lancar' },
+            { name: '12 JAM', price: 5000, validity_iso: 'P1D', uptime_limit: 'PT12H', badge: '', desc: 'Aktif setengah hari full speed' },
+            { name: '24 JAM', price: 7000, validity_iso: 'P2D', uptime_limit: 'P1D', badge: 'POPULER', desc: 'Paket harian paling diminati' },
+            { name: '3 HARI', price: 15000, validity_iso: 'P3D', uptime_limit: '', badge: '', desc: 'Akses 3 hari tanpa batas kuota' },
+            { name: '7 HARI', price: 25000, validity_iso: 'P7D', uptime_limit: '', badge: 'HEMAT', desc: 'Paket mingguan hemat & stabil' },
+            { name: '14 HARI', price: 45000, validity_iso: 'P14D', uptime_limit: '', badge: '', desc: 'Dua pekan online ngebut' },
+            { name: '30 HARI', price: 75000, validity_iso: 'P1M', uptime_limit: '', badge: 'BEST VALUE', desc: 'Paket bulanan full unlimited' }
           ];
       var plans = (CFG.PRICING_PLANS && CFG.PRICING_PLANS.length > 0) ? CFG.PRICING_PLANS : fallbackList;
 
