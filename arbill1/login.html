@@ -37,13 +37,17 @@
       for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
       var el = document.getElementById('nav-item-paket');
       if (el) el.classList.add('active');
-      var modal = document.getElementById('pkg-list-modal');
+      var modal = document.getElementById('pkg-modal') || document.getElementById('pkg-list-modal');
       if (modal) modal.classList.add('active');
     }
 
     function closeModal(id) {
       var el = document.getElementById(id);
       if (el) el.classList.remove('active');
+      var m1 = document.getElementById('pkg-modal');
+      if (m1 && (id === 'pkg-modal' || id === 'pkg-list-modal')) m1.classList.remove('active');
+      var m2 = document.getElementById('pkg-list-modal');
+      if (m2 && (id === 'pkg-modal' || id === 'pkg-list-modal')) m2.classList.remove('active');
       var navs = document.querySelectorAll('.nav-item');
       for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
     }
@@ -387,79 +391,22 @@
   </div>
 
   <!-- ============================================================== -->
-  <!-- MODAL DAFTAR SEMUA PAKET VOUCHER                               -->
+  <!-- MODAL: PILIHAN PAKET VOUCHER INTERNET (PERSIS STATUS.HTML)      -->
   <!-- ============================================================== -->
-  <div id="pkg-list-modal" class="modal-overlay">
-    <div class="modal-card modal-card-wide">
+  <div id="pkg-modal" class="modal-overlay">
+    <div class="modal-card modal-card-packages">
       <div class="modal-header">
         <div>
-          <div class="modal-title">📋 Pilihan Paket Voucher</div>
-          <div style="font-size: 0.72rem; color: var(--accent-cyan); margin-top: 2px;">⚡ Pembelian Instan Online 24 Jam</div>
+          <div class="modal-title">📋 Pilihan Paket Voucher Internet</div>
+          <div style="font-size: 0.78rem; color: var(--accent-cyan); margin-top: 2px;">⚡ Koneksi Super Cepat & Stabil • Pembelian Online Otomatis</div>
         </div>
-        <button class="btn-close-modal" onclick="closeModal('pkg-list-modal')">✕</button>
-      </div>
-
-      <!-- Flash Sale Alert (Modal) -->
-      <div id="modal-fs-banner" class="flash-sale-banner" style="display: none; margin-bottom: 8px;">
-        <div class="fs-banner-left">
-          <span class="fs-icon">⚡</span>
-          <div>
-            <div id="modal-fs-title" class="fs-banner-title">FLASH SALE AKTIF!</div>
-            <div id="modal-fs-sub" class="fs-banner-sub">Diskon paket terbatas</div>
-          </div>
-        </div>
-        <div id="modal-fs-timer" class="fs-banner-timer">⏱ 00:00:00</div>
-      </div>
-
-      <!-- Container Daftar Paket -->
-      <div id="modal-packages-container" class="modal-package-list">
-        <!-- Paket-paket dirender dinamis di sini -->
-      </div>
-
-      <!-- Summary Paket Terpilih & Tombol Beli Langsung -->
-      <div class="modal-selected-box">
-        <div class="modal-selected-title">Paket Terpilih:</div>
-        <div class="modal-selected-value">
-          <span id="modal-selected-name">24 JAM</span>
-          <span id="modal-selected-price" style="color: #fbbf24;">Rp 5.000</span>
-        </div>
-      </div>
-
-      <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
-        <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); font-weight: 800; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);" onclick="openArbilPayCheckout(); closeModal('pkg-list-modal');">
-          💳 Beli & Bayar Online (QRIS / E-Wallet)
-        </button>
-        <button type="button" class="btn-submit" style="background: linear-gradient(135deg, #25d366 0%, #128c7e 100%); font-weight: 600; font-size: 0.85rem;" onclick="confirmOrderWA(); closeModal('pkg-list-modal');">
-          📲 Beli Manual via WhatsApp Admin
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Interactive Package Purchase Modal (Single Selection) -->
-  <div id="pkg-modal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
-        <div class="modal-title">Beli Voucher Hotspot</div>
         <button class="btn-close-modal" onclick="closeModal('pkg-modal')">✕</button>
       </div>
-      <div style="text-align:center; padding:10px 0;">
-        <div style="font-size:0.85rem; color:var(--text-secondary);">Paket Dipilih:</div>
-        <div id="modal-pkg-dur" style="font-size:1.35rem; font-weight:800; color:var(--accent-cyan); margin:4px 0;">24 JAM</div>
-        <div id="modal-pkg-price" style="font-size:1.25rem; font-weight:800; color:#fbbf24;">Rp 5.000</div>
-        <div id="modal-pkg-flash" style="display:none; margin-top:8px; font-size:0.75rem; color:#fef08a; font-weight:700; background:linear-gradient(135deg, rgba(239,68,68,0.3) 0%, rgba(245,158,11,0.3) 100%); border:1px solid rgba(245,158,11,0.5); border-radius:8px; padding:6px 10px;">
-          ⚡ Flash Sale Aktif! Diskon Terbatas
-        </div>
+
+      <!-- Container Daftar Paket Dinamis (3 Kolom di Laptop, 1 Kolom di HP) -->
+      <div id="status-packages-container" class="modal-packages-grid">
+        <!-- Paket-paket dirender otomatis dari API Billing & Cache -->
       </div>
-      <div style="font-size:0.8rem; color:var(--text-secondary); margin-top:10px; line-height:1.5;">
-        Pembayaran instan online mendukung: <strong>QRIS, ArabPay E-Wallet, VA Transfer, & Manual WhatsApp</strong>.
-      </div>
-      <button type="button" class="btn-submit" style="margin-top:14px; background:linear-gradient(135deg, #4f46e5 0%, #06b6d4 100%); font-weight:800; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);" onclick="openArbilPayCheckout()">
-        💳 Beli & Bayar Online (QRIS / E-Wallet)
-      </button>
-      <button type="button" class="btn-submit" style="margin-top:8px; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); font-weight:600; font-size:0.85rem;" onclick="confirmOrderWA()">
-        📲 Beli Manual via WhatsApp Admin
-      </button>
     </div>
   </div>
 
@@ -944,27 +891,28 @@
       }
     }
 
-    function confirmOrderWA() {
+    // Pesan Paket via WhatsApp Admin
+    function orderPkgWA(name, price) {
       var cfg = window.APP_CONFIG || {};
       var waNum = (cfg.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
       var brand = cfg.BRAND_NAME || 'WiFi ARABPAY';
-      var note = currentPkg.isFlashSale ? (" (⚡ Promo Flash Sale: " + (currentPkg.promoDetails && currentPkg.promoDetails.badge_label ? currentPkg.promoDetails.badge_label : 'Diskon Terbatas') + ")") : "";
-      var msg = encodeURIComponent("Halo Admin " + brand + ", saya ingin membeli Paket Voucher " + currentPkg.dur + " (" + currentPkg.price + ")" + note + ". Mohon info cara pembayarannya.");
+      var msg = encodeURIComponent("Halo Admin " + brand + ", saya ingin membeli Paket Voucher " + name + " (" + price + "). Mohon info cara pembayarannya.");
       var waUrl = "https://wa.me/" + waNum + "?text=" + msg;
       closeModal('pkg-modal');
       closeModal('pkg-list-modal');
       window.location.href = waUrl;
     }
 
-    // Buka Halaman Billing ArbilBaru & Langsung Munculkan Modal Konfirmasi Pembelian
-    function openArbilPayCheckout() {
-      var url = BILLING_API_URL + '/#/portal';
+    // Buka Halaman Billing ArbilBaru & Langsung Munculkan Pembelian Paket Terpilih
+    function orderPkgDirect(name, price, packageId, flashSaleId) {
+      var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      var url = billingBase + '/#/portal';
       var params = [];
-      if (currentPkg.packageId) {
-        params.push('buy_package_id=' + encodeURIComponent(currentPkg.packageId));
+      if (packageId) {
+        params.push('buy_package_id=' + encodeURIComponent(packageId));
       }
-      if (currentPkg.isFlashSale && currentPkg.promoDetails && currentPkg.promoDetails.id) {
-        params.push('flash_sale_id=' + encodeURIComponent(currentPkg.promoDetails.id));
+      if (flashSaleId) {
+        params.push('flash_sale_id=' + encodeURIComponent(flashSaleId));
       }
       var rId = (CFG.ROUTER_ID || '').trim();
       if (!rId) {
@@ -982,20 +930,25 @@
       window.location.href = url;
     }
 
-    // ==============================================================
-    // NAVIGASI BOTTOM BAR (FAB) & MODAL DAFTAR PAKET
-    // ==============================================================
+    // Backwards compatibility alias
+    function openArbilPayCheckout() {
+      orderPkgDirect(currentPkg.dur || 'Paket Internet', currentPkg.price || '', currentPkg.packageId, currentPkg.isFlashSale && currentPkg.promoDetails ? currentPkg.promoDetails.id : null);
+    }
+    function confirmOrderWA() {
+      orderPkgWA(currentPkg.dur || 'Paket Internet', currentPkg.price || '');
+    }
+
+    // Navigasi Modal Daftar Paket (Dari Tab Bawah / Tombol Beli / Klik Kartu)
     function openPackageListModal() {
       document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
       var el = document.getElementById('nav-item-paket');
       if (el) el.classList.add('active');
-      document.getElementById('pkg-list-modal').classList.add('active');
+      var m = document.getElementById('pkg-modal') || document.getElementById('pkg-list-modal');
+      if (m) m.classList.add('active');
     }
 
     function navToLogin() {
       document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
-      var el = document.getElementById('nav-item-login');
-      if (el) el.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       switchTab('voucher');
       var inp = document.getElementById('voucher');
@@ -1017,314 +970,172 @@
       }, 3500);
     }
 
-    // Render item ke Modal Daftar Paket (#modal-packages-container)
-    function renderModalPackagesList(packages) {
-      var mContainer = document.getElementById('modal-packages-container');
-      if (!mContainer) return;
-      mContainer.innerHTML = '';
+    // Render Paket Voucher Persis Seperti di status.html (Grid Responsif 3 Kolom & SWR dari Live API)
+    function renderStatusPackages(packages) {
+      var gridContainer = document.getElementById('status-packages-container') || document.getElementById('modal-packages-container');
+      var cardsContainer = document.getElementById('dynamic-price-cards');
+      if (!packages || packages.length === 0) return;
 
-      packages.forEach(function(pkg, idx) {
-        var item = document.createElement('div');
-        item.className = 'modal-pkg-item' + (idx === 0 ? ' selected' : '');
-        var durationDisplay = parseIsoDuration(pkg.uptime_limit || pkg.validity_iso) || pkg.package_name || pkg.name;
-        var packageNameDisplay = pkg.package_name || durationDisplay;
-        var effectivePriceStr = formatRupiah(pkg.effective_price || pkg.price);
-        var originalPriceStr = formatRupiah(pkg.price);
-        item.setAttribute('data-dur', packageNameDisplay);
-
-        var html = '<div class="modal-pkg-left">';
-        html += '<div class="modal-pkg-name-row">';
-        html += '<span class="modal-pkg-name">' + packageNameDisplay + '</span>';
-        if (pkg.is_flash_sale && pkg.flash_sale) {
-          html += '<span class="modal-pkg-badge flash-sale">⚡ ' + (pkg.flash_sale.badge_label || 'FLASH SALE') + '</span>';
-        } else if (pkg.badge || idx === 0) {
-          html += '<span class="modal-pkg-badge">' + (pkg.badge || 'POPULER') + '</span>';
-        }
-        html += '</div>';
-
-        html += '<div class="modal-pkg-sub">';
-        var speedInfo = pkg.rate_limit || pkg.speed || 'Akses Internet Cepat';
-        html += '<span>⚡ ' + speedInfo + '</span>';
-        if (pkg.is_flash_sale && pkg.flash_sale && pkg.flash_sale.quota_remaining !== undefined) {
-          html += '<span>• Sisa ' + pkg.flash_sale.quota_remaining + ' voucher</span>';
-        }
-        html += '</div>';
-        html += '</div>';
-
-        html += '<div class="modal-pkg-right">';
-        if (pkg.is_flash_sale && pkg.flash_sale) {
-          html += '<span class="modal-pkg-orig-price">' + originalPriceStr + '</span>';
-        }
-        html += '<span class="modal-pkg-price">' + effectivePriceStr + '</span>';
-        html += '<button type="button" class="modal-pkg-btn">Pilih</button>';
-        html += '</div>';
-
-        item.innerHTML = html;
-
-        var pkgId = pkg.package_id || pkg.profile_id || pkg.id;
-        var numPrice = Number(pkg.effective_price || pkg.price || 0);
-
-        item.addEventListener('click', function() {
-          selectPackage(item, packageNameDisplay, effectivePriceStr, pkg.is_flash_sale ? pkg.flash_sale : null, pkgId, numPrice, false);
-        });
-
-        mContainer.appendChild(item);
-      });
-    }
-
-    // Dynamic Live Voucher Loader dari Billing ArbilBaru (Dengan Caching LocalStorage SWR)
-    function renderLiveVoucherData(data, isFromCache) {
-      var container = document.getElementById('dynamic-price-cards');
-      var statusBadge = document.getElementById('pricing-live-status');
-      if (!container || !data || !data.packages) return;
-
-      if (statusBadge) {
-        if (isFromCache) {
-          statusBadge.innerHTML = '<span style="color:#06b6d4;">⚡</span> Memuat data...';
-        } else {
-          statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
-        }
-      }
-
-      // Handle Flash Sale Top Banner & Modal Banner
-      var banner = document.getElementById('flash-sale-banner');
-      var mBanner = document.getElementById('modal-fs-banner');
-      if (data.has_flash_sale && data.flash_sales && data.flash_sales.length > 0) {
-        var activeFs = data.flash_sales[0];
-        var cleanTitle = (activeFs.title || 'FLASH SALE SPESIAL!').replace(/^⚡\s*/, '');
-        var cleanDiscount = (activeFs.discount_text || 'Diskon spesial terbatas').replace(/Rp\s*Rp/gi, 'Rp');
-        var remainingQuota = activeFs.quota_remaining !== undefined 
-          ? activeFs.quota_remaining 
-          : ((activeFs.quota_limit || 50) - (activeFs.quota_sold || 0));
-
-        if (banner) {
-          banner.style.display = 'flex';
-          var titleEl = document.getElementById('fs-banner-title');
-          var subEl = document.getElementById('fs-banner-sub');
-          if (titleEl) titleEl.innerText = '⚡ ' + cleanTitle;
-          if (subEl) subEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
-        }
-
-        if (mBanner) {
-          mBanner.style.display = 'flex';
-          var mTitleEl = document.getElementById('modal-fs-title');
-          var mSubEl = document.getElementById('modal-fs-sub');
-          if (mTitleEl) mTitleEl.innerText = '⚡ ' + cleanTitle;
-          if (mSubEl) mSubEl.innerText = cleanDiscount + ' • Sisa: ' + remainingQuota + ' voucher';
-        }
-
-        // Robust countdown timer
-        var targetEndTime = activeFs.end_time ? new Date(activeFs.end_time).getTime() : 0;
-        if (!targetEndTime && activeFs.seconds_remaining) {
-          targetEndTime = Date.now() + (activeFs.seconds_remaining * 1000);
-        }
-
-        if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
-
-        function renderTimer() {
-          var now = Date.now();
-          var diffSec = Math.max(0, Math.floor((targetEndTime - now) / 1000));
-          var timerEl = document.getElementById('fs-banner-timer');
-          var mTimerEl = document.getElementById('modal-fs-timer');
-
-          if (diffSec <= 0) {
-            if (timerEl) timerEl.innerText = 'BERAKHIR';
-            if (mTimerEl) mTimerEl.innerText = 'BERAKHIR';
-            if (flashSaleTimerInterval) clearInterval(flashSaleTimerInterval);
-            return;
-          }
-          var h = Math.floor(diffSec / 3600);
-          var m = Math.floor((diffSec % 3600) / 60);
-          var s = diffSec % 60;
-          var timeStr = '⏱ ' + pad2(h) + ':' + pad2(m) + ':' + pad2(s);
-          if (timerEl) timerEl.innerText = timeStr;
-          if (mTimerEl) mTimerEl.innerText = timeStr;
-        }
-
-        if (targetEndTime > Date.now()) {
-          renderTimer();
-          flashSaleTimerInterval = setInterval(renderTimer, 1000);
-        }
-      } else {
-        if (banner) banner.style.display = 'none';
-        if (mBanner) mBanner.style.display = 'none';
-      }
-
-      // Kosongkan dan render kartu paket di halaman utama
-      container.innerHTML = '';
-      data.packages.forEach(function(pkg, idx) {
-        var card = document.createElement('div');
-        card.className = 'price-card' + (idx === 0 ? ' selected' : '');
-
-        var durationDisplay = parseIsoDuration(pkg.uptime_limit || pkg.validity_iso) || pkg.package_name;
-        var packageNameDisplay = pkg.package_name || durationDisplay;
-        var effectivePriceStr = formatRupiah(pkg.effective_price || pkg.price);
-        var originalPriceStr = formatRupiah(pkg.price);
-
+      // 1. Render Grid di dalam Modal (Persis Status.html)
+      if (gridContainer) {
         var html = '';
-        if (pkg.is_flash_sale && pkg.flash_sale) {
-          var fs = pkg.flash_sale;
-          html += '<span class="price-badge flash-sale">⚡ ' + (fs.badge_label || 'FLASH SALE') + '</span>';
-          html += '<div class="price-duration">' + packageNameDisplay + '</div>';
-          html += '<div class="price-original">' + originalPriceStr + '</div>';
-          html += '<div class="price-amount flash-promo">' + effectivePriceStr + '</div>';
-          if (fs.quota_remaining !== undefined) {
-            html += '<div class="price-quota-info">Sisa Kuota: ' + fs.quota_remaining + '</div>';
-          }
-        } else {
-          if (idx === 0) {
-            html += '<span class="price-badge">POPULER</span>';
-          }
-          html += '<div class="price-duration">' + packageNameDisplay + '</div>';
-          html += '<div class="price-amount">' + effectivePriceStr + '</div>';
-          if (pkg.rate_limit) {
-            html += '<div class="price-speed-tag">⚡ ' + pkg.rate_limit + '</div>';
-          }
-        }
+        packages.forEach(function(pkg) {
+          var numPrice = Number(pkg.effective_price || pkg.price || 0);
+          var formattedPrice = 'Rp ' + numPrice.toLocaleString('id-ID');
+          var name = pkg.package_name || pkg.name || 'Paket Internet';
+          var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : '');
+          var badgeHtml = badgeText ? '<span class="pkg-card-badge">' + badgeText + '</span>' : '';
+          var speedText = pkg.rate_limit || pkg.speed || 'Kecepatan Tinggi';
+          var descText = pkg.desc || (pkg.quota_mb ? ('Kuota Data ' + (pkg.quota_mb >= 1024 ? (pkg.quota_mb / 1024 + ' GB') : (pkg.quota_mb + ' MB'))) : 'Akses internet tanpa batas kuota (Full Unlimited)');
+          var pkgId = pkg.package_id || pkg.profile_id || pkg.id || '';
+          var fsId = (pkg.is_flash_sale && pkg.flash_sale && pkg.flash_sale.id) ? pkg.flash_sale.id : '';
 
-        card.innerHTML = html;
-        var pkgId = pkg.package_id || pkg.profile_id || pkg.id;
-        var numPrice = Number(pkg.effective_price || pkg.price || 0);
-
-        card.addEventListener('click', function() {
-          selectPackage(card, packageNameDisplay, effectivePriceStr, pkg.is_flash_sale ? pkg.flash_sale : null, pkgId, numPrice, true);
+          html += '<div class="pkg-card-item">' +
+            badgeHtml +
+            '<div>' +
+              '<div class="pkg-card-duration">' + name + '</div>' +
+              '<div class="pkg-card-speed">⚡ ' + speedText + '</div>' +
+              '<div class="pkg-card-desc">' + descText + '</div>' +
+            '</div>' +
+            '<div>' +
+              '<div class="pkg-card-price-row">' +
+                '<span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>' +
+                '<span class="pkg-card-price">' + formattedPrice + '</span>' +
+              '</div>' +
+              '<div style="display:flex; gap:6px; margin-top:8px;">' +
+                '<button type="button" class="pkg-card-buy-btn" style="flex:1;" onclick="orderPkgDirect(\'' + name.replace(/'/g, "\\'") + '\', \'' + formattedPrice + '\', \'' + pkgId + '\', \'' + fsId + '\')">' +
+                  '<span>🛒 Beli Sekarang</span>' +
+                '</button>' +
+                '<button type="button" class="pkg-card-buy-btn" style="flex:0 0 auto; background:linear-gradient(135deg, #25d366 0%, #128c7e 100%); padding:8px 12px;" title="Pesan via WhatsApp Admin" onclick="orderPkgWA(\'' + name.replace(/'/g, "\\'") + '\', \'' + formattedPrice + '\')">' +
+                  '<span>📲 WA</span>' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
         });
-
-        container.appendChild(card);
-      });
-
-      // Render juga ke Modal Daftar Paket
-      renderModalPackagesList(data.packages);
-
-      // Set initial selected package
-      if (data.packages.length > 0) {
-        var first = data.packages[0];
-        var fName = first.package_name || parseIsoDuration(first.uptime_limit || first.validity_iso);
-        var fPrice = formatRupiah(first.effective_price || first.price);
-        currentPkg = {
-          dur: fName,
-          price: fPrice,
-          rawPrice: Number(first.effective_price || first.price || 0),
-          packageId: first.package_id || first.profile_id || first.id,
-          isFlashSale: !!first.is_flash_sale,
-          promoDetails: first.flash_sale || null
-        };
-        var dEl = document.getElementById('modal-pkg-dur');
-        if (dEl) dEl.innerText = fName;
-        var pEl = document.getElementById('modal-pkg-price');
-        if (pEl) pEl.innerText = fPrice;
-        var snEl = document.getElementById('modal-selected-name');
-        if (snEl) snEl.innerText = fName;
-        var spEl = document.getElementById('modal-selected-price');
-        if (spEl) spEl.innerText = fPrice;
+        gridContainer.innerHTML = html;
       }
+
+      // 2. Render Kartu Pilihan di Halaman Login (Top 3)
+      if (cardsContainer) {
+        cardsContainer.innerHTML = '';
+        var topCards = packages.slice(0, 3);
+        topCards.forEach(function(pkg, idx) {
+          var numPrice = Number(pkg.effective_price || pkg.price || 0);
+          var formattedPrice = 'Rp ' + numPrice.toLocaleString('id-ID');
+          var name = pkg.package_name || pkg.name || 'Paket Internet';
+          var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : (idx === 1 ? 'POPULER' : ''));
+          var card = document.createElement('div');
+          card.className = 'price-card' + (idx === 1 ? ' selected' : '');
+          var cHtml = '';
+          if (badgeText) cHtml += '<span class="price-badge">' + badgeText + '</span>';
+          cHtml += '<div class="price-duration">' + name + '</div>';
+          cHtml += '<div class="price-amount">' + formattedPrice + '</div>';
+          if (pkg.rate_limit || pkg.speed) {
+            cHtml += '<div class="price-speed-tag">⚡ ' + (pkg.rate_limit || pkg.speed) + '</div>';
+          }
+          card.innerHTML = cHtml;
+          card.onclick = function() {
+            openPackageListModal();
+          };
+          cardsContainer.appendChild(card);
+        });
+      }
+
+      // Set default selected
+      var first = packages[0];
+      currentPkg = {
+        dur: first.package_name || first.name,
+        price: 'Rp ' + Number(first.effective_price || first.price || 0).toLocaleString('id-ID'),
+        rawPrice: Number(first.effective_price || first.price || 0),
+        packageId: first.package_id || first.profile_id || first.id || '',
+        isFlashSale: !!first.is_flash_sale,
+        promoDetails: first.flash_sale || null
+      };
     }
 
+    // Dynamic Live Voucher Loader dari Billing ArbilBaru (SWR + Live Fetch Persis status.html)
     function loadLiveVoucherPackages() {
-      var container = document.getElementById('dynamic-price-cards');
       var statusBadge = document.getElementById('pricing-live-status');
-      if (!container) return;
 
-      var hasRenderedFromCache = false;
+      var fallbackList = (CFG.FALLBACK_PACKAGES && CFG.FALLBACK_PACKAGES.length > 0)
+        ? CFG.FALLBACK_PACKAGES
+        : [
+            { name: '1 JAM', price: 2000, speed: '5 Mbps', badge: '', desc: 'Cocok browsing cepat & sosmed' },
+            { name: '3 JAM', price: 3000, speed: '7 Mbps', badge: '', desc: 'Nonton YouTube & streaming lancar' },
+            { name: '12 JAM', price: 5000, speed: '10 Mbps', badge: '', desc: 'Aktif setengah hari full speed' },
+            { name: '24 JAM', price: 7000, speed: '12 Mbps', badge: 'POPULER', desc: 'Paket harian paling diminati' },
+            { name: '3 HARI', price: 15000, speed: '15 Mbps', badge: '', desc: 'Akses 3 hari tanpa batas kuota' },
+            { name: '7 HARI', price: 25000, speed: '15 Mbps', badge: 'HEMAT', desc: 'Paket mingguan hemat & stabil' },
+            { name: '14 HARI', price: 45000, speed: '20 Mbps', badge: '', desc: 'Dua pekan online ngebut' },
+            { name: '30 HARI', price: 75000, speed: '25 Mbps', badge: 'BEST VALUE', desc: 'Paket bulanan full unlimited' }
+          ];
+      var plans = (CFG.PRICING_PLANS && CFG.PRICING_PLANS.length > 0) ? CFG.PRICING_PLANS : fallbackList;
 
-      // 1. Pola SWR: Render instan (0 ms) dari LocalStorage jika ada cache sebelumnya
+      // 1. Cek cache paket di LocalStorage lebih dulu (SWR - Instan 0 ms)
+      var hasRenderedCache = false;
       try {
-        var cachedRaw = localStorage.getItem('arbill_cached_packages');
-        if (cachedRaw) {
-          var cachedData = JSON.parse(cachedRaw);
-          if (cachedData && cachedData.packages && cachedData.packages.length > 0) {
-            renderLiveVoucherData(cachedData, true);
-            hasRenderedFromCache = true;
+        var cachedPkgRaw = localStorage.getItem('arbill_cached_packages');
+        if (cachedPkgRaw) {
+          var cachedPkgData = JSON.parse(cachedPkgRaw);
+          if (cachedPkgData && cachedPkgData.packages && cachedPkgData.packages.length > 0) {
+            renderStatusPackages(cachedPkgData.packages);
+            hasRenderedCache = true;
+            if (statusBadge) statusBadge.innerHTML = '<span style="color:#06b6d4;">⚡</span> Memuat data...';
           }
         }
       } catch(e) {}
 
-      // 2. Fetch data realtime terbaru di background
-      var endpoint = BILLING_API_URL + '/api/vouchers/available';
-      var rId = (CFG.ROUTER_ID || '').trim();
-      if (!rId) {
-        var mtIdentity = '$(identity)';
-        if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
-      }
-      if (rId) {
-        endpoint += (endpoint.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
+      // Jika belum ada cache, render fallback default langsung agar layar tidak pernah kosong
+      if (!hasRenderedCache) {
+        renderStatusPackages(plans);
       }
 
-      fetch(endpoint, { method: 'GET', cache: 'no-cache' })
+      // 2. Fetch live data dari API Billing
+      var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      if (window.fetch && billingBase) {
+        var controller = window.AbortController ? new AbortController() : null;
+        var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 4000) : null;
+
+        var availEndpoint = billingBase + '/api/vouchers/available';
+        var rId = (CFG.ROUTER_ID || '').trim();
+        if (!rId) {
+          var mtIdentity = '$(identity)';
+          if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
+        }
+        if (rId) {
+          availEndpoint += (availEndpoint.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
+        }
+
+        fetch(availEndpoint, {
+          method: 'GET',
+          cache: 'no-cache',
+          signal: controller ? controller.signal : undefined
+        })
         .then(function(res) {
+          if (timeoutId) clearTimeout(timeoutId);
           if (!res.ok) throw new Error('HTTP ' + res.status);
           return res.json();
         })
         .then(function(data) {
-          if (!data || !data.success || !data.packages || data.packages.length === 0) {
-            if (!hasRenderedFromCache) {
-              console.log('Paket dinamis kosong, menggunakan daftar fallback.');
-              renderFallbackFromConfig();
-            }
-            return;
+          if (data && data.success && data.packages && data.packages.length > 0) {
+            try { localStorage.setItem('arbill_cached_packages', JSON.stringify(data)); } catch(e) {}
+            renderStatusPackages(data.packages);
+            if (statusBadge) statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
           }
-
-          // Simpan data paket terbaru ke LocalStorage
-          try {
-            localStorage.setItem('arbill_cached_packages', JSON.stringify(data));
-          } catch(e) {}
-
-          renderLiveVoucherData(data, false);
         })
         .catch(function(err) {
-          console.warn('Billing live packages offline or unreachable:', err);
-          if (hasRenderedFromCache) {
-            if (statusBadge) {
-              statusBadge.innerHTML = '<span style="color:#fbbf24;">⚡</span> Mode Offline (Tersimpan)';
-            }
-          } else {
-            if (statusBadge) {
-              statusBadge.innerHTML = '⚡ Offline Mode';
-            }
-            renderFallbackFromConfig();
+          console.warn('Billing live packages unreachable, using cached/fallback:', err);
+          if (statusBadge) {
+            statusBadge.innerHTML = hasRenderedCache ? '⚡ Mode Tersimpan' : '⚡ Offline Mode';
           }
         });
-    }
-
-    function renderFallbackFromConfig() {
-      var container = document.getElementById('dynamic-price-cards');
-      var fallbacks = (window.APP_CONFIG && window.APP_CONFIG.FALLBACK_PACKAGES) || [
-        { name: '1 JAM', price: 2000, badge: '', speed: '5 Mbps' },
-        { name: '24 JAM', price: 5000, badge: 'POPULER', speed: '10 Mbps' },
-        { name: '7 HARI', price: 25000, badge: 'HEMAT', speed: '15 Mbps' }
-      ];
-
-      if (container) {
-        container.innerHTML = '';
-        fallbacks.forEach(function(pkg, idx) {
-          var card = document.createElement('div');
-          card.className = 'price-card' + (idx === 1 ? ' selected' : '');
-          var priceFormatted = formatRupiah(pkg.price);
-          var html = '';
-          if (pkg.badge) html += '<span class="price-badge">' + pkg.badge + '</span>';
-          html += '<div class="price-duration">' + pkg.name + '</div>';
-          html += '<div class="price-amount">' + priceFormatted + '</div>';
-          if (pkg.speed) html += '<div class="price-speed-tag">⚡ ' + pkg.speed + '</div>';
-          card.innerHTML = html;
-          card.addEventListener('click', function() {
-            selectPackage(card, pkg.name, priceFormatted, null, null, pkg.price, true);
-          });
-          container.appendChild(card);
-        });
-      }
-
-      // Render juga ke Modal Daftar Paket
-      renderModalPackagesList(fallbacks);
-
-      if (fallbacks.length > 1) {
-        var def = fallbacks[1];
-        var defPrice = formatRupiah(def.price);
-        var snEl = document.getElementById('modal-selected-name');
-        if (snEl) snEl.innerText = def.name;
-        var spEl = document.getElementById('modal-selected-price');
-        if (spEl) spEl.innerText = defPrice;
       }
     }
+    // Alias untuk kompatibilitas
+    var renderLiveVoucherData = renderStatusPackages;
+    var renderModalPackagesList = renderStatusPackages;
+    var renderFallbackFromConfig = function() { loadLiveVoucherPackages(); };
 
     function openHelpModal() {
       var navs = document.querySelectorAll('.nav-item');
