@@ -315,22 +315,49 @@
         </div>
       </div>
 
-      <!-- Dynamic Price Cards Container -->
+      <!-- Dynamic Price Cards Container (6 Kartu Voucher) -->
       <div class="price-cards" id="dynamic-price-cards">
-        <div class="price-card" onclick="selectPackage(this, '1 JAM', 'Rp 2.000', null, '1h', 2000)">
+        <div class="price-card" onclick="openPackageListModal()">
           <div class="price-duration">1 JAM</div>
           <div class="price-amount">Rp 2.000</div>
+          <div class="price-speed-tag">⚡ 5 Mbps</div>
         </div>
-        <div class="price-card selected" onclick="selectPackage(this, '24 JAM', 'Rp 5.000', null, '24h', 5000)">
+        <div class="price-card selected" onclick="openPackageListModal()">
           <span class="price-badge">POPULER</span>
-          <div class="price-duration">24 JAM</div>
-          <div class="price-amount">Rp 5.000</div>
+          <div class="price-duration">3 JAM</div>
+          <div class="price-amount">Rp 3.000</div>
+          <div class="price-speed-tag">⚡ 7 Mbps</div>
         </div>
-        <div class="price-card" onclick="selectPackage(this, '7 HARI', 'Rp 25.000', null, '7d', 25000)">
+        <div class="price-card" onclick="openPackageListModal()">
+          <div class="price-duration">12 JAM</div>
+          <div class="price-amount">Rp 5.000</div>
+          <div class="price-speed-tag">⚡ 10 Mbps</div>
+        </div>
+        <div class="price-card" onclick="openPackageListModal()">
+          <div class="price-duration">24 JAM</div>
+          <div class="price-amount">Rp 7.000</div>
+          <div class="price-speed-tag">⚡ 12 Mbps</div>
+        </div>
+        <div class="price-card" onclick="openPackageListModal()">
+          <div class="price-duration">3 HARI</div>
+          <div class="price-amount">Rp 15.000</div>
+          <div class="price-speed-tag">⚡ 15 Mbps</div>
+        </div>
+        <div class="price-card" onclick="openPackageListModal()">
+          <span class="price-badge">HEMAT</span>
           <div class="price-duration">7 HARI</div>
           <div class="price-amount">Rp 25.000</div>
+          <div class="price-speed-tag">⚡ 15 Mbps</div>
         </div>
       </div>
+
+      <!-- Tombol Lihat Semua Voucher -->
+      <button type="button" class="btn-see-all-vouchers" onclick="openPackageListModal()">
+        <span>📋 Lihat Semua Voucher</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+        </svg>
+      </button>
     </div>
 
     <!-- Quick Footer Actions -->
@@ -1011,10 +1038,10 @@
         gridContainer.innerHTML = html;
       }
 
-      // 2. Render Kartu Pilihan di Halaman Login (Top 3)
+      // 2. Render Kartu Pilihan di Halaman Login (Top 6 Voucher)
       if (cardsContainer) {
         cardsContainer.innerHTML = '';
-        var topCards = packages.slice(0, 3);
+        var topCards = packages.slice(0, 6);
         topCards.forEach(function(pkg, idx) {
           var numPrice = Number(pkg.effective_price || pkg.price || 0);
           var formattedPrice = 'Rp ' + numPrice.toLocaleString('id-ID');
