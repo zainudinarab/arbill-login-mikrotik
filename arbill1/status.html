@@ -471,9 +471,87 @@
         <button class="btn-close-modal" onclick="closeModal('pkg-modal')">✕</button>
       </div>
 
+      <!-- Notice Penjelasan Istilah Paket (Smooth Accordion / Modal Trigger) -->
+      <button type="button" class="pkg-guide-notice-bar" onclick="openPackageGuideModal()">
+        <span class="pkg-guide-notice-icon">💡</span>
+        <span class="pkg-guide-notice-text">Bingung beda <strong>Masa Aktif</strong> &amp; <strong>Masa Pakai</strong>? Klik di sini untuk penjelasannya</span>
+        <span class="pkg-guide-notice-arrow">➔</span>
+      </button>
+
       <!-- Container Daftar Paket Dinamis (3 Kolom di Laptop, 1 Kolom di HP) -->
       <div id="status-packages-container" class="modal-packages-grid">
         <!-- Paket-paket dirender otomatis dari config -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: PANDUAN PENJELASAN ISTILAH PAKET                        -->
+  <!-- ============================================================== -->
+  <div id="package-guide-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('package-guide-modal')">
+    <div class="modal-card modal-card-guide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">💡</span>
+          <div>
+            <div class="modal-title">Panduan Istilah Paket</div>
+            <div style="font-size: 0.74rem; color: var(--accent-cyan); margin-top: 2px;">Pahami sebelum memilih voucher WiFi</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="closeModal('package-guide-modal')">✕</button>
+      </div>
+
+      <div class="guide-modal-body">
+        <!-- Item 1: Masa Aktif -->
+        <div class="guide-item-card">
+          <div class="guide-item-header">
+            <span class="guide-item-badge badge-aktif">⏳ Masa Aktif</span>
+            <span class="guide-item-sub">Masa Berlaku Voucher</span>
+          </div>
+          <div class="guide-item-desc">
+            Jangka waktu berlakunya voucher dihitung sejak <strong>pertama kali login</strong>. Jika waktu ini habis, voucher akan kadaluwarsa (hangus).
+          </div>
+          <div class="guide-item-example">
+            <span>📌 Contoh:</span> <strong>Aktif 1 Hari (24 Jam)</strong>. Voucher tetap bisa dipakai sampai batas 24 jam ke depan.
+          </div>
+        </div>
+
+        <!-- Item 2: Masa Pakai -->
+        <div class="guide-item-card">
+          <div class="guide-item-header">
+            <span class="guide-item-badge badge-pakai">⏱️ Masa Pakai</span>
+            <span class="guide-item-sub">Total Waktu Online (Limit Uptime)</span>
+          </div>
+          <div class="guide-item-desc">
+            Total lama waktu internet terhubung. Anda bisa <strong>menjeda / disconnect</strong> jika sedang tidak dipakai, dan sisa waktu tidak berkurang selama masih dalam Masa Aktif.
+          </div>
+          <div class="guide-item-example">
+            <span>📌 Contoh:</span> <strong>Pakai 3 Jam</strong>. Anda bisa online 1 jam pagi dan 2 jam malam (total 3 jam pemakaian).
+          </div>
+        </div>
+
+        <!-- Item 3: Kuota Data -->
+        <div class="guide-item-card">
+          <div class="guide-item-header">
+            <span class="guide-item-badge badge-kuota">📦 Kuota Data</span>
+            <span class="guide-item-sub">Volume Akses Download &amp; Upload</span>
+          </div>
+          <div class="guide-item-desc">
+            Batas volume transfer data. Jika tertulis <strong>Unlimited</strong>, Anda bebas streaming video, download, dan sosmed tanpa batasan kuota GB!
+          </div>
+        </div>
+
+        <!-- Kesimpulan Ringkas -->
+        <div class="guide-summary-box">
+          <div class="guide-summary-title">🎯 Kesimpulan Praktis:</div>
+          <div class="guide-summary-text">
+            Paket <strong>3 JAM (Aktif 1 Hari, Kuota Unlimited)</strong> artinya Anda mendapatkan jatah online total <strong>3 jam</strong>, bebas dipakai kapan saja dalam rentang waktu <strong>24 jam</strong> tanpa batas kuota data.
+          </div>
+        </div>
+
+        <button type="button" class="btn-submit" style="margin-top: 8px; width: 100%; padding: 10px; font-size: 0.84rem;" onclick="closeModal('package-guide-modal')">
+          👍 Saya Mengerti
+        </button>
       </div>
     </div>
   </div>
@@ -987,6 +1065,11 @@
 
     function openValidityModal() {
       var el = document.getElementById('validity-modal');
+      if (el) el.classList.add('active');
+    }
+
+    function openPackageGuideModal() {
+      var el = document.getElementById('package-guide-modal');
       if (el) el.classList.add('active');
     }
 
