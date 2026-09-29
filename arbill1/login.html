@@ -7,8 +7,8 @@
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
   <title>HTTPS Login - WiFi ARABPAY</title>
-  <link rel="stylesheet" href="css/style.css?v=2.3">
-  <script src="setting.js?v=2.3"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="setting.js"></script>
   <script src="js/jsQR.min.js" defer></script>
   <script>
     // Helper fleksibel untuk mengekstrak array paket dari berbagai format respon API / LocalStorage
@@ -97,15 +97,7 @@
     }
 
     function openPackageListModal() {
-      if (typeof window.ensurePackagesRendered === 'function') {
-        window.ensurePackagesRendered();
-      }
-      var navs = document.querySelectorAll('.nav-item');
-      for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
-      var el = document.getElementById('nav-item-paket');
-      if (el) el.classList.add('active');
-      var modal = document.getElementById('pkg-modal') || document.getElementById('pkg-list-modal');
-      if (modal) modal.classList.add('active');
+      window.location.href = 'vocher.html';
     }
 
     function closeModal(id) {
@@ -246,29 +238,29 @@
           <span id="prayer-today-date" class="prayer-date">Hari Ini</span>
         </div>
         <div id="next-prayer-badge" class="next-prayer-badge">
-          Memuat...
+          🕌 Menuju Dzuhur: <strong>4j 0m</strong>
         </div>
       </div>
       <div class="prayer-grid">
         <div class="prayer-item" id="item-subuh">
           <span class="p-name">Subuh</span>
-          <span class="p-time" id="time-subuh">--:--</span>
+          <span class="p-time" id="time-subuh">04:23</span>
         </div>
-        <div class="prayer-item" id="item-dzuhur">
+        <div class="prayer-item active" id="item-dzuhur">
           <span class="p-name">Dzuhur</span>
-          <span class="p-time" id="time-dzuhur">--:--</span>
+          <span class="p-time" id="time-dzuhur">11:45</span>
         </div>
         <div class="prayer-item" id="item-ashar">
           <span class="p-name">Ashar</span>
-          <span class="p-time" id="time-ashar">--:--</span>
+          <span class="p-time" id="time-ashar">14:52</span>
         </div>
         <div class="prayer-item" id="item-maghrib">
           <span class="p-name">Maghrib</span>
-          <span class="p-time" id="time-maghrib">--:--</span>
+          <span class="p-time" id="time-maghrib">17:50</span>
         </div>
         <div class="prayer-item" id="item-isya">
           <span class="p-name">Isya</span>
-          <span class="p-time" id="time-isya">--:--</span>
+          <span class="p-time" id="time-isya">18:59</span>
         </div>
       </div>
     </div>
@@ -466,7 +458,7 @@
       <button type="button" class="btn-quick-act" onclick="openHelpModal()">
         ❓ Bantuan / FAQ
       </button>
-      <button type="button" class="btn-quick-act btn-wa-direct" onclick="document.getElementById('pkg-modal').classList.add('active')">
+      <button type="button" class="btn-quick-act btn-wa-direct" onclick="window.location.href='vocher.html'">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
           <path d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/>
         </svg>
@@ -491,12 +483,12 @@
   <div class="bottom-nav-bar">
 
     <!-- Tab 1: DAFTAR PAKET -->
-    <button type="button" class="nav-item" id="nav-item-paket" onclick="openPackageListModal()">
+    <a href="vocher.html" class="nav-item" id="nav-item-paket" title="Lihat Pilihan Paket Voucher">
       <svg viewBox="0 0 24 24" fill="currentColor">
         <path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 12 7.4 15.38 12 17 10.83 14.92 8H20v6z"/>
       </svg>
       <span>Paket</span>
-    </button>
+    </a>
 
     <!-- Tab 2: CENTER PROMINENT FAB SCAN BUTTON (ARBILL CYBER SCANNER) -->
     <div class="fab-scan-wrapper">
@@ -1321,12 +1313,7 @@
 
     // Navigasi Modal Daftar Paket (Dari Tab Bawah / Tombol Beli / Klik Kartu)
     function openPackageListModal() {
-      ensurePackagesRendered();
-      document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
-      var el = document.getElementById('nav-item-paket');
-      if (el) el.classList.add('active');
-      var m = document.getElementById('pkg-modal') || document.getElementById('pkg-list-modal');
-      if (m) m.classList.add('active');
+      window.location.href = 'vocher.html';
     }
 
     function ensurePackagesRendered() {
@@ -2011,6 +1998,9 @@
         if (savedTheme) setTheme(savedTheme);
       } catch(e) {}
       applyAppConfig();
+      if (typeof updatePrayerTimes === 'function') {
+        updatePrayerTimes();
+      }
       updateFabScanLink();
       restoreLastVoucher();
       loadLiveVoucherPackages();

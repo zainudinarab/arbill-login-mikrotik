@@ -2,441 +2,614 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="pragma" content="no-cache">
   <meta http-equiv="expires" content="0">
-  <title>Diagnostik & Tes API Voucher - WiFi ARABPAY</title>
+  <title>Pilihan Paket Voucher - WiFi ARABPAY</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="setting.js"></script>
+  <script src="js/jsQR.min.js" defer></script>
   <style>
-    :root {
-      --bg-dark: #0a0f1d;
-      --bg-card: rgba(15, 23, 42, 0.85);
-      --border-color: rgba(56, 189, 248, 0.25);
-      --accent-cyan: #06b6d4;
-      --accent-gold: #fbbf24;
-      --accent-green: #10b981;
-      --accent-red: #ef4444;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-
-    body {
-      background: var(--bg-dark);
-      color: var(--text-main);
-      padding: 16px;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .container {
+    /* Dedicated Page Container for Vocher */
+    .vocher-page-container {
       width: 100%;
-      max-width: 860px;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 16px 14px 90px;
+      position: relative;
+      z-index: 10;
     }
 
-    .header-box {
-      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+    .vocher-header-box {
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid var(--border-color);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 18px 20px;
       margin-bottom: 16px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 8px;
     }
 
-    .header-title {
+    .vocher-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .btn-back-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #f8fafc;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back-login:hover {
+      background: rgba(6, 182, 212, 0.2);
+      border-color: var(--accent-cyan);
+      color: #38bdf8;
+      transform: translateX(-2px);
+    }
+
+    .vocher-title-main {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #38bdf8;
+      color: #ffffff;
       display: flex;
       align-items: center;
       gap: 8px;
+      line-height: 1.3;
     }
 
-    .header-sub {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      line-height: 1.4;
-    }
-
-    /* URL Control Bar */
-    .control-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 16px;
-    }
-
-    .control-label {
-      font-size: 0.78rem;
-      color: var(--accent-gold);
-      font-weight: 700;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .input-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .url-input {
-      flex: 1;
-      background: rgba(0, 0, 0, 0.45);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 10px 12px;
-      color: #fff;
-      font-size: 0.82rem;
-      font-family: monospace;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .url-input:focus {
-      border-color: var(--accent-cyan);
-    }
-
-    .btn-fetch {
-      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-      border: none;
-      color: #fff;
-      font-weight: 700;
-      font-size: 0.82rem;
-      padding: 10px 18px;
-      border-radius: 8px;
-      cursor: pointer;
+    .vocher-title-sub {
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
       display: flex;
       align-items: center;
       gap: 6px;
-      white-space: nowrap;
-      transition: transform 0.15s, opacity 0.15s;
     }
 
-    .btn-fetch:hover {
-      opacity: 0.92;
-      transform: translateY(-1px);
-    }
-
-    .btn-fetch:active {
-      transform: scale(0.97);
-    }
-
-    /* Status Banner */
-    .status-banner {
-      border-radius: 10px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
-      font-size: 0.82rem;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      line-height: 1.45;
-    }
-
-    .status-banner.loading {
-      background: rgba(6, 182, 212, 0.12);
-      border: 1px solid rgba(6, 182, 212, 0.35);
-      color: #67e8f9;
-    }
-
-    .status-banner.success {
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      color: #6ee7b7;
-    }
-
-    .status-banner.error {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.35);
-      color: #fca5a5;
-    }
-
-    /* Stats Quick Bar */
-    .stats-grid {
+    /* Grid of packages */
+    .vocher-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 10px;
-      margin-bottom: 16px;
+      grid-template-columns: 1fr;
+      gap: 14px;
     }
 
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 10px;
-      padding: 10px 12px;
-      text-align: center;
+    @media (min-width: 640px) {
+      .vocher-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
-    .stat-card-title {
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      font-weight: 700;
-      margin-bottom: 4px;
+    @media (min-width: 900px) {
+      .vocher-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+      }
     }
 
-    .stat-card-val {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #38bdf8;
-    }
-
-    /* Rendered Packages */
-    .section-title {
-      font-size: 0.95rem;
-      font-weight: 800;
-      color: var(--accent-gold);
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .packages-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-
-    .pkg-item {
-      background: var(--bg-card);
+    /* Package Card in Dedicated Page */
+    .vocher-card {
+      background: rgba(15, 23, 42, 0.75);
       border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 14px;
+      padding: 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s ease;
       position: relative;
+      transition: all 0.25s ease;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
     }
 
-    .pkg-item:hover {
+    .vocher-card:hover {
+      background: rgba(15, 23, 42, 0.9);
       border-color: var(--accent-cyan);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.15);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(6, 182, 212, 0.25);
     }
 
-    .pkg-badge {
+    .vocher-badge {
       position: absolute;
-      top: 0;
-      right: 0;
-      background: linear-gradient(135deg, #d97706, #b45309);
-      color: #fff;
-      font-size: 0.6rem;
+      top: 14px;
+      right: 14px;
+      background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+      color: #ffffff;
+      font-size: 0.65rem;
       font-weight: 800;
       padding: 3px 8px;
-      border-bottom-left-radius: 8px;
-      border-top-right-radius: 11px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
-    .pkg-name {
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 4px;
-      line-height: 1.25;
-    }
-
-    .pkg-price {
+    .vocher-name {
       font-size: 1.15rem;
-      font-weight: 900;
-      color: #22d3ee;
+      font-weight: 800;
+      color: #ffffff;
       margin-bottom: 8px;
+      padding-right: 50px;
+      line-height: 1.3;
     }
 
-    .pkg-meta-tags {
+    .vocher-meta-box {
       display: flex;
       flex-direction: column;
-      gap: 4px;
-      margin-bottom: 8px;
+      gap: 5px;
+      margin-bottom: 10px;
     }
 
-    .pkg-meta-tag {
+    .vocher-meta-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       background: rgba(0, 0, 0, 0.35);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 6px;
-      padding: 3px 6px;
-      font-size: 0.7rem;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .pkg-meta-tag .tag-k { color: var(--text-muted); }
-    .pkg-meta-tag .tag-v { font-weight: 700; color: #facc15; }
-
-    /* Raw JSON Viewer */
-    .json-box {
-      background: #050811;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
-
-    .json-header {
-      background: rgba(255, 255, 255, 0.05);
-      padding: 10px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .json-header-title {
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #94a3b8;
-    }
-
-    .btn-copy {
-      background: rgba(6, 182, 212, 0.15);
-      border: 1px solid var(--accent-cyan);
-      color: var(--accent-cyan);
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      cursor: pointer;
-      font-weight: 700;
-      transition: all 0.2s;
-    }
-
-    .btn-copy:hover {
-      background: var(--accent-cyan);
-      color: #000;
-    }
-
-    pre code {
-      display: block;
-      padding: 14px;
-      font-family: Consolas, Monaco, "Courier New", monospace;
+      padding: 4px 8px;
       font-size: 0.74rem;
-      color: #a5f3fc;
-      line-height: 1.5;
-      overflow-x: auto;
-      max-height: 480px;
-      white-space: pre-wrap;
-      word-break: break-all;
+      color: #cbd5e1;
     }
 
-    .nav-links {
+    .vocher-meta-row strong {
+      color: #38bdf8;
+    }
+
+    .vocher-desc {
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-bottom: 14px;
+      min-height: 28px;
+    }
+
+    .vocher-price-row {
       display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      border-top: 1px dashed rgba(255, 255, 255, 0.1);
+      padding-top: 10px;
+    }
+
+    .vocher-price-label {
+      font-size: 0.72rem;
+      color: var(--text-secondary);
+    }
+
+    .vocher-price-amount {
+      font-size: 1.25rem;
+      font-weight: 900;
+      color: #fbbf24;
+      text-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+    }
+
+    .vocher-btn-buy {
+      width: 100%;
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.86rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
       justify-content: center;
-      gap: 12px;
-      margin-top: 10px;
-    }
-
-    .nav-btn {
-      color: var(--accent-cyan);
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.35);
       text-decoration: none;
-      font-size: 0.82rem;
-      font-weight: 700;
-      padding: 8px 16px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      background: rgba(15, 23, 42, 0.6);
-      transition: all 0.2s;
     }
 
-    .nav-btn:hover {
-      background: rgba(6, 182, 212, 0.15);
-      border-color: var(--accent-cyan);
+    .vocher-btn-buy:hover {
+      background: linear-gradient(135deg, #0891b2 0%, #2563eb 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(6, 182, 212, 0.5);
+    }
+
+    .vocher-btn-buy:active {
+      transform: scale(0.97);
+    }
+
+    /* Live sync status tag */
+    .sync-status-tag {
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .sync-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
     }
   </style>
 </head>
-<body>
+<body class="has-bottom-nav">
 
-  <div class="container">
+  <!-- Dynamic Floating Orbs Background -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
 
-    <!-- Header -->
-    <div class="header-box">
-      <div class="header-title">
-        <span>⚡</span> Diagnostik &amp; Pemantau JSON API Voucher
+  <div class="vocher-page-container">
+
+    <!-- Top Branding & Navigation Header -->
+    <div class="vocher-header-box">
+      <div class="vocher-top-row">
+        <a href="login.html" class="btn-back-login">
+          <span>⬅</span> Kembali ke Login
+        </a>
+        <div class="theme-switcher-btns">
+          <button type="button" class="theme-btn active" onclick="setTheme('cyber', this)" title="Tema Cyber Dark">🌙</button>
+          <button type="button" class="theme-btn" onclick="setTheme('gold', this)" title="Tema Gold Luxury">👑</button>
+          <button type="button" class="theme-btn" onclick="setTheme('light', this)" title="Tema Terang">☀️</button>
+        </div>
       </div>
-      <div class="header-sub">
-        Halaman khusus untuk menguji koneksi langsung dari browser/MikroTik ke API Server Arbill Baru. Membantu memastikan apakah domain sudah ter-bypass di Walled Garden dan data voucher valid.
-      </div>
-    </div>
 
-    <!-- URL Control Card -->
-    <div class="control-card">
-      <label class="control-label" for="api-url-input">🌐 Target URL API Voucher:</label>
-      <div class="input-row">
-        <input type="text" id="api-url-input" class="url-input" 
-               value="https://arbill.arabpay.my.id/api/vouchers/available?router_id=DESKTOP-AUTJKVA">
-        <button type="button" class="btn-fetch" id="btn-fetch" onclick="fetchVoucherData()">
-          <span>🔄 Ambil Data</span>
+      <div class="vocher-title-main">
+        <span>📋</span> Pilihan Paket Voucher Internet
+      </div>
+      <div class="vocher-title-sub">
+        <span>⚡</span> Koneksi Super Cepat &amp; Stabil • Pembelian Online Otomatis
+      </div>
+
+      <!-- Live Sync Info -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+        <span class="sync-status-tag">
+          <span class="sync-dot" id="sync-dot"></span>
+          <span id="sync-text">Voucher Tersimpan di Browser (Instan)</span>
+        </span>
+        <button type="button" onclick="refreshVouchersLive()" style="background: none; border: none; color: var(--accent-cyan); font-size: 0.72rem; cursor: pointer; text-decoration: underline; font-weight: 700;">
+          🔄 Perbarui Paket
         </button>
       </div>
-      <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">
-        💡 Ganti <code>router_id</code> jika ingin menguji identitas router lain di sistem Arbill.
+    </div>
+
+    <!-- Notice Penjelasan Istilah Paket (Masa Aktif vs Masa Pakai) -->
+    <button type="button" class="pkg-guide-notice-bar" onclick="openPackageGuideModal()">
+      <span class="pkg-guide-notice-icon">💡</span>
+      <span class="pkg-guide-notice-text">Bingung beda <strong>Masa Aktif</strong> &amp; <strong>Masa Pakai</strong>? Klik di sini untuk penjelasannya</span>
+      <span class="pkg-guide-notice-arrow">➔</span>
+    </button>
+
+    <!-- Flash Sale Live Header Banner (Jika Ada) -->
+    <div id="flash-sale-banner" class="flash-sale-banner" style="display:none; margin-bottom: 14px;">
+      <div class="fs-banner-left">
+        <span class="fs-icon">⚡</span>
+        <div>
+          <div id="fs-banner-title" class="fs-banner-title">FLASH SALE SPESIAL!</div>
+          <div id="fs-banner-sub" class="fs-banner-sub">Diskon paket terbatas</div>
+        </div>
+      </div>
+      <div id="fs-banner-timer" class="fs-banner-timer">
+        ⏱ 00:00:00
       </div>
     </div>
 
-    <!-- Realtime Status Banner -->
-    <div id="status-banner" class="status-banner loading">
-      <div>⏳</div>
-      <div id="status-text">Sedang menghubungi server API...</div>
+    <!-- Container Grid Daftar Paket Voucher -->
+    <div class="vocher-grid" id="packages-container">
+      <!-- 1. Voucher Hotspot 3 Jam Tes -->
+      <div class="vocher-card">
+        <div>
+          <div class="vocher-name">Voucher Hotspot 3 Jam Tes</div>
+          <div class="vocher-meta-box">
+            <span class="vocher-meta-row">⏳ Masa Aktif: <strong>30 Mnt</strong></span>
+            <span class="vocher-meta-row">⏱️ Masa Pakai: <strong>1 Hari</strong></span>
+            <span class="vocher-meta-row">📦 Kuota Data: <strong>Unlimited</strong></span>
+          </div>
+          <div class="vocher-desc">Akses internet tanpa batas kuota (Full Unlimited)</div>
+        </div>
+        <div>
+          <div class="vocher-price-row">
+            <span class="vocher-price-label">Tarif Voucher:</span>
+            <span class="vocher-price-amount">Rp 2.000</span>
+          </div>
+          <button type="button" class="vocher-btn-buy" onclick="orderPkgDirect('Voucher Hotspot 3 Jam Tes', 'Rp 2.000')">
+            <span>🛒 Beli Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 2. Voucher Hotspot 3 Jam -->
+      <div class="vocher-card">
+        <div>
+          <div class="vocher-name">Voucher Hotspot 3 Jam</div>
+          <div class="vocher-meta-box">
+            <span class="vocher-meta-row">⏳ Masa Aktif: <strong>1 Hari</strong></span>
+            <span class="vocher-meta-row">⏱️ Masa Pakai: <strong>3 Jam</strong></span>
+            <span class="vocher-meta-row">📦 Kuota Data: <strong>Unlimited</strong></span>
+          </div>
+          <div class="vocher-desc">Akses internet tanpa batas kuota (Full Unlimited)</div>
+        </div>
+        <div>
+          <div class="vocher-price-row">
+            <span class="vocher-price-label">Tarif Voucher:</span>
+            <span class="vocher-price-amount">Rp 3.000</span>
+          </div>
+          <button type="button" class="vocher-btn-buy" onclick="orderPkgDirect('Voucher Hotspot 3 Jam', 'Rp 3.000')">
+            <span>🛒 Beli Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3. Hotspot Kuota 1 GB -->
+      <div class="vocher-card">
+        <div>
+          <div class="vocher-name">Hotspot Kuota 1 GB</div>
+          <div class="vocher-meta-box">
+            <span class="vocher-meta-row">⏳ Masa Aktif: <strong>7 Hari</strong></span>
+            <span class="vocher-meta-row">⏱️ Masa Pakai: <strong>Bebas Pakai</strong></span>
+            <span class="vocher-meta-row">📦 Kuota Data: <strong>1 GB</strong></span>
+          </div>
+          <div class="vocher-desc">Kuota Data 1 GB full speed</div>
+        </div>
+        <div>
+          <div class="vocher-price-row">
+            <span class="vocher-price-label">Tarif Voucher:</span>
+            <span class="vocher-price-amount">Rp 3.000</span>
+          </div>
+          <button type="button" class="vocher-btn-buy" onclick="orderPkgDirect('Hotspot Kuota 1 GB', 'Rp 3.000')">
+            <span>🛒 Beli Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Paket 1 hari -->
+      <div class="vocher-card">
+        <div>
+          <div class="vocher-name">Paket 1 hari</div>
+          <div class="vocher-meta-box">
+            <span class="vocher-meta-row">⏳ Masa Aktif: <strong>13 Jam</strong></span>
+            <span class="vocher-meta-row">⏱️ Masa Pakai: <strong>3 Jam</strong></span>
+            <span class="vocher-meta-row">📦 Kuota Data: <strong>Unlimited</strong></span>
+          </div>
+          <div class="vocher-desc">Akses internet harian stabil &amp; hemat</div>
+        </div>
+        <div>
+          <div class="vocher-price-row">
+            <span class="vocher-price-label">Tarif Voucher:</span>
+            <span class="vocher-price-amount">Rp 3.000</span>
+          </div>
+          <button type="button" class="vocher-btn-buy" onclick="orderPkgDirect('Paket 1 hari', 'Rp 3.000')">
+            <span>🛒 Beli Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. Voucher 5000 Agen -->
+      <div class="vocher-card">
+        <span class="vocher-badge">POPULER</span>
+        <div>
+          <div class="vocher-name">Voucher 5000 Agen</div>
+          <div class="vocher-meta-box">
+            <span class="vocher-meta-row">⏳ Masa Aktif: <strong>1 Hari</strong></span>
+            <span class="vocher-meta-row">⏱️ Masa Pakai: <strong>12 Jam</strong></span>
+            <span class="vocher-meta-row">📦 Kuota Data: <strong>Unlimited</strong></span>
+          </div>
+          <div class="vocher-desc">Paket favorit streaming lancar tanpa batas kuota</div>
+        </div>
+        <div>
+          <div class="vocher-price-row">
+            <span class="vocher-price-label">Tarif Voucher:</span>
+            <span class="vocher-price-amount">Rp 5.000</span>
+          </div>
+          <button type="button" class="vocher-btn-buy" onclick="orderPkgDirect('Voucher 5000 Agen', 'Rp 5.000')">
+            <span>🛒 Beli Sekarang</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 6. Voucher 24 Jam 1.5M -->
+      <div class="vocher-card">
+        <div>
+          <div class="vocher-name">Voucher 24 Jam 1.5M</div>
+          <div class="vocher-meta-box">
+            <span class="vocher-meta-row">⏳ Masa Aktif: <strong>1 Hari</strong></span>
+            <span class="vocher-meta-row">⏱️ Masa Pakai: <strong>Bebas Pakai</strong></span>
+            <span class="vocher-meta-row">📦 Kuota Data: <strong>Unlimited</strong></span>
+          </div>
+          <div class="vocher-desc">Aktif full 24 jam bebas pakai seharian</div>
+        </div>
+        <div>
+          <div class="vocher-price-row">
+            <span class="vocher-price-label">Tarif Voucher:</span>
+            <span class="vocher-price-amount">Rp 7.000</span>
+          </div>
+          <button type="button" class="vocher-btn-buy" onclick="orderPkgDirect('Voucher 24 Jam 1.5M', 'Rp 7.000')">
+            <span>🛒 Beli Sekarang</span>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <!-- Quick Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-card-title">HTTP Status</div>
-        <div class="stat-card-val" id="stat-http-code">--</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-title">Jumlah Paket</div>
-        <div class="stat-card-val" id="stat-pkg-count">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-title">Waktu Respons</div>
-        <div class="stat-card-val" id="stat-latency">-- ms</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-card-title">Flash Sale</div>
-        <div class="stat-card-val" id="stat-flash-sale">Tidak Ada</div>
-      </div>
-    </div>
-
-    <!-- Hasil Visualisasi Paket -->
-    <div class="section-title">
-      <span>📦 Paket Voucher Terdeteksi:</span>
-      <span id="pkg-counter-label" style="font-size:0.75rem; color:var(--text-muted);">Memuat...</span>
-    </div>
-    <div id="packages-container" class="packages-grid">
-      <!-- Kartu paket akan dirender otomatis di sini -->
-    </div>
-
-    <!-- Raw JSON Data Box -->
-    <div class="json-box">
-      <div class="json-header">
-        <span class="json-header-title">📄 Raw JSON Response dari Server:</span>
-        <button type="button" class="btn-copy" onclick="copyJson()">📋 Salin JSON</button>
-      </div>
-      <pre><code id="json-output">// Data JSON akan muncul di sini...</code></pre>
-    </div>
-
-    <!-- Navigation Shortcuts -->
-    <div class="nav-links">
-      <a href="login.html" class="nav-btn">⬅ Kembali ke Halaman Login</a>
-      <a href="status.html" class="nav-btn">📊 Halaman Status</a>
+    <!-- Footer Information -->
+    <div style="text-align: center; margin-top: 24px; font-size: 0.75rem; color: var(--text-secondary); line-height: 1.6;">
+      <strong style="color: #fff;" id="footer-brand">WiFi ARABPAY Hotspot Digital</strong><br>
+      Pusat Bantuan WhatsApp: <strong style="color: var(--accent-cyan);" id="footer-wa">0812-3456-7890</strong>
     </div>
 
   </div>
 
+  <!-- ============================================================== -->
+  <!-- MOBILE BOTTOM NAVIGATION BAR: TAB KIRI MENJADI "LOGIN"         -->
+  <!-- ============================================================== -->
+  <div class="bottom-nav-bar">
+
+    <!-- Tab 1: KEMBALI KE LOGIN (Sebelumnya 'Paket', kini jadi 'Login'!) -->
+    <a href="login.html" class="nav-item" id="nav-item-login" title="Kembali ke Halaman Login Hotspot">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+      </svg>
+      <span>Login</span>
+    </a>
+
+    <!-- Tab 2: CENTER PROMINENT FAB SCAN BUTTON (ARBILL CYBER SCANNER) -->
+    <div class="fab-scan-wrapper">
+      <a href="javascript:void(0)" id="fab-scan-link" class="fab-scan-btn" onclick="return handleFabScanClick(event)" title="Scan QR & Barcode Voucher">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm9.5-6.5v3h-3v-3h3M20 5h-6v6h6V5zm-6 8h1.5v1.5H14V13zm1.5 1.5H17V16h-1.5v-1.5zM14 16h1.5v1.5H14V16zm3-1.5H18.5V16H17v-1.5zm0 3h1.5V19H17v-1.5zm-1.5 0H17V20h-1.5v-1.5zm3-3H20V16h-1.5v-1.5zm0 3H20V19h-1.5v-1.5zM20 20h-1.5v-1.5H20V20zM3 3h4V1H1v6h2V3zm18-2h-4v2h4v4h2V1h-2zm2 18h-2v4h-4v2h6v-6zM3 17H1v6h6v-2H3v-4z"/>
+        </svg>
+      </a>
+      <span class="fab-scan-label">SCAN</span>
+    </div>
+
+    <!-- Tab 3: BANTUAN WHATSAPP / FAQ -->
+    <button type="button" class="nav-item" id="nav-item-help" onclick="openHelpModal()" title="Panduan & Bantuan">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+      </svg>
+      <span>Bantuan</span>
+    </button>
+
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: PANDUAN PENJELASAN ISTILAH PAKET                        -->
+  <!-- ============================================================== -->
+  <div id="package-guide-modal" class="modal-overlay" onclick="if(event.target===this)closeModal('package-guide-modal')">
+    <div class="modal-card modal-card-guide">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">💡</span>
+          <div>
+            <div class="modal-title">Panduan Istilah Paket</div>
+            <div style="font-size: 0.74rem; color: var(--accent-cyan); margin-top: 2px;">Pahami sebelum memilih voucher WiFi</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal" onclick="closeModal('package-guide-modal')">✕</button>
+      </div>
+
+      <div class="guide-modal-body">
+        <!-- Item 1: Masa Aktif -->
+        <div class="guide-item-card">
+          <div class="guide-item-header">
+            <span class="guide-item-badge badge-aktif">⏳ Masa Aktif</span>
+            <span class="guide-item-sub">Masa Berlaku Voucher</span>
+          </div>
+          <div class="guide-item-desc">
+            Jangka waktu berlakunya voucher dihitung sejak <strong>pertama kali login</strong>. Jika waktu ini habis, voucher akan kadaluwarsa (hangus).
+          </div>
+          <div class="guide-item-example">
+            <span>📌 Contoh:</span> <strong>Aktif 1 Hari (24 Jam)</strong>. Voucher tetap bisa dipakai sampai batas 24 jam ke depan.
+          </div>
+        </div>
+
+        <!-- Item 2: Masa Pakai -->
+        <div class="guide-item-card">
+          <div class="guide-item-header">
+            <span class="guide-item-badge badge-pakai">⏱️ Masa Pakai</span>
+            <span class="guide-item-sub">Total Waktu Online (Limit Uptime)</span>
+          </div>
+          <div class="guide-item-desc">
+            Total lama waktu internet terhubung. Anda bisa <strong>menjeda / disconnect</strong> jika sedang tidak dipakai, dan sisa waktu tidak berkurang selama masih dalam Masa Aktif.
+          </div>
+          <div class="guide-item-example">
+            <span>📌 Contoh:</span> <strong>Pakai 3 Jam</strong>. Anda bisa online 1 jam pagi dan 2 jam malam (total 3 jam pemakaian).
+          </div>
+        </div>
+
+        <!-- Item 3: Kuota Data -->
+        <div class="guide-item-card">
+          <div class="guide-item-header">
+            <span class="guide-item-badge badge-kuota">📦 Kuota Data</span>
+            <span class="guide-item-sub">Volume Akses Download &amp; Upload</span>
+          </div>
+          <div class="guide-item-desc">
+            Batas volume transfer data. Jika tertulis <strong>Unlimited</strong>, Anda bebas streaming video, download, dan sosmed tanpa batasan kuota GB!
+          </div>
+        </div>
+
+        <!-- Kesimpulan Ringkas -->
+        <div class="guide-summary-box">
+          <div class="guide-summary-title">🎯 Kesimpulan Praktis:</div>
+          <div class="guide-summary-text">
+            Paket <strong>3 JAM (Aktif 1 Hari, Kuota Unlimited)</strong> artinya Anda mendapatkan jatah online total <strong>3 jam</strong>, bebas dipakai kapan saja dalam rentang waktu <strong>24 jam</strong> tanpa batas kuota data.
+          </div>
+        </div>
+
+        <button type="button" class="btn-submit" style="margin-top: 8px; width: 100%; padding: 10px; font-size: 0.84rem;" onclick="closeModal('package-guide-modal')">
+          👍 Saya Mengerti
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive FAQ / Help Modal -->
+  <div id="help-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Panduan & Bantuan</div>
+        <button class="btn-close-modal" onclick="closeModal('help-modal')">✕</button>
+      </div>
+      <div style="font-size:0.85rem; color:var(--text-secondary); line-height:1.6;">
+        <p style="margin-bottom:10px;"><strong>1. Cara Beli Voucher:</strong><br>Pilih paket voucher yang diinginkan lalu tekan tombol <strong>Beli Sekarang</strong> untuk melakukan pembayaran instan melalui QRIS atau E-Wallet.</p>
+        <p style="margin-bottom:10px;"><strong>2. Cara Login:</strong><br>Setelah mendapatkan kode voucher, klik tab <strong>Login</strong> di kiri bawah untuk memasukkan kode voucher atau tekan tombol <strong>SCAN</strong>.</p>
+        <p style="margin-bottom:12px;"><strong>3. Hubungi Admin:</strong><br>Jika membutuhkan bantuan langsung, silakan hubungi CS kami melalui WhatsApp.</p>
+        <button type="button" class="btn-submit" style="width: 100%; padding: 10px; font-size: 0.85rem; background: #25d366; color: #fff;" onclick="orderHelpWA()">
+          💬 Chat WhatsApp Admin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- REALTIME CAMERA BARCODE & QR SCANNER MODAL                     -->
+  <!-- ============================================================== -->
+  <div id="qr-scan-modal" class="scanner-modal">
+    <div class="scanner-header">
+      <div class="scanner-title">
+        <span>📷 Scan QR / Barcode</span>
+      </div>
+      <div class="scanner-tools">
+        <button type="button" class="scanner-tool-btn" onclick="stopBarcodeScanner()" title="Tutup Scanner" style="background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;">✕</button>
+      </div>
+    </div>
+    <div class="scanner-viewport">
+      <video id="scanner-video" playsinline autoplay muted></video>
+      <div class="scan-viewfinder">
+        <div class="scan-corner tl"></div>
+        <div class="scan-corner tr"></div>
+        <div class="scan-corner bl"></div>
+        <div class="scan-corner br"></div>
+        <div class="scan-laser"></div>
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+      <div class="scanner-hint">
+        Arahkan kamera ke <strong>Barcode atau QR Code</strong> voucher WiFi Anda.
+      </div>
+      <button type="button" class="btn-submit" style="width: 100%; max-width: 360px; margin-top: 8px; font-size: 0.82rem; background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);" onclick="handleFabScanClick(event)">
+        🌐 Buka ARBILL CYBER SCANNER
+      </button>
+    </div>
+  </div>
+
   <script>
+    var CFG = window.APP_CONFIG || {};
+
+    // Helper formatting durasi ISO
     function formatIsoDuration(iso) {
       if (!iso || typeof iso !== 'string') return '';
       var s = iso.trim().toUpperCase();
@@ -464,11 +637,8 @@
 
     function getPackageMeta(pkg) {
       var masaAktif = '';
-      if (pkg.validity_iso) {
-        masaAktif = formatIsoDuration(pkg.validity_iso);
-      } else if (pkg.validity) {
-        masaAktif = formatIsoDuration(pkg.validity);
-      }
+      if (pkg.validity_iso) masaAktif = formatIsoDuration(pkg.validity_iso);
+      else if (pkg.validity) masaAktif = formatIsoDuration(pkg.validity);
 
       var masaPakai = '';
       if (pkg.uptime_limit && String(pkg.uptime_limit).trim() !== '') {
@@ -505,139 +675,210 @@
       };
     }
 
-    function fetchVoucherData() {
-      var input = document.getElementById('api-url-input');
-      var url = (input.value || '').trim();
-      var banner = document.getElementById('status-banner');
-      var statusText = document.getElementById('status-text');
-      var jsonOut = document.getElementById('json-output');
+    // Helper ekstrak paket dari berbagai struktur respon
+    function extractPackages(data) {
+      if (!data) return [];
+      if (Array.isArray(data)) return data;
+      if (data.packages && Array.isArray(data.packages) && data.packages.length > 0) return data.packages;
+      if (data.groups && Array.isArray(data.groups) && data.groups.length > 0) return data.groups;
+      var list = [];
+      if (data.ondemand && Array.isArray(data.ondemand)) list = list.concat(data.ondemand);
+      if (data.pregenerated && Array.isArray(data.pregenerated)) list = list.concat(data.pregenerated);
+      return list;
+    }
+
+    // Ambil data cache lokal browser (Instan 0 ms)
+    function getLocalCache() {
+      try {
+        var r1 = localStorage.getItem('arbill_vouchers_cache');
+        if (r1) {
+          var p1 = JSON.parse(r1);
+          var res1 = extractPackages(p1);
+          if (res1 && res1.length > 0) return res1;
+        }
+      } catch(e) {}
+      try {
+        var r2 = localStorage.getItem('arbill_cached_packages');
+        if (r2) {
+          var p2 = JSON.parse(r2);
+          var res2 = extractPackages(p2);
+          if (res2 && res2.length > 0) return res2;
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    // Render kartu paket ke DOM
+    function renderPackagesList(packages) {
+      if (!packages || !packages.length) return;
       var container = document.getElementById('packages-container');
-      var countLabel = document.getElementById('pkg-counter-label');
+      if (!container) return;
 
-      var statHttp = document.getElementById('stat-http-code');
-      var statCount = document.getElementById('stat-pkg-count');
-      var statLatency = document.getElementById('stat-latency');
-      var statFs = document.getElementById('stat-flash-sale');
+      var html = '';
+      packages.forEach(function(pkg, idx) {
+        var name = pkg.package_name || pkg.name || 'Paket Voucher';
+        var numPrice = Number(pkg.effective_price || pkg.price || 0);
+        var priceText = 'Rp ' + Math.round(numPrice).toLocaleString('id-ID');
+        var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : (idx === 1 ? 'POPULER' : ''));
+        var badgeHtml = badgeText ? ('<span class="vocher-badge">' + badgeText + '</span>') : '';
+        var meta = getPackageMeta(pkg);
+        var desc = pkg.description || pkg.desc || ('Akses internet tanpa batas kuota (Full Unlimited)');
+        var pkgId = pkg.package_id || pkg.id || '';
 
-      if (!url) {
-        alert('Silakan masukkan URL API terlebih dahulu!');
-        return;
-      }
-
-      banner.className = 'status-banner loading';
-      banner.innerHTML = '<div>⏳</div><div id="status-text">Menghubungi server API: <code>' + url + '</code> ...</div>';
-      statHttp.innerText = 'FETCH...';
-      statCount.innerText = '--';
-      statLatency.innerText = '-- ms';
-      jsonOut.innerText = '// Memuat data...';
-      container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; grid-column: 1/-1;">Sedang memproses...</div>';
-
-      var startTime = performance.now();
-
-      fetch(url, {
-        method: 'GET',
-        cache: 'no-cache'
-      })
-      .then(function(res) {
-        var endTime = performance.now();
-        var ms = Math.round(endTime - startTime);
-        statLatency.innerText = ms + ' ms';
-        statHttp.innerText = res.status;
-
-        if (!res.ok) {
-          throw new Error('HTTP ' + res.status + ' (' + res.statusText + ')');
-        }
-        return res.json();
-      })
-      .then(function(data) {
-        banner.className = 'status-banner success';
-        banner.innerHTML = '<div>✅</div><div><strong>Koneksi Berhasil (HTTP 200)!</strong> API Arbill dapat diakses sempurna melalui browser/jaringan hotspot Anda. Walled Garden MikroTik sudah berfungsi.</div>';
-
-        // Tampilkan Raw JSON dengan format rapi (indent 2)
-        jsonOut.innerText = JSON.stringify(data, null, 2);
-
-        var packages = (data && data.packages && data.packages.length > 0) 
-          ? data.packages 
-          : ((data && data.groups && data.groups.length > 0) ? data.groups : (data.packages || []));
-        
-        // Simpan langsung ke LocalStorage browser agar login.html dan status.html otomatis dapat data tanpa fetch ulang!
-        try {
-          localStorage.setItem('arbill_vouchers_cache', JSON.stringify(packages));
-          localStorage.setItem('arbill_cached_packages', JSON.stringify(data));
-        } catch(e) {}
-
-        statCount.innerText = packages.length;
-        countLabel.innerText = packages.length + ' Paket Ditemukan (Tersimpan di Browser)';
-
-        if (data.has_flash_sale) {
-          statFs.innerText = '⚡ Aktif (' + (data.flash_sales_count || 1) + ')';
-          statFs.style.color = '#facc15';
-        } else {
-          statFs.innerText = 'Tidak Ada';
-          statFs.style.color = '#38bdf8';
-        }
-
-        if (packages.length === 0) {
-          container.innerHTML = '<div style="color:#ef4444; font-size:0.82rem; grid-column: 1/-1;">⚠️ API merespons dengan sukses, tetapi paket kosong untuk router_id ini. Pastikan nama router_id sesuai dengan yang ada di Arbill Baru.</div>';
-          return;
-        }
-
-        // Render Kartu Paket Visual
-        var html = '';
-        packages.forEach(function(pkg, idx) {
-          var name = pkg.package_name || pkg.name || 'Paket Voucher';
-          var numPrice = Number(pkg.effective_price || pkg.price || 0);
-          var priceText = 'Rp ' + numPrice.toLocaleString('id-ID');
-          var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : (idx === 1 ? 'POPULER' : ''));
-          var badgeHtml = badgeText ? '<span class="pkg-badge">' + badgeText + '</span>' : '';
-          var meta = getPackageMeta(pkg);
-
-          html += '<div class="pkg-item">' +
-            badgeHtml +
-            '<div>' +
-              '<div class="pkg-name">' + name + '</div>' +
-              '<div class="pkg-price">' + priceText + '</div>' +
-              '<div class="pkg-meta-tags">' +
-                '<div class="pkg-meta-tag"><span class="tag-k">⏳ Masa Aktif:</span><span class="tag-v">' + meta.aktif + '</span></div>' +
-                '<div class="pkg-meta-tag"><span class="tag-k">⏱️ Masa Pakai:</span><span class="tag-v">' + meta.pakai + '</span></div>' +
-                '<div class="pkg-meta-tag"><span class="tag-k">📦 Kuota Data:</span><span class="tag-v">' + meta.kuota + '</span></div>' +
-              '</div>' +
+        html += '<div class="vocher-card">' +
+          badgeHtml +
+          '<div>' +
+            '<div class="vocher-name">' + name + '</div>' +
+            '<div class="vocher-meta-box">' +
+              '<span class="vocher-meta-row">⏳ Masa Aktif: <strong>' + meta.aktif + '</strong></span>' +
+              '<span class="vocher-meta-row">⏱️ Masa Pakai: <strong>' + meta.pakai + '</strong></span>' +
+              '<span class="vocher-meta-row">📦 Kuota Data: <strong>' + meta.kuota + '</strong></span>' +
             '</div>' +
-            '<div style="font-size:0.68rem; color:#64748b; margin-top:4px;">Profile: ' + (pkg.profile_name || pkg.profile_id || '-') + '</div>' +
-          '</div>';
-        });
-        container.innerHTML = html;
-      })
-      .catch(function(err) {
-        var endTime = performance.now();
-        statLatency.innerText = Math.round(endTime - startTime) + ' ms';
-        statHttp.innerText = 'GAGAL';
-        statCount.innerText = '0';
-
-        banner.className = 'status-banner error';
-        banner.innerHTML = '<div>❌</div><div><strong>Gagal Mengakses API:</strong> ' + err.message + '<br><small style="color:#cbd5e1; margin-top:4px; display:block;">Penyebab umum: Domain <code>arbill.arabpay.my.id</code> belum ter-bypass di <code>/ip hotspot walled-garden</code> MikroTik, atau koneksi internet router belum tersambung ke domain tersebut.</small></div>';
-
-        jsonOut.innerText = '// Error: ' + err.toString();
-        container.innerHTML = '<div style="color:#ef4444; font-size:0.82rem; grid-column: 1/-1;">Gagal memuat paket dari server API.</div>';
-        countLabel.innerText = 'Gagal';
+            '<div class="vocher-desc">' + desc + '</div>' +
+          '</div>' +
+          '<div>' +
+            '<div class="vocher-price-row">' +
+              '<span class="vocher-price-label">Tarif Voucher:</span>' +
+              '<span class="vocher-price-amount">' + priceText + '</span>' +
+            '</div>' +
+            '<button type="button" class="vocher-btn-buy" onclick="orderPkgDirect(\'' + name.replace(/'/g, "\\'") + '\', \'' + priceText + '\', \'' + pkgId + '\')">' +
+              '<span>🛒 Beli Sekarang</span>' +
+            '</button>' +
+          '</div>' +
+        '</div>';
       });
+
+      container.innerHTML = html;
     }
 
-    function copyJson() {
-      var text = document.getElementById('json-output').innerText;
-      if (!text || text.startsWith('//')) {
-        alert('Belum ada data JSON yang dapat disalin.');
-        return;
+    // Buka Halaman Billing ArbilBaru & Langsung Munculkan Pembelian Paket Terpilih
+    function orderPkgDirect(name, price, packageId, flashSaleId) {
+      var billingBase = (window.APP_CONFIG && window.APP_CONFIG.BILLING_URL ? window.APP_CONFIG.BILLING_URL : (CFG.BILLING_URL || '')).replace(/\/+$/, '');
+      if (!billingBase) return;
+      var url = billingBase + '/#/portal';
+      var params = [];
+      if (packageId) {
+        params.push('buy_package_id=' + encodeURIComponent(packageId));
       }
-      navigator.clipboard.writeText(text).then(function() {
-        alert('✅ Data JSON berhasil disalin ke clipboard!');
-      }).catch(function() {
-        alert('Gagal menyalin otomatis. Silakan pilih teks manual.');
-      });
+      if (flashSaleId) {
+        params.push('flash_sale_id=' + encodeURIComponent(flashSaleId));
+      }
+      var cfg = window.APP_CONFIG || {};
+      var rId = (cfg.ROUTER_ID || CFG.ROUTER_ID || 'DESKTOP-AUTJKVA').trim();
+      if (rId) {
+        params.push('router_id=' + encodeURIComponent(rId));
+      }
+      if (params.length > 0) {
+        url += '?' + params.join('&');
+      }
+      window.location.href = url;
     }
 
-    // Auto-fetch saat halaman dibuka
-    document.addEventListener('DOMContentLoaded', fetchVoucherData);
+    // Modal Control
+    function openPackageGuideModal() {
+      var m = document.getElementById('package-guide-modal');
+      if (m) m.classList.add('active');
+    }
+    function openHelpModal() {
+      var m = document.getElementById('help-modal');
+      if (m) m.classList.add('active');
+    }
+    function closeModal(id) {
+      var m = document.getElementById(id);
+      if (m) m.classList.remove('active');
+    }
+    function orderHelpWA() {
+      var cfg = window.APP_CONFIG || {};
+      var waNum = (cfg.WHATSAPP_ADMIN || '6281234567890').replace(/[^0-9]/g, '');
+      var brand = cfg.BRAND_NAME || 'WiFi ARABPAY';
+      var msg = encodeURIComponent("Halo Admin " + brand + ", saya butuh bantuan terkait voucher WiFi.");
+      window.location.href = "https://wa.me/" + waNum + "?text=" + msg;
+    }
+
+    // FAB Scanner Handler
+    function handleFabScanClick(e) {
+      if (e) e.preventDefault();
+      var cfg = window.APP_CONFIG || {};
+      var scannerUrl = cfg.QR_SCANNER_URL || ((cfg.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '') + '/myqr/');
+      window.location.href = scannerUrl;
+      return false;
+    }
+
+    // Theme Switcher
+    function setTheme(theme, btn) {
+      document.querySelectorAll('.theme-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) btn.classList.add('active');
+      document.body.className = 'has-bottom-nav';
+      if (theme === 'gold') document.body.classList.add('theme-gold');
+      if (theme === 'light') document.body.classList.add('theme-light');
+      try { localStorage.setItem('arbill_theme', theme); } catch(e) {}
+    }
+
+    // Fetch live dari API Billing
+    function refreshVouchersLive() {
+      var syncDot = document.getElementById('sync-dot');
+      var syncText = document.getElementById('sync-text');
+      if (syncDot) syncDot.style.background = '#06b6d4';
+      if (syncText) syncText.innerText = 'Menghubungi server...';
+
+      var cfg = window.APP_CONFIG || {};
+      var billingUrl = (cfg.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      var routerId = (cfg.ROUTER_ID || 'DESKTOP-AUTJKVA').trim();
+      var targetUrl = billingUrl + '/api/vouchers/available?router_id=' + encodeURIComponent(routerId);
+
+      fetch(targetUrl, { method: 'GET', cache: 'no-cache' })
+        .then(function(res) {
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          return res.json();
+        })
+        .then(function(data) {
+          var pkgs = extractPackages(data);
+          if (pkgs && pkgs.length > 0) {
+            renderPackagesList(pkgs);
+            try {
+              localStorage.setItem('arbill_vouchers_cache', JSON.stringify(pkgs));
+              localStorage.setItem('arbill_cached_packages', JSON.stringify(data));
+            } catch(e) {}
+            if (syncDot) syncDot.style.background = '#10b981';
+            if (syncText) syncText.innerText = 'Paket Diperbarui (' + pkgs.length + ' Paket)';
+          } else {
+            if (syncDot) syncDot.style.background = '#f59e0b';
+            if (syncText) syncText.innerText = 'Data siap (Standar)';
+          }
+        })
+        .catch(function(err) {
+          if (syncDot) syncDot.style.background = '#10b981';
+          if (syncText) syncText.innerText = 'Menggunakan Cache Browser';
+        });
+    }
+
+    // Inisialisasi saat DOM siap
+    document.addEventListener('DOMContentLoaded', function() {
+      // 1. Terapkan tema tersimpan
+      var savedTheme = localStorage.getItem('arbill_theme') || 'cyber';
+      setTheme(savedTheme);
+
+      // 2. Terapkan konfigurasi brand & footer
+      var cfg = window.APP_CONFIG || {};
+      if (cfg.BRAND_NAME) {
+        document.title = 'Pilihan Paket Voucher - ' + cfg.BRAND_NAME;
+        var fb = document.getElementById('footer-brand');
+        if (fb) fb.innerText = cfg.BRAND_NAME + ' Hotspot Digital';
+      }
+      if (cfg.WHATSAPP_DISPLAY) {
+        var fw = document.getElementById('footer-wa');
+        if (fw) fw.innerText = cfg.WHATSAPP_DISPLAY;
+      }
+
+      // 3. Render instan dari LocalStorage (0 ms)
+      var localPkgs = getLocalCache();
+      if (localPkgs && localPkgs.length > 0) {
+        renderPackagesList(localPkgs);
+      }
+
+      // 4. Background live sync
+      refreshVouchersLive();
+    });
   </script>
 </body>
 </html>
