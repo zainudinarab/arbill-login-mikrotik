@@ -8,6 +8,7 @@
 
 window.APP_CONFIG = {
   // 1. PENGATURAN URL BILLING SERVER (ARBILBARU)
+  // Cukup atur URL domain ini saja, link scanner QR otomatis mengarah ke [BILLING_URL]/myqr/
   BILLING_URL: 'https://arbill.arabpay.my.id',
 
   // 2. FILTER ROUTER MIKROTIK
@@ -15,21 +16,17 @@ window.APP_CONFIG = {
   // Nilai ini digunakan langsung untuk mengambil voucher & sinkronisasi billing.
   ROUTER_ID: 'DESKTOP-AUTJKVA',
 
-  // 3. SCANNER QR / BARCODE HTTPS
-  // Browser HP wajib membuka scanner lewat HTTPS agar diizinkan akses kamera
-  QR_SCANNER_URL: 'https://arbill.arabpay.my.id/myqr/',
-
-  // 4. IDENTITAS & BRANDING WIFI
+  // 3. IDENTITAS & BRANDING WIFI
   BRAND_NAME: 'WIFI ARABPAY',
   BRAND_SUBTITLE: 'Super Fast & Secure Internet',
   SSL_BADGE_TEXT: 'HTTPS SSL 256-bit',
 
-  // 5. KONTAK & PEMBELIAN VOUCHER VIA WHATSAPP
+  // 4. KONTAK & PEMBELIAN VOUCHER VIA WHATSAPP
   // Format nomor WhatsApp: gunakan kode negara tanpa simbol + (contoh: 6281234567890)
   WHATSAPP_ADMIN: '6281234567890',
   WHATSAPP_DISPLAY: '0812-3456-7890', // Tampilan nomor di footer
 
-  // 6. PENGATURAN JADWAL SHOLAT (100% OFFLINE)
+  // 5. PENGATURAN JADWAL SHOLAT (100% OFFLINE)
   PRAYER_TIMES: {
     ENABLED: true, // true: tampilkan widget jadwal sholat, false: sembunyikan
     CITY_LABEL: 'WIB & Sekitarnya', // Nama kota / wilayah
@@ -38,18 +35,18 @@ window.APP_CONFIG = {
     LONGITUDE: 106.8456 // Koordinat bujur
   },
 
-  // 7. FORMAT KODE VOUCHER
+  // 6. FORMAT KODE VOUCHER
   // Pilihan: 'lowercase' (huruf kecil), 'uppercase' (huruf besar), atau 'none' (sesuai ketikan pelanggan)
   VOUCHER_CASE: 'lowercase',
 
-  // 8. FITUR-FITUR TAMPILAN
+  // 7. FITUR-FITUR TAMPILAN
   FEATURES: {
     ENABLE_FLASH_SALE: true, // Tampilkan banner promo Flash Sale jika aktif di billing
     ENABLE_LIVE_CLOCK: true, // Jam digital realtime di sudut atas
     ENABLE_THEME_SWITCHER: true // Tombol pilihan tema Gelap / Gold / Terang
   },
 
-  // 9. DAFTAR PAKET CADANGAN (FALLBACK JIKA OFFLINE)
+  // 8. DAFTAR PAKET CADANGAN (FALLBACK JIKA OFFLINE)
   // Tampil jika server billing sedang offline atau belum terhubung
   FALLBACK_PACKAGES: [
     {
@@ -111,5 +108,6 @@ window.APP_CONFIG = {
   ]
 };
 
-// Alias kompatibilitas jika template lama memanggil QR_SCAN_URL
+// URL Scanner QR otomatis ditambahkan '/myqr/' dari domain BILLING_URL
+window.APP_CONFIG.QR_SCANNER_URL = (window.APP_CONFIG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '') + '/myqr/';
 window.APP_CONFIG.QR_SCAN_URL = window.APP_CONFIG.QR_SCANNER_URL;
