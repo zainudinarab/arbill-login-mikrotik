@@ -8,6 +8,7 @@
   <title>Login Hotspot Kampus - Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU)</title>
   <link rel="stylesheet" href="css/unipdu.css">
   <link rel="icon" href="img/favicon.png">
+  <script src="setting.js"></script>
 </head>
 <body>
 
@@ -70,9 +71,11 @@
           <button type="button" class="role-tab-btn" id="tab-dosen" onclick="switchRole('dosen')">
             <span>👨‍🏫</span> Dosen &amp; Staf
           </button>
+          $(if trial == 'yes')
           <button type="button" class="role-tab-btn" id="tab-tamu" onclick="switchRole('tamu')">
             <span>👥</span> Tamu
           </button>
+          $(endif)
         </div>
 
         <!-- MikroTik CHAP Login Form -->
@@ -162,14 +165,96 @@
             </svg>
           </button>
 
-          <!-- Guest Trial Button (Jika diaktifkan di MikroTik) -->
-          $(if trial == 'yes')
-          <a href="$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)" class="btn-guest-trial">
-            <span>🌐 Akses Coba Gratis / Tamu (Trial)</span>
-          </a>
-          $(endif)
-
         </form>
+
+        $(if trial == 'yes')
+        <!-- ============================================================== -->
+        <!-- GUEST PANEL: REGISTRASI TAMU DENGAN AUTO LOGIN URL             -->
+        <!-- ============================================================== -->
+        <div id="guest-panel" style="display: none;">
+          <!-- Tamu Mode Switcher -->
+          <div style="display: flex; gap: 8px; background: #f1f5f9; padding: 4px; border-radius: 10px; margin-bottom: 18px; border: 1px solid #e2e8f0;">
+            <button type="button" class="role-tab-btn active" id="btn-tamu-reg" onclick="switchTamuMode('register')" style="font-size: 0.76rem; padding: 8px 6px;">
+              📝 Registrasi Tamu Baru
+            </button>
+            <button type="button" class="role-tab-btn" id="btn-tamu-code" onclick="switchTamuMode('code')" style="font-size: 0.76rem; padding: 8px 6px;">
+              🔑 Sudah Punya Kode
+            </button>
+          </div>
+
+          <!-- 1. Form Registrasi Tamu Baru (Auto Buatkan User & Login) -->
+          <form id="form-guest-register" onsubmit="return handleGuestRegister(event)" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label" for="guest-name">Nama Lengkap Tamu</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                </span>
+                <input type="text" id="guest-name" class="input-control" placeholder="Contoh: Budi Santoso" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="guest-phone">Nomor WhatsApp / HP</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                  </svg>
+                </span>
+                <input type="tel" id="guest-phone" class="input-control" placeholder="Contoh: 081234567890" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="guest-purpose">Instansi / Keperluan Berkunjung</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+                  </svg>
+                </span>
+                <input type="text" id="guest-purpose" class="input-control" placeholder="Contoh: Tamu Fakultas / Wali Mahasiswa / Seminar">
+              </div>
+            </div>
+
+            <!-- Feedback / Status Box -->
+            <div id="guest-status-box" style="display: none; margin-bottom: 16px; padding: 12px 14px; border-radius: 10px; font-size: 0.82rem; line-height: 1.5;"></div>
+
+            <!-- Submit Button Registrasi Tamu -->
+            <button type="submit" class="btn-campus-submit" id="btn-guest-submit">
+              <span id="guest-btn-text">DAFTAR &amp; MASUK INTERNET</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/>
+              </svg>
+            </button>
+          </form>
+
+          <!-- 2. Form Sudah Punya Kode Tamu -->
+          <div id="guest-code-section" style="display: none;">
+            <div class="form-group">
+              <label class="form-label" for="guest-code-input">Kode Akses / Voucher Tamu</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
+                  </svg>
+                </span>
+                <input type="text" id="guest-code-input" class="input-control" placeholder="Masukkan kode akses tamu">
+              </div>
+            </div>
+
+            <button type="button" class="btn-campus-submit" onclick="doGuestCodeLogin()">
+              <span>MASUK DENGAN KODE TAMU</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        $(endif)
 
         <!-- MikroTik Error Notification Banner -->
         $(if error)
@@ -321,35 +406,206 @@
 
     // Role Switcher Handlers
     function switchRole(role) {
-      document.querySelectorAll('.role-tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.role-tabs > .role-tab-btn').forEach(function(b) { b.classList.remove('active'); });
       var tab = document.getElementById('tab-' + role);
       if (tab) tab.classList.add('active');
 
+      var regularForm = document.login;
+      var guestPanel = document.getElementById('guest-panel');
       var label = document.getElementById('label-user');
       var userInput = document.getElementById('username-input');
       var pwGroup = document.getElementById('group-password');
 
-      if (role === 'mhs') {
-        if (label) label.innerText = 'Nomor Induk Mahasiswa (NIM)';
-        if (userInput) {
-          userInput.placeholder = 'Contoh: 210101001';
-          userInput.focus();
-        }
-        if (pwGroup) pwGroup.style.display = 'block';
-      } else if (role === 'dosen') {
-        if (label) label.innerText = 'NIDN / NIP / Username Dosen/Staf';
-        if (userInput) {
-          userInput.placeholder = 'Contoh: 0712345601 atau nama_user';
-          userInput.focus();
-        }
-        if (pwGroup) pwGroup.style.display = 'block';
-      } else if (role === 'tamu') {
-        if (label) label.innerText = 'Identitas Tamu / No. HP';
-        if (userInput) {
-          userInput.placeholder = 'Contoh: 08123456789';
-          userInput.focus();
+      if (role === 'tamu') {
+        if (regularForm) regularForm.style.display = 'none';
+        if (guestPanel) guestPanel.style.display = 'block';
+      } else {
+        if (guestPanel) guestPanel.style.display = 'none';
+        if (regularForm) regularForm.style.display = 'block';
+
+        if (role === 'mhs') {
+          if (label) label.innerText = 'Nomor Induk Mahasiswa (NIM)';
+          if (userInput) {
+            userInput.placeholder = 'Contoh: 210101001';
+            userInput.focus();
+          }
+          if (pwGroup) pwGroup.style.display = 'block';
+        } else if (role === 'dosen') {
+          if (label) label.innerText = 'NIDN / NIP / Username Dosen/Staf';
+          if (userInput) {
+            userInput.placeholder = 'Contoh: 0712345601 atau nama_user';
+            userInput.focus();
+          }
+          if (pwGroup) pwGroup.style.display = 'block';
         }
       }
+    }
+
+    // Switch between Tamu: Register vs Already have code
+    function switchTamuMode(mode) {
+      var regForm = document.getElementById('form-guest-register');
+      var codeSec = document.getElementById('guest-code-section');
+      var btnReg = document.getElementById('btn-tamu-reg');
+      var btnCode = document.getElementById('btn-tamu-code');
+
+      if (mode === 'register') {
+        if (btnReg) btnReg.classList.add('active');
+        if (btnCode) btnCode.classList.remove('active');
+        if (regForm) regForm.style.display = 'block';
+        if (codeSec) codeSec.style.display = 'none';
+      } else {
+        if (btnCode) btnCode.classList.add('active');
+        if (btnReg) btnReg.classList.remove('active');
+        if (regForm) regForm.style.display = 'none';
+        if (codeSec) codeSec.style.display = 'block';
+      }
+    }
+
+    // Process Guest Registration via Backend API & Auto Login URL
+    async function handleGuestRegister(event) {
+      if (event && event.preventDefault) event.preventDefault();
+      var name = (document.getElementById('guest-name').value || '').trim();
+      var phone = (document.getElementById('guest-phone').value || '').trim();
+      var purpose = (document.getElementById('guest-purpose').value || '').trim();
+      var statusBox = document.getElementById('guest-status-box');
+      var btn = document.getElementById('btn-guest-submit');
+      var btnText = document.getElementById('guest-btn-text');
+
+      if (!name || !phone) {
+        alert('Mohon lengkapi Nama Lengkap dan Nomor WhatsApp Anda.');
+        return false;
+      }
+
+      btn.disabled = true;
+      btn.style.opacity = '0.75';
+      if (btnText) btnText.innerText = 'MEMBUAT AKUN TAMU...';
+      if (statusBox) {
+        statusBox.style.display = 'block';
+        statusBox.style.background = '#f0fdf4';
+        statusBox.style.border = '1px solid #bbf7d0';
+        statusBox.style.color = '#166534';
+        statusBox.innerHTML = '⏳ <strong>Sedang mendaftarkan tamu ke sistem...</strong> Mohon tunggu sebentar.';
+      }
+
+      var apiUrl = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.GUEST_API_URL) ? window.UNIPDU_CONFIG.GUEST_API_URL : 'https://arbill.arabpay.my.id/api/guest/register';
+      var routerId = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ROUTER_ID) ? window.UNIPDU_CONFIG.ROUTER_ID : 'UNIPDU-MAIN';
+
+      var payload = {
+        name: name,
+        phone: phone,
+        purpose: purpose,
+        mac: '$(mac)',
+        ip: '$(ip)',
+        router_id: routerId
+      };
+
+      try {
+        var response = await fetch(apiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        var data = await response.json();
+
+        if (response.ok && data.success) {
+          var username = data.username;
+          var password = data.password || data.username;
+          var loginUrl = data.login_url;
+
+          if (statusBox) {
+            statusBox.style.background = '#ecfdf5';
+            statusBox.style.border = '1.5px solid #10b981';
+            statusBox.style.color = '#047857';
+            statusBox.innerHTML = '✅ <strong>Registrasi Tamu Berhasil!</strong><br>' +
+              'Kode Akses Anda: <strong style="font-size:1.1rem; color:#064e3b; letter-spacing:1px;">' + username + '</strong><br>' +
+              '<small>Sedang langsung menghubungkan login ke internet...</small>';
+          }
+
+          // Otomatis langsung login via URL login MikroTik
+          setTimeout(function() {
+            if (loginUrl) {
+              window.location.href = loginUrl;
+              return;
+            }
+
+            if (typeof hexMD5 === 'function' && document.sendin) {
+              document.sendin.username.value = username;
+              document.sendin.password.value = hexMD5('$(chap-id)' + password + '$(chap-challenge)');
+              document.sendin.submit();
+              return;
+            }
+
+            var directUrl = '$(link-login-only)' + 
+              '?username=' + encodeURIComponent(username) + 
+              '&password=' + encodeURIComponent(password) + 
+              '&dst=' + encodeURIComponent('$(link-orig)');
+            window.location.href = directUrl;
+          }, 1200);
+
+        } else {
+          throw new Error(data.message || 'Gagal membuat user tamu dari server.');
+        }
+      } catch (err) {
+        // Fallback Simulasi Demo jika backend belum aktif
+        if (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ENABLE_MOCK_FALLBACK) {
+          var demoCode = 'TAMU' + Math.floor(1000 + Math.random() * 9000);
+          if (statusBox) {
+            statusBox.style.background = '#fffbeb';
+            statusBox.style.border = '1.5px solid #fde68a';
+            statusBox.style.color = '#92400e';
+            statusBox.innerHTML = '⚡ <strong>Mode Demonstrasi Aktif</strong> (Backend Belum Dikonfigurasi):<br>' +
+              'Kode Tamu Dibuat: <strong>' + demoCode + '</strong><br>' +
+              '<small>Sedang langsung login via URL...</small>';
+          }
+
+          setTimeout(function() {
+            if (typeof hexMD5 === 'function' && document.sendin) {
+              document.sendin.username.value = demoCode;
+              document.sendin.password.value = hexMD5('$(chap-id)' + demoCode + '$(chap-challenge)');
+              document.sendin.submit();
+              return;
+            }
+            var directUrl = '$(link-login-only)' + 
+              '?username=' + encodeURIComponent(demoCode) + 
+              '&password=' + encodeURIComponent(demoCode) + 
+              '&dst=' + encodeURIComponent('$(link-orig)');
+            window.location.href = directUrl;
+          }, 1500);
+          return false;
+        }
+
+        if (statusBox) {
+          statusBox.style.background = '#fef2f2';
+          statusBox.style.border = '1.5px solid #fca5a5';
+          statusBox.style.color = '#991b1b';
+          statusBox.innerHTML = '❌ <strong>Registrasi Gagal:</strong> ' + (err.message || 'Tidak dapat menghubungi server.');
+        }
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        if (btnText) btnText.innerText = 'DAFTAR & MASUK INTERNET';
+      }
+      return false;
+    }
+
+    // Login dengan Kode Tamu yang sudah dimiliki
+    function doGuestCodeLogin() {
+      var code = (document.getElementById('guest-code-input').value || '').trim();
+      if (!code) {
+        alert('Silakan masukkan Kode Akses Tamu Anda.');
+        return;
+      }
+      if (typeof hexMD5 === 'function' && document.sendin) {
+        document.sendin.username.value = code;
+        document.sendin.password.value = hexMD5('$(chap-id)' + code + '$(chap-challenge)');
+        document.sendin.submit();
+        return;
+      }
+      var loginUrl = '$(link-login-only)' + 
+        '?username=' + encodeURIComponent(code) + 
+        '&password=' + encodeURIComponent(code) + 
+        '&dst=' + encodeURIComponent('$(link-orig)');
+      window.location.href = loginUrl;
     }
 
     // Toggle Slide-out Side Drawer Menu
