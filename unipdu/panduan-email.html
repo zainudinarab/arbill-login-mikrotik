@@ -4,12 +4,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#047857">
-  <title>Panduan Email Institusi - UNIPDU Jombang</title>
+  <title>Panduan Akun & Email Institusi - UNIPDU Jombang</title>
   <link rel="icon" type="image/png" href="img/logo.png">
   <link rel="stylesheet" href="css/unipdu.css">
 </head>
 <body>
+  <!-- Ambient Background Decor -->
+  <div class="ambient-orb orb-top-left"></div>
+  <div class="ambient-orb orb-bottom-right"></div>
+  <div class="ambient-orb orb-center-gold"></div>
+
   <div class="page-wrapper guide-wrapper">
+    <!-- Top Campus Navigation Bar -->
     <header class="campus-topbar">
       <div class="topbar-left-group">
         <a href="panduan.html" class="guide-back-link" title="Kembali ke Daftar Panduan">
@@ -30,31 +36,72 @@
     </header>
 
     <main>
+      <!-- Hero Header -->
       <section class="guide-hero">
         <div class="guide-hero-top">
           <span class="guide-badge-pill" style="background:#e0f2fe; border-color:#bae6fd; color:#0369a1;">📧 GOOGLE WORKSPACE UNIPDU</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Puskomnet UNIPDU</span>
         </div>
         <h2 class="guide-hero-title">Panduan Akun &amp; Email Institusi UNIPDU</h2>
-        <p class="guide-hero-subtitle">Petunjuk aktivasi akun email resmi @mhs.unipdu.ac.id dan prosedur reset sandi jika lupa password.</p>
+        <p class="guide-hero-subtitle">
+          Petunjuk format email institusi berbasis fakultas serta prosedur pengajuan reset kata sandi resmi melalui SIAKAD UNIPDU.
+        </p>
       </section>
 
+      <!-- Steps List -->
       <section class="guide-steps-list">
+
+        <!-- STEP 1: FORMAT EMAIL BERBASIS FAKULTAS -->
         <article class="guide-step-card">
           <div class="step-number-badge">1</div>
           <div class="step-card-body">
-            <div class="step-card-header"><h3 class="step-title">Ketahui Format Email Anda</h3></div>
+            <div class="step-card-header">
+              <h3 class="step-title">Format Alamat Email Institusi Sivitas</h3>
+              <span class="step-tag" style="background:#ecfdf5; color:#047857; font-weight:700;">Format Resmi</span>
+            </div>
             <p class="step-desc">
-              Mahasiswa menggunakan format: <code>NIM@mhs.unipdu.ac.id</code> (Contoh: <code>210101001@mhs.unipdu.ac.id</code>).<br>
-              Dosen dan Staf menggunakan format: <code>nama@unipdu.ac.id</code>.
+              Email resmi sivitas akademika UNIPDU menggunakan domain fakultas dengan pola:
+              <br>
+              <strong style="color: #047857; font-size: 0.95rem;">nama@fakultas.unipdu.ac.id</strong>
+            </p>
+            
+            <!-- Daftar Format Fakultas -->
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px 16px; margin: 10px 0 12px;">
+              <div style="font-size:0.78rem; font-weight:800; color:var(--text-title); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px;">
+                Contoh Sesuai Fakultas:
+              </div>
+              <ul style="margin:0; padding-left:18px; font-size:0.84rem; color:var(--text-body); line-height:1.7;">
+                <li>
+                  <strong>FAI (Fakultas Agama Islam):</strong> 
+                  <code style="color:#0369a1; background:#e0f2fe; padding:2px 6px; border-radius:4px;">nama@fai.unipdu.ac.id</code>
+                </li>
+                <li>
+                  <strong>FIK (Fakultas Ilmu Kesehatan):</strong> 
+                  <code style="color:#0369a1; background:#e0f2fe; padding:2px 6px; border-radius:4px;">nama@fik.unipdu.ac.id</code>
+                </li>
+                <li>
+                  <strong>Fakultas Lainnya:</strong> Menggunakan singkatan fakultas resmi masing-masing diikuti <code>.unipdu.ac.id</code>
+                </li>
+              </ul>
+            </div>
+
+            <p style="font-size:0.8rem; color:var(--text-muted); margin:0;">
+              💡 Email ini digunakan untuk akses <strong>LMS Canvas</strong>, <strong>Google Classroom/Drive</strong>, dan layanan digital UNIPDU lainnya.
             </p>
           </div>
         </article>
 
+        <!-- STEP 2: LOGIN KE GMAIL / GOOGLE WORKSPACE -->
         <article class="guide-step-card">
           <div class="step-number-badge">2</div>
           <div class="step-card-body">
-            <div class="step-card-header"><h3 class="step-title">Buka mail.google.com</h3></div>
-            <p class="step-desc">Email institusi UNIPDU terintegrasi resmi dengan Google Workspace for Education. Masuk ke halaman login Gmail.</p>
+            <div class="step-card-header">
+              <h3 class="step-title">Masuk ke Google Workspace (Gmail)</h3>
+              <span class="step-tag">Akses Web</span>
+            </div>
+            <p class="step-desc">
+              Email institusi UNIPDU terintegrasi langsung dengan layanan Google Workspace for Education. Anda dapat membukanya melalui browser di <strong>mail.google.com</strong> atau aplikasi Gmail di ponsel.
+            </p>
             <div class="step-mockup-box">
               <span class="step-mockup-url">https://mail.google.com</span>
               <a href="https://mail.google.com" target="_blank" class="step-action-btn">Buka Gmail &rarr;</a>
@@ -62,30 +109,83 @@
           </div>
         </article>
 
+        <!-- STEP 3: LOGIN & MASUKKAN PASSWORD PERDANA -->
         <article class="guide-step-card">
           <div class="step-number-badge">3</div>
           <div class="step-card-body">
-            <div class="step-card-header"><h3 class="step-title">Masukkan Password Perdana &amp; Buat Password Baru</h3></div>
-            <p class="step-desc">Gunakan password default yang diterbitkan Puskomnet saat registrasi mahasiswa baru, kemudian ikuti instruksi Google untuk mengganti kata sandi pribadi Anda.</p>
+            <div class="step-card-header">
+              <h3 class="step-title">Aktivasi &amp; Pembuatan Password Pribadi</h3>
+              <span class="step-tag">Keamanan Akun</span>
+            </div>
+            <p class="step-desc">
+              Saat pertama kali login, gunakan kata sandi awal yang diterbitkan oleh Puskomnet / bagian akademik. Ikuti panduan Google untuk membuat kata sandi baru yang kuat (kombinasi huruf besar, kecil, angka, dan simbol) serta aktifkan nomor pemulihan.
+            </p>
           </div>
         </article>
 
-        <article class="guide-step-card">
-          <div class="step-number-badge">4</div>
+        <!-- STEP 4: CARA RESET PASSWORD VIA SIAKAD -->
+        <article class="guide-step-card" style="border-left: 4px solid #059669;">
+          <div class="step-number-badge" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">4</div>
           <div class="step-card-body">
-            <div class="step-card-header"><h3 class="step-title">Jika Lupa Password Email Institusi</h3></div>
-            <p class="step-desc">Datang langsung ke unit <strong>Puskomnet Gedung Rektorat UNIPDU</strong> dengan menunjukkan KTM (Kartu Tanda Mahasiswa) untuk permohonan reset password.</p>
+            <div class="step-card-header">
+              <h3 class="step-title">Lupa Password? Ajukan Reset Lewat SIAKAD</h3>
+              <span class="step-tag" style="background:#fef3c7; color:#92400e; font-weight:700;">⭐ Layanan Mandiri</span>
+            </div>
+            <p class="step-desc">
+              Jika Anda lupa kata sandi email institusi, Anda <strong>dapat mengajukan permohonan reset password secara mandiri melalui portal SIAKAD</strong> di <code>https://siakad.unipdu.ac.id</code>:
+            </p>
+            <ol style="margin: 0 0 14px 18px; padding: 0; font-size: 0.84rem; color: var(--text-body); line-height: 1.65;">
+              <li>Login ke akun SIAKAD Anda di <strong>siakad.unipdu.ac.id</strong> menggunakan NIM/NIDN.</li>
+              <li>Pilih menu profil pengguna atau opsi <strong>Pengajuan Reset Password Email Institusi</strong>.</li>
+              <li>Ikuti instruksi sistem untuk menerima kata sandi baru atau kode pemulihan.</li>
+            </ol>
+            <div class="step-mockup-box">
+              <span class="step-mockup-url">https://siakad.unipdu.ac.id</span>
+              <a href="https://siakad.unipdu.ac.id" target="_blank" class="step-action-btn" style="background:#d97706;">
+                Ajukan di SIAKAD UNIPDU &rarr;
+              </a>
+            </div>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0;">
+              *Apabila Anda juga mengalami kendala masuk ke akun SIAKAD, silakan hubungi langsung tim <strong>Puskomnet Gedung Rektorat UNIPDU</strong> dengan membawa KTM (Kartu Tanda Mahasiswa).
+            </p>
           </div>
         </article>
+
+      </section>
+
+      <!-- Help Card -->
+      <section class="visi-misi-box" style="margin-bottom: 24px; text-align: left;">
+        <div class="visi-misi-badge">📞 Pusat Bantuan Puskomnet UNIPDU</div>
+        <p style="font-size: 0.86rem; color: #064e3b; margin: 10px 0 14px; line-height: 1.6;">
+          Perlu bantuan aktivasi email, sinkronisasi LMS Canvas, atau verifikasi data akun mahasiswa? Tim Puskomnet UNIPDU siap membantu Anda pada jam kerja operasional kampus.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <a href="https://siakad.unipdu.ac.id" target="_blank" class="step-action-btn">
+            Buka Portal SIAKAD &rarr;
+          </a>
+          <a href="panduan-canvas.html" class="step-action-btn" style="background:#E6261F;">
+            Panduan Canvas LMS &rarr;
+          </a>
+          <a href="panduan.html" class="step-action-btn" style="background:#ffffff; color:#047857; border:1px solid #a7f3d0;">
+            Kembali ke Daftar Panduan
+          </a>
+        </div>
       </section>
     </main>
 
+    <!-- Footer -->
     <footer class="campus-footer">
       <div><strong>&copy; 2026 Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang</strong></div>
-      <div>Pusat Komputer &amp; Jaringan (Puskomnet)</div>
+      <div>Pusat Komputer &amp; Jaringan (Puskomnet) &bull; Gedung Rektorat UNIPDU</div>
+      <div style="margin-top: 4px;">
+        <a href="https://unipdu.ac.id/" target="_blank">unipdu.ac.id</a> &bull; 
+        <a href="https://siakad.unipdu.ac.id/" target="_blank">siakad.unipdu.ac.id</a> &bull; 
+        <a href="https://canvas.unipdu.ac.id/" target="_blank">canvas.unipdu.ac.id</a>
+      </div>
     </footer>
   </div>
 
+  <!-- Mobile Bottom Nav -->
   <nav class="mobile-bottom-nav">
     <a href="login.html" class="bottom-nav-item"><span class="bottom-nav-icon">↩️</span><span class="bottom-nav-label">Login</span></a>
     <a href="https://siakad.unipdu.ac.id/" target="_blank" class="bottom-nav-item"><span class="bottom-nav-icon">🎓</span><span class="bottom-nav-label">SIAKAD</span></a>
