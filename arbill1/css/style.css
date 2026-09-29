@@ -122,7 +122,7 @@ body {
   -webkit-backdrop-filter: blur(28px);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-xl);
-  padding: 34px 28px;
+  padding: 20px 20px 24px;
   box-shadow: var(--shadow-lg);
   position: relative;
   z-index: 1;
@@ -133,12 +133,13 @@ body {
   border-color: rgba(255, 255, 255, 0.22);
 }
 
-/* Top Action Bar (Theme Switcher + Live Clock) */
+/* Top Action Bar (Live Time + Brand Icon Center + Theme Switcher) */
 .top-action-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  gap: 8px;
+  margin-bottom: 10px;
 }
 
 .live-time-widget {
@@ -152,6 +153,7 @@ body {
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text-secondary);
+  white-space: nowrap;
 }
 
 .live-dot {
@@ -201,19 +203,20 @@ body {
 /* Brand Header */
 .brand-header {
   text-align: center;
-  margin-bottom: 22px;
+  margin-bottom: 14px;
 }
 
 .brand-icon {
-  width: 64px;
-  height: 64px;
+  width: 52px;
+  height: 52px;
   background: var(--gradient-main);
-  border-radius: 20px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--shadow-glow);
-  margin: 0 auto 14px;
+  margin: 0;
+  flex-shrink: 0;
   transition: transform 0.3s ease;
 }
 
@@ -222,24 +225,26 @@ body {
 }
 
 .brand-icon svg {
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   fill: #ffffff;
 }
 
 .brand-title {
-  font-size: 1.65rem;
+  font-size: 1.55rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  margin-bottom: 2px;
+  line-height: 1.2;
 }
 
 .brand-subtitle {
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   color: var(--text-secondary);
-  margin-top: 5px;
+  margin-top: 3px;
   display: flex;
   align-items: center;
   justify-content: center;
