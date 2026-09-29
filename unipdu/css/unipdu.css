@@ -1,38 +1,48 @@
 /* ====================================================================
- * UNIPDU JOMBANG - PRESTIGIOUS ACADEMIC HOTSPOT STYLESHEET
+ * UNIPDU JOMBANG - PRESTIGIOUS ACADEMIC HOTSPOT (LIGHT MODERN THEME)
  * Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang
+ * Desain Bersih, Terang, Modern, & Profesional Sivitas Akademika
  * ==================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
+  /* Campus Colors: Emerald Green & Academic Gold */
   --primary-emerald: #064e3b;
   --primary-green: #047857;
-  --primary-light: #10b981;
-  --accent-gold: #f59e0b;
-  --accent-gold-hover: #d97706;
-  --accent-cyan: #06b6d4;
-  --accent-rose: #f43f5e;
+  --primary-light: #059669;
+  --primary-mint: #10b981;
+  --primary-tint: #ecfdf5;
   
-  --bg-deep: #09121d;
-  --bg-surface: rgba(15, 23, 42, 0.78);
-  --bg-card: rgba(30, 41, 59, 0.7);
-  --border-glass: rgba(16, 185, 129, 0.22);
-  --border-glass-hover: rgba(52, 211, 153, 0.45);
+  --accent-gold: #d97706;
+  --accent-gold-light: #f59e0b;
+  --accent-amber-bg: #fffbeb;
+  --accent-amber-border: #fde68a;
   
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --text-emerald: #6ee7b7;
-  --text-gold: #fde047;
+  /* Modern Crisp Light Theme Surfaces */
+  --bg-body: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-soft: #f1f5f9;
+  --border-light: #e2e8f0;
+  --border-focus: #059669;
+  
+  /* High-Contrast Typography */
+  --text-title: #0f172a;
+  --text-body: #334155;
+  --text-muted: #64748b;
+  --text-emerald: #047857;
+  --text-amber: #92400e;
 
+  /* Geometry & Shadows */
   --radius-sm: 8px;
   --radius-md: 14px;
   --radius-lg: 20px;
   --radius-full: 9999px;
 
-  --shadow-glow: 0 10px 30px -5px rgba(4, 120, 87, 0.4);
-  --shadow-gold: 0 8px 25px -4px rgba(245, 158, 11, 0.35);
-  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+  --shadow-soft: 0 4px 15px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03);
+  --shadow-card: 0 20px 40px -12px rgba(15, 23, 42, 0.08), 0 8px 16px -6px rgba(15, 23, 42, 0.04);
+  --shadow-emerald: 0 10px 25px -4px rgba(4, 120, 87, 0.35);
+  --shadow-hover: 0 12px 28px -6px rgba(5, 150, 105, 0.18);
 }
 
 * {
@@ -44,8 +54,12 @@
 
 body {
   font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--bg-deep);
-  color: var(--text-main);
+  background-color: var(--bg-body);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.06) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(4, 120, 87, 0.07) 0px, transparent 50%);
+  color: var(--text-body);
   min-height: 100vh;
   position: relative;
   overflow-x: hidden;
@@ -55,38 +69,38 @@ body {
   line-height: 1.5;
 }
 
-/* Dynamic Ambient Glow Orbs */
+/* Subtle Ambient Glow Elements */
 .ambient-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(90px);
+  filter: blur(80px);
   pointer-events: none;
   z-index: 0;
-  opacity: 0.45;
+  opacity: 0.6;
 }
 
 .orb-top-left {
-  width: 380px;
-  height: 380px;
-  top: -120px;
-  left: -100px;
-  background: radial-gradient(circle, #047857 0%, #064e3b 80%);
+  width: 420px;
+  height: 420px;
+  top: -150px;
+  left: -120px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
 }
 
 .orb-bottom-right {
-  width: 450px;
-  height: 450px;
-  bottom: -150px;
-  right: -100px;
-  background: radial-gradient(circle, #0d9488 0%, #0f172a 80%);
+  width: 480px;
+  height: 480px;
+  bottom: -160px;
+  right: -120px;
+  background: radial-gradient(circle, rgba(4, 120, 87, 0.12) 0%, transparent 70%);
 }
 
 .orb-center-gold {
-  width: 280px;
-  height: 280px;
-  top: 40%;
-  left: 60%;
-  background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+  width: 320px;
+  height: 320px;
+  top: 35%;
+  left: 65%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%);
 }
 
 /* Master Page Container */
@@ -96,27 +110,29 @@ body {
   width: 100%;
   max-width: 1140px;
   margin: 0 auto;
-  padding: 20px 16px 30px;
+  padding: 20px 16px 28px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-/* Top Campus Header Bar */
+/* ==============================================================
+ * TOP CAMPUS NAVIGATION BAR (LIGHT MODE)
+ * ============================================================== */
 .campus-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 14px;
-  background: rgba(15, 23, 42, 0.65);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border-glass);
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   padding: 12px 20px;
   margin-bottom: 24px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-soft);
 }
 
 .campus-brand {
@@ -128,9 +144,10 @@ body {
 
 .campus-logo-wrap {
   background: #ffffff;
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: var(--radius-md);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,16 +166,16 @@ body {
 }
 
 .campus-title-h1 {
-  font-size: 1.15rem;
+  font-size: 1.18rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-title);
   letter-spacing: -0.01em;
   line-height: 1.25;
 }
 
 .campus-tagline {
-  font-size: 0.75rem;
-  color: var(--accent-gold);
+  font-size: 0.76rem;
+  color: var(--primary-green);
   font-weight: 600;
   letter-spacing: 0.2px;
 }
@@ -167,43 +184,25 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;
 }
 
 .badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(4, 120, 87, 0.18);
-  border: 1px solid rgba(52, 211, 153, 0.35);
-  color: var(--text-emerald);
-  padding: 5px 12px;
+  background: #fef3c7;
+  border: 1px solid #fde68a;
+  color: #92400e;
+  padding: 6px 14px;
   border-radius: var(--radius-full);
-  font-size: 0.74rem;
-  font-weight: 600;
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.1);
 }
 
-.badge-pulse-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: #10b981;
-  box-shadow: 0 0 8px #10b981;
-  animation: pulseDot 2s infinite ease-in-out;
-}
-
-@keyframes pulseDot {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.5; }
-}
-
-.badge-ssl {
-  background: rgba(6, 182, 212, 0.15);
-  border-color: rgba(6, 182, 212, 0.35);
-  color: #67e8f9;
-}
-
-/* Main Split Showcase Layout */
+/* ==============================================================
+ * MAIN SPLIT GRID (DESKTOP 2-COLUMNS, MOBILE 1-COLUMN)
+ * ============================================================== */
 .campus-main-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -214,33 +213,31 @@ body {
 
 @media (min-width: 900px) {
   .campus-main-grid {
-    grid-template-columns: 430px 1fr;
+    grid-template-columns: 440px 1fr;
     gap: 28px;
     align-items: start;
   }
 }
 
 /* ==============================================================
- * LEFT: ACADEMIC LOGIN CARD
+ * LEFT: ACADEMIC LOGIN CARD (LIGHT MODE)
  * ============================================================== */
 .login-card {
-  background: var(--bg-surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border-glass);
+  background: #ffffff;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
-  padding: 24px 22px;
+  padding: 26px 24px;
   box-shadow: var(--shadow-card);
   position: relative;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
 .login-card:hover {
-  border-color: var(--border-glass-hover);
+  box-shadow: 0 24px 48px -12px rgba(15, 23, 42, 0.12);
 }
 
 .login-card-header {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -249,36 +246,36 @@ body {
   font-size: 0.7rem;
   text-transform: uppercase;
   font-weight: 800;
-  letter-spacing: 1px;
-  color: var(--accent-gold);
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 3px 10px;
+  letter-spacing: 0.8px;
+  color: var(--primary-green);
+  background: var(--primary-tint);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: 4px 12px;
   border-radius: 6px;
   margin-bottom: 8px;
 }
 
 .login-card-title {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 800;
-  color: #ffffff;
+  color: var(--text-title);
   line-height: 1.3;
 }
 
 .login-card-desc {
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 5px;
 }
 
 /* Role Selector Tabs */
 .role-tabs {
   display: flex;
-  background: rgba(15, 23, 42, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-surface-soft);
+  border: 1px solid var(--border-light);
   border-radius: 12px;
   padding: 4px;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .role-tab-btn {
@@ -286,38 +283,39 @@ body {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 8px 6px;
+  padding: 9px 8px;
   border-radius: 9px;
-  font-size: 0.78rem;
-  font-weight: 600;
+  font-size: 0.8rem;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
+  gap: 6px;
 }
 
 .role-tab-btn.active {
-  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-emerald) 100%);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: #ffffff;
-  box-shadow: 0 3px 12px rgba(4, 120, 87, 0.4);
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.3);
 }
 
 .role-tab-btn:hover:not(.active) {
-  color: #ffffff;
+  color: var(--text-title);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 /* Form Groups & Inputs */
 .form-group {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .form-label {
   display: block;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-title);
   margin-bottom: 6px;
 }
 
@@ -339,26 +337,26 @@ body {
 
 .input-control {
   width: 100%;
-  background: rgba(10, 16, 29, 0.75);
-  border: 1px solid var(--border-glass);
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
   border-radius: 12px;
   padding: 12px 14px 12px 42px;
   font-family: inherit;
-  font-size: 0.88rem;
-  color: #ffffff;
+  font-size: 0.9rem;
+  color: var(--text-title);
   outline: none;
   transition: all 0.25s ease;
 }
 
 .input-control:focus {
   border-color: var(--primary-light);
-  background: rgba(10, 16, 29, 0.95);
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
 }
 
 .input-control::placeholder {
-  color: #64748b;
-  font-size: 0.82rem;
+  color: #94a3b8;
+  font-size: 0.84rem;
 }
 
 .btn-toggle-eye {
@@ -366,9 +364,9 @@ body {
   right: 12px;
   background: transparent;
   border: none;
-  color: #64748b;
+  color: #94a3b8;
   cursor: pointer;
-  padding: 4px;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -376,7 +374,7 @@ body {
 }
 
 .btn-toggle-eye:hover {
-  color: #ffffff;
+  color: var(--text-title);
 }
 
 /* Remember Me & Help Row */
@@ -384,8 +382,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  font-size: 0.76rem;
+  margin-bottom: 18px;
+  font-size: 0.78rem;
   color: var(--text-muted);
 }
 
@@ -394,23 +392,25 @@ body {
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .remember-checkbox {
   accent-color: var(--primary-green);
   cursor: pointer;
-  width: 15px;
-  height: 15px;
+  width: 16px;
+  height: 16px;
 }
 
 .link-reset-pw {
   color: var(--accent-gold);
   text-decoration: none;
-  font-weight: 600;
-  transition: text-decoration 0.2s;
+  font-weight: 700;
+  transition: color 0.2s;
 }
 
 .link-reset-pw:hover {
+  color: var(--accent-gold-hover);
   text-decoration: underline;
 }
 
@@ -418,9 +418,9 @@ body {
 .btn-campus-submit {
   width: 100%;
   background: linear-gradient(135deg, #059669 0%, #047857 50%, #064e3b 100%);
-  border: 1px solid rgba(52, 211, 153, 0.4);
+  border: none;
   border-radius: 12px;
-  padding: 12px 18px;
+  padding: 13px 20px;
   font-family: inherit;
   font-size: 0.92rem;
   font-weight: 800;
@@ -431,7 +431,7 @@ body {
   justify-content: center;
   gap: 8px;
   letter-spacing: 0.3px;
-  box-shadow: var(--shadow-glow);
+  box-shadow: var(--shadow-emerald);
   transition: all 0.25s ease;
   margin-bottom: 14px;
 }
@@ -439,7 +439,7 @@ body {
 .btn-campus-submit:hover {
   background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
   transform: translateY(-2px);
-  box-shadow: 0 12px 25px rgba(4, 120, 87, 0.55);
+  box-shadow: 0 14px 28px rgba(4, 120, 87, 0.45);
 }
 
 .btn-campus-submit:active {
@@ -449,14 +449,14 @@ body {
 /* Guest / Trial Button */
 .btn-guest-trial {
   width: 100%;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  background: #fef3c7;
+  border: 1px solid #fde68a;
   border-radius: 12px;
-  padding: 10px 14px;
+  padding: 11px 14px;
   font-family: inherit;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   font-weight: 700;
-  color: var(--accent-gold);
+  color: #92400e;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -467,81 +467,82 @@ body {
 }
 
 .btn-guest-trial:hover {
-  background: rgba(245, 158, 11, 0.22);
-  border-color: var(--accent-gold);
-  color: #ffffff;
+  background: #fde68a;
+  color: #78350f;
   transform: translateY(-1px);
 }
 
 /* MikroTik Error Alert Box */
 .campus-alert {
-  background: rgba(244, 63, 94, 0.15);
-  border: 1px solid rgba(244, 63, 94, 0.4);
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
   border-radius: 10px;
-  padding: 10px 14px;
+  padding: 11px 14px;
   margin-top: 12px;
   margin-bottom: 14px;
-  font-size: 0.78rem;
-  color: #fda4af;
+  font-size: 0.8rem;
+  color: #be123c;
   display: flex;
   align-items: center;
   gap: 8px;
   line-height: 1.4;
+  font-weight: 600;
 }
 
 /* SIAKAD Notice Box */
 .siakad-notice-box {
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(4, 120, 87, 0.12) 100%);
-  border: 1px dashed rgba(245, 158, 11, 0.45);
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 14px 16px;
   margin-top: 14px;
 }
 
 .siakad-notice-title {
-  font-size: 0.76rem;
+  font-size: 0.8rem;
   font-weight: 800;
-  color: var(--accent-gold);
+  color: #92400e;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .siakad-notice-body {
-  font-size: 0.73rem;
-  color: #cbd5e1;
+  font-size: 0.76rem;
+  color: #78350f;
   line-height: 1.45;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .siakad-notice-body strong {
-  color: #ffffff;
+  color: #451a03;
 }
 
 .btn-siakad-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: rgba(245, 158, 11, 0.2);
-  border: 1px solid var(--accent-gold);
+  background: #d97706;
+  border: none;
   color: #ffffff;
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  padding: 6px 12px;
+  padding: 7px 14px;
   border-radius: 8px;
   text-decoration: none;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.25);
   transition: all 0.2s ease;
 }
 
 .btn-siakad-link:hover {
-  background: var(--accent-gold);
-  color: #000000;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+  background: #b45309;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
 }
 
 /* ==============================================================
- * RIGHT: SHOWCASE BANNER & CAMPUS HIGHLIGHTS
+ * RIGHT: SHOWCASE BANNER & CAMPUS HIGHLIGHTS (LIGHT MODE)
  * ============================================================== */
 .showcase-card {
   display: flex;
@@ -550,8 +551,8 @@ body {
 }
 
 .campus-banner-wrapper {
-  background: var(--bg-surface);
-  border: 1px solid var(--border-glass);
+  background: #ffffff;
+  border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: var(--shadow-card);
@@ -576,13 +577,13 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(9, 18, 29, 0.95) 0%, rgba(9, 18, 29, 0.6) 70%, transparent 100%);
-  padding: 20px 18px 12px;
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.92) 0%, rgba(15, 23, 42, 0.6) 65%, transparent 100%);
+  padding: 22px 18px 14px;
   color: #ffffff;
 }
 
 .banner-caption-title {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 800;
   color: #ffffff;
   display: flex;
@@ -591,8 +592,8 @@ body {
 }
 
 .banner-caption-sub {
-  font-size: 0.74rem;
-  color: var(--text-emerald);
+  font-size: 0.76rem;
+  color: #6ee7b7;
   margin-top: 2px;
 }
 
@@ -600,56 +601,55 @@ body {
 .portals-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
 
 .portal-tile {
-  background: var(--bg-surface);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid var(--border-light);
   border-radius: 12px;
-  padding: 12px 14px;
+  padding: 14px;
   text-decoration: none;
-  color: #ffffff;
+  color: var(--text-title);
   display: flex;
   flex-direction: column;
   gap: 4px;
+  box-shadow: var(--shadow-soft);
   transition: all 0.25s ease;
-  backdrop-filter: blur(12px);
 }
 
 .portal-tile:hover {
-  border-color: var(--primary-light);
-  background: rgba(30, 41, 59, 0.85);
+  border-color: var(--primary-mint);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.25);
+  box-shadow: var(--shadow-hover);
 }
 
 .portal-icon {
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   margin-bottom: 2px;
 }
 
 .portal-name {
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 800;
+  color: var(--text-title);
 }
 
 .portal-sub {
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
-/* Visi Misi Text Card */
+/* Visi Misi Text Card (Light Academic Quote) */
 .visi-misi-box {
-  background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(15, 23, 42, 0.75) 100%);
-  border: 1px solid var(--border-glass);
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%);
+  border: 1px solid #a7f3d0;
   border-radius: var(--radius-md);
-  padding: 16px 18px;
+  padding: 18px 22px;
   text-align: center;
-  backdrop-filter: blur(14px);
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-soft);
 }
 
 .visi-misi-box::before {
@@ -657,32 +657,32 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  width: 4px;
+  width: 5px;
   height: 100%;
-  background: linear-gradient(to bottom, var(--accent-gold), var(--primary-light));
+  background: linear-gradient(to bottom, #d97706, #059669);
 }
 
 .visi-misi-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(245, 158, 11, 0.15);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  color: var(--accent-gold);
-  font-size: 0.68rem;
+  background: #d1fae5;
+  border: 1px solid #6ee7b7;
+  color: #065f46;
+  font-size: 0.7rem;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 1px;
-  padding: 3px 10px;
+  padding: 4px 12px;
   border-radius: 6px;
   margin-bottom: 8px;
 }
 
 .visi-misi-quote {
-  font-size: 0.95rem;
+  font-size: 0.98rem;
   font-weight: 700;
-  color: #ffffff;
-  line-height: 1.45;
+  color: #1e293b;
+  line-height: 1.5;
   font-style: italic;
   letter-spacing: -0.01em;
 }
@@ -691,31 +691,63 @@ body {
 .campus-footer {
   margin-top: auto;
   text-align: center;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  font-size: 0.75rem;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+  font-size: 0.78rem;
   color: var(--text-muted);
   line-height: 1.6;
 }
 
 .campus-footer strong {
-  color: #ffffff;
+  color: var(--text-title);
 }
 
 .campus-footer a {
-  color: var(--accent-gold);
+  color: var(--primary-green);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .campus-footer a:hover {
   text-decoration: underline;
 }
 
+/* ==============================================================
+ * STATUS PAGE CONNECTION DETAILS (LIGHT THEME)
+ * ============================================================== */
+.status-details-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 18px;
+}
+
+.status-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.84rem;
+}
+
+.status-row:last-child {
+  border-bottom: none;
+}
+
+.status-row .label {
+  color: var(--text-muted);
+}
+
+.status-row .val {
+  color: var(--text-title);
+  font-weight: 700;
+}
+
 /* Responsive Tweaks */
 @media (max-width: 600px) {
   .campus-topbar {
-    padding: 10px 14px;
+    padding: 12px 14px;
     flex-direction: column;
     align-items: flex-start;
   }
@@ -723,6 +755,6 @@ body {
     padding: 20px 16px;
   }
   .campus-title-h1 {
-    font-size: 1rem;
+    font-size: 1.05rem;
   }
 }

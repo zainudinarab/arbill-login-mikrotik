@@ -68,7 +68,7 @@
       <section class="login-card">
         
         <div class="login-card-header" style="text-align: left; margin-bottom: 14px;">
-          <span class="login-badge-sub" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(52, 211, 153, 0.3);">
+          <span class="login-badge-sub">
             Sesi Hotspot Aktif
           </span>
           <h2 class="login-card-title" style="font-size: 1.25rem;">
@@ -79,40 +79,40 @@
           <p class="login-card-desc">Perangkat Anda berhasil tersambung ke jaringan hotspot kampus UNIPDU.</p>
         </div>
 
-        <!-- Connection Details Table List -->
-        <div style="background: rgba(10, 16, 29, 0.7); border: 1px solid var(--border-glass); border-radius: 12px; padding: 12px 14px; margin-bottom: 18px;">
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
-            <span style="color: var(--text-muted);">IP Address:</span>
-            <strong style="color: #ffffff; font-family: monospace;">$(ip)</strong>
+        <!-- Connection Details Table List (Light Modern) -->
+        <div class="status-details-box">
+          <div class="status-row">
+            <span class="label">IP Address:</span>
+            <strong class="val" style="font-family: monospace;">$(ip)</strong>
           </div>
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
-            <span style="color: var(--text-muted);">MAC Address:</span>
-            <strong style="color: #cbd5e1; font-family: monospace;">$(mac)</strong>
+          <div class="status-row">
+            <span class="label">MAC Address:</span>
+            <strong class="val" style="font-family: monospace; color: #475569;">$(mac)</strong>
           </div>
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
-            <span style="color: var(--text-muted);">Lama Terhubung:</span>
-            <strong style="color: var(--text-emerald);">$(uptime)</strong>
+          <div class="status-row">
+            <span class="label">Lama Terhubung:</span>
+            <strong class="val" style="color: var(--primary-green);">$(uptime)</strong>
           </div>
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
-            <span style="color: var(--text-muted);">Trafik Data:</span>
-            <strong style="color: #67e8f9;">📥 $(bytes-out-nice) | 📤 $(bytes-in-nice)</strong>
+          <div class="status-row">
+            <span class="label">Trafik Data:</span>
+            <strong class="val" style="color: #0284c7;">📥 $(bytes-out-nice) | 📤 $(bytes-in-nice)</strong>
           </div>
           $(if session-time-left)
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
-            <span style="color: var(--text-muted);">Sisa Waktu:</span>
-            <strong style="color: var(--accent-gold);">$(session-time-left)</strong>
+          <div class="status-row">
+            <span class="label">Sisa Waktu:</span>
+            <strong class="val" style="color: var(--accent-gold);">$(session-time-left)</strong>
           </div>
           $(endif)
           $(if remain-bytes-total)
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 0.82rem;">
-            <span style="color: var(--text-muted);">Sisa Kuota:</span>
-            <strong style="color: #38bdf8;">$(remain-bytes-total-nice)</strong>
+          <div class="status-row">
+            <span class="label">Sisa Kuota:</span>
+            <strong class="val" style="color: #0284c7;">$(remain-bytes-total-nice)</strong>
           </div>
           $(endif)
           $(if refresh-timeout)
-          <div style="display: flex; justify-content: space-between; padding: 7px 0; font-size: 0.78rem;">
-            <span style="color: var(--text-muted);">Pembaruan Status:</span>
-            <span style="color: #94a3b8;">Tiap $(refresh-timeout)</span>
+          <div class="status-row">
+            <span class="label">Pembaruan Status:</span>
+            <span class="val" style="color: #64748b; font-weight: normal;">Tiap $(refresh-timeout)</span>
           </div>
           $(endif)
         </div>
