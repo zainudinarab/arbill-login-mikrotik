@@ -1,0 +1,697 @@
+/* ====================================================================
+ * UNIPDU JOMBANG - PRESTIGIOUS ACADEMIC HOTSPOT STYLESHEET
+ * Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang
+ * ==================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary-emerald: #064e3b;
+  --primary-green: #047857;
+  --primary-light: #10b981;
+  --accent-gold: #f59e0b;
+  --accent-gold-hover: #d97706;
+  --accent-cyan: #06b6d4;
+  --accent-rose: #f43f5e;
+  
+  --bg-deep: #09121d;
+  --bg-surface: rgba(15, 23, 42, 0.78);
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --border-glass: rgba(16, 185, 129, 0.22);
+  --border-glass-hover: rgba(52, 211, 153, 0.45);
+  
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-emerald: #6ee7b7;
+  --text-gold: #fde047;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  --shadow-glow: 0 10px 30px -5px rgba(4, 120, 87, 0.4);
+  --shadow-gold: 0 8px 25px -4px rgba(245, 158, 11, 0.35);
+  --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.6);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Poppins', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  line-height: 1.5;
+}
+
+/* Dynamic Ambient Glow Orbs */
+.ambient-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.45;
+}
+
+.orb-top-left {
+  width: 380px;
+  height: 380px;
+  top: -120px;
+  left: -100px;
+  background: radial-gradient(circle, #047857 0%, #064e3b 80%);
+}
+
+.orb-bottom-right {
+  width: 450px;
+  height: 450px;
+  bottom: -150px;
+  right: -100px;
+  background: radial-gradient(circle, #0d9488 0%, #0f172a 80%);
+}
+
+.orb-center-gold {
+  width: 280px;
+  height: 280px;
+  top: 40%;
+  left: 60%;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.25) 0%, transparent 70%);
+}
+
+/* Master Page Container */
+.page-wrapper {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 20px 16px 30px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Top Campus Header Bar */
+.campus-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 12px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+}
+
+.campus-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.campus-logo-wrap {
+  background: #ffffff;
+  padding: 5px 8px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.campus-logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+.campus-meta-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.campus-title-h1 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.campus-tagline {
+  font-size: 0.75rem;
+  color: var(--accent-gold);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.topbar-status-badges {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.badge-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(4, 120, 87, 0.18);
+  border: 1px solid rgba(52, 211, 153, 0.35);
+  color: var(--text-emerald);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.badge-pulse-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #10b981;
+  box-shadow: 0 0 8px #10b981;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.5; }
+}
+
+.badge-ssl {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.35);
+  color: #67e8f9;
+}
+
+/* Main Split Showcase Layout */
+.campus-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+@media (min-width: 900px) {
+  .campus-main-grid {
+    grid-template-columns: 430px 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+}
+
+/* ==============================================================
+ * LEFT: ACADEMIC LOGIN CARD
+ * ============================================================== */
+.login-card {
+  background: var(--bg-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  padding: 24px 22px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+  transition: border-color 0.3s ease;
+}
+
+.login-card:hover {
+  border-color: var(--border-glass-hover);
+}
+
+.login-card-header {
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.login-badge-sub {
+  display: inline-block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--accent-gold);
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 3px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.login-card-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.3;
+}
+
+.login-card-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Role Selector Tabs */
+.role-tabs {
+  display: flex;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 18px;
+}
+
+.role-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 8px 6px;
+  border-radius: 9px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.role-tab-btn.active {
+  background: linear-gradient(135deg, var(--primary-green) 0%, var(--primary-emerald) 100%);
+  color: #ffffff;
+  box-shadow: 0 3px 12px rgba(4, 120, 87, 0.4);
+}
+
+.role-tab-btn:hover:not(.active) {
+  color: #ffffff;
+}
+
+/* Form Groups & Inputs */
+.form-group {
+  margin-bottom: 14px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.input-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: 14px;
+  color: var(--primary-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.input-control {
+  width: 100%;
+  background: rgba(10, 16, 29, 0.75);
+  border: 1px solid var(--border-glass);
+  border-radius: 12px;
+  padding: 12px 14px 12px 42px;
+  font-family: inherit;
+  font-size: 0.88rem;
+  color: #ffffff;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+.input-control:focus {
+  border-color: var(--primary-light);
+  background: rgba(10, 16, 29, 0.95);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+}
+
+.input-control::placeholder {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.btn-toggle-eye {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+.btn-toggle-eye:hover {
+  color: #ffffff;
+}
+
+/* Remember Me & Help Row */
+.remember-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+}
+
+.remember-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.remember-checkbox {
+  accent-color: var(--primary-green);
+  cursor: pointer;
+  width: 15px;
+  height: 15px;
+}
+
+.link-reset-pw {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-weight: 600;
+  transition: text-decoration 0.2s;
+}
+
+.link-reset-pw:hover {
+  text-decoration: underline;
+}
+
+/* Primary Submit Button */
+.btn-campus-submit {
+  width: 100%;
+  background: linear-gradient(135deg, #059669 0%, #047857 50%, #064e3b 100%);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.3px;
+  box-shadow: var(--shadow-glow);
+  transition: all 0.25s ease;
+  margin-bottom: 14px;
+}
+
+.btn-campus-submit:hover {
+  background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(4, 120, 87, 0.55);
+}
+
+.btn-campus-submit:active {
+  transform: scale(0.98);
+}
+
+/* Guest / Trial Button */
+.btn-guest-trial {
+  width: 100%;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  margin-bottom: 14px;
+}
+
+.btn-guest-trial:hover {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: var(--accent-gold);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+/* MikroTik Error Alert Box */
+.campus-alert {
+  background: rgba(244, 63, 94, 0.15);
+  border: 1px solid rgba(244, 63, 94, 0.4);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  margin-bottom: 14px;
+  font-size: 0.78rem;
+  color: #fda4af;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+/* SIAKAD Notice Box */
+.siakad-notice-box {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(4, 120, 87, 0.12) 100%);
+  border: 1px dashed rgba(245, 158, 11, 0.45);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-top: 14px;
+}
+
+.siakad-notice-title {
+  font-size: 0.76rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.siakad-notice-body {
+  font-size: 0.73rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.siakad-notice-body strong {
+  color: #ffffff;
+}
+
+.btn-siakad-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid var(--accent-gold);
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-siakad-link:hover {
+  background: var(--accent-gold);
+  color: #000000;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+}
+
+/* ==============================================================
+ * RIGHT: SHOWCASE BANNER & CAMPUS HIGHLIGHTS
+ * ============================================================== */
+.showcase-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.campus-banner-wrapper {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.campus-banner-img {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.campus-banner-wrapper:hover .campus-banner-img {
+  transform: scale(1.02);
+}
+
+.campus-banner-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(9, 18, 29, 0.95) 0%, rgba(9, 18, 29, 0.6) 70%, transparent 100%);
+  padding: 20px 18px 12px;
+  color: #ffffff;
+}
+
+.banner-caption-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.banner-caption-sub {
+  font-size: 0.74rem;
+  color: var(--text-emerald);
+  margin-top: 2px;
+}
+
+/* Visi Misi & Academic Portal Links Grid */
+.portals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 10px;
+}
+
+.portal-tile {
+  background: var(--bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-decoration: none;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.25s ease;
+  backdrop-filter: blur(12px);
+}
+
+.portal-tile:hover {
+  border-color: var(--primary-light);
+  background: rgba(30, 41, 59, 0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(4, 120, 87, 0.25);
+}
+
+.portal-icon {
+  font-size: 1.3rem;
+  margin-bottom: 2px;
+}
+
+.portal-name {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.portal-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Visi Misi Card */
+.visi-misi-box {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  backdrop-filter: blur(14px);
+}
+
+.visi-misi-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Campus Footer */
+.campus-footer {
+  margin-top: auto;
+  text-align: center;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.campus-footer strong {
+  color: #ffffff;
+}
+
+.campus-footer a {
+  color: var(--accent-gold);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.campus-footer a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive Tweaks */
+@media (max-width: 600px) {
+  .campus-topbar {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .login-card {
+    padding: 20px 16px;
+  }
+  .campus-title-h1 {
+    font-size: 1rem;
+  }
+}
