@@ -186,18 +186,29 @@ body {
   gap: 10px;
 }
 
+/* Jam Digital Header - Warna Jelas & Kontras Tinggi */
+.topbar-clock-pill,
 .badge-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  color: #92400e;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
   padding: 6px 14px;
   border-radius: var(--radius-full);
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
-  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  letter-spacing: 0.3px;
+}
+
+.topbar-clock-pill .clock-time,
+.badge-pill #clock-display {
+  color: #0f172a;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Inter', monospace, sans-serif;
 }
 
 /* ==============================================================
@@ -627,6 +638,33 @@ body {
 .portal-icon {
   font-size: 1.4rem;
   margin-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+}
+
+.portal-icon svg,
+.portal-icon img {
+  width: 24px;
+  height: 24px;
+  display: block;
+}
+
+.canvas-icon-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background-color: #E6261F;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(230, 38, 31, 0.25);
+  flex-shrink: 0;
+}
+
+.canvas-icon-box svg {
+  width: 18px;
+  height: 18px;
 }
 
 .portal-name {
@@ -744,17 +782,80 @@ body {
   font-weight: 700;
 }
 
-/* Responsive Tweaks */
-@media (max-width: 600px) {
+/* Responsive Tweaks (Tampilan HP / Mobile) */
+@media (max-width: 768px) {
   .campus-topbar {
     padding: 12px 14px;
+    position: relative;
+    display: flex;
     flex-direction: column;
     align-items: flex-start;
   }
+
+  .campus-brand {
+    padding-right: 96px; /* Ruang aman agar teks brand tidak menimpa jam di kanan atas */
+    gap: 10px;
+    max-width: 100%;
+  }
+
+  .campus-logo-wrap {
+    padding: 3px 6px;
+    flex-shrink: 0;
+  }
+
+  .campus-logo-img {
+    height: 38px;
+    max-width: 90px;
+  }
+
+  .campus-meta-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .campus-title-h1 {
+    font-size: 0.95rem;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .campus-tagline {
+    font-size: 0.65rem;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Jam diletakkan persis di pojok kanan atas tampilan HP */
+  .topbar-status-badges {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    margin: 0;
+    z-index: 5;
+  }
+
+  .topbar-clock-pill,
+  .badge-pill {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    background: #ffffff !important;
+    border: 1.5px solid #cbd5e1 !important;
+    color: #0f172a !important; /* Warna font gelap tajam & sangat jelas */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .topbar-clock-pill .clock-time,
+  .badge-pill #clock-display {
+    color: #0f172a !important;
+    font-weight: 800;
+  }
+
   .login-card {
     padding: 20px 16px;
-  }
-  .campus-title-h1 {
-    font-size: 1.05rem;
   }
 }
