@@ -1618,7 +1618,7 @@
 
     function handleFabScanClick(e) {
       var cfg = window.APP_CONFIG || {};
-      var qrUrl = cfg.QR_SCANNER_URL || 'https://arbill.arabpay.my.id/myqr/';
+      var qrUrl = cfg.QR_SCANNER_URL || cfg.QR_SCAN_URL || 'https://arbill.arabpay.my.id/myqr/';
       var currentUrl = window.location.href.split('?')[0].split('#')[0];
       var delim = qrUrl.indexOf('?') !== -1 ? '&' : '?';
       var target = qrUrl + delim + 'loginUrl=' + encodeURIComponent(currentUrl);
@@ -1630,7 +1630,7 @@
 
     function updateFabScanLink() {
       var cfg = window.APP_CONFIG || {};
-      var qrUrl = cfg.QR_SCANNER_URL || 'https://arbill.arabpay.my.id/myqr/';
+      var qrUrl = cfg.QR_SCANNER_URL || cfg.QR_SCAN_URL || 'https://arbill.arabpay.my.id/myqr/';
       var linkEl = document.getElementById('fab-scan-link');
       if (linkEl) {
         var currentUrl = window.location.href.split('?')[0].split('#')[0];

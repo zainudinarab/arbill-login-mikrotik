@@ -2,69 +2,54 @@
  * ====================================================================
  * WIFI ARABPAY - PENGATURAN TEMPLATE HOTSPOT MIKROTIK
  * ====================================================================
- * File ini digunakan untuk mengubah semua pengaturan template login
- * tanpa perlu mengedit file login.html.
+ * File ini digunakan untuk mengubah semua pengaturan template login & status
+ * tanpa perlu mengedit file login.html atau status.html.
  */
 
 window.APP_CONFIG = {
   // 1. PENGATURAN URL BILLING SERVER (ARBILBARU)
-  // - Saat uji coba di komputer lokal: 'http://localhost:3006'
-  // - Saat dipasang di router MikroTik fisik:
-  //   Ganti dengan IP Komputer Server Billing Anda, misalnya: 'http://192.168.1.100:3006'
-  //   Atau domain jika pakai Cloudflare/VPN: 'https://billing.arab.net'
   BILLING_URL: 'https://arbill.arabpay.my.id',
 
-  // 1.2. FILTER ROUTER MIKROTIK (OPSIONAL)
-  // Masukkan ID Router (misal: 'rtr-mtv0hjfd') atau Nama Router di Arbill Baru.
-  // Jika diisi, halaman login HANYA mengambil & menampilkan paket voucher milik router ini.
-  // Jika dikosongkan (''), sistem otomatis membaca identity MikroTik atau menampilkan semua paket.
+  // 2. FILTER ROUTER MIKROTIK
+  // Masukkan ID Router atau Nama Router di Arbill Baru (misal: 'DESKTOP-AUTJKVA').
+  // Nilai ini digunakan langsung untuk mengambil voucher & sinkronisasi billing.
   ROUTER_ID: 'DESKTOP-AUTJKVA',
 
-  // 1.5. URL PEMINDAI KAMERA QR CODE VOUCHER (HTTPS)
+  // 3. SCANNER QR / BARCODE HTTPS
   // Browser HP wajib membuka scanner lewat HTTPS agar diizinkan akses kamera
-  QR_SCAN_URL: 'https://arbill.arabpay.my.id/myqr/',
+  QR_SCANNER_URL: 'https://arbill.arabpay.my.id/myqr/',
 
-  // 2. IDENTITAS & BRANDING WIFi
+  // 4. IDENTITAS & BRANDING WIFI
   BRAND_NAME: 'WIFI ARABPAY',
   BRAND_SUBTITLE: 'Super Fast & Secure Internet',
   SSL_BADGE_TEXT: 'HTTPS SSL 256-bit',
 
-  // 3. KONTAK & PEMBELIAN VOUCHER VIA WHATSAPP
+  // 5. KONTAK & PEMBELIAN VOUCHER VIA WHATSAPP
   // Format nomor WhatsApp: gunakan kode negara tanpa simbol + (contoh: 6281234567890)
   WHATSAPP_ADMIN: '6281234567890',
   WHATSAPP_DISPLAY: '0812-3456-7890', // Tampilan nomor di footer
 
-  // 4. SCANNER QR / BARCODE HTTPS (ARBILL CYBER SCANNER)
-  // Menghubungkan ke scanner kamera HTTPS agar kamera langsung aktif di HP Android/iOS
-  // tanpa peringatan browser memblokir kamera di jaringan HTTP.
-  QR_SCANNER_URL: 'https://arbill.arabpay.my.id/myqr/',
-
-  // 4. PENGATURAN JADWAL SHOLAT (100% OFFLINE)
+  // 6. PENGATURAN JADWAL SHOLAT (100% OFFLINE)
   PRAYER_TIMES: {
     ENABLED: true, // true: tampilkan widget jadwal sholat, false: sembunyikan
     CITY_LABEL: 'WIB & Sekitarnya', // Nama kota / wilayah
     TIMEZONE: 7, // 7 = WIB (Jawa/Sumatera), 8 = WITA (Bali/Sulawesi), 9 = WIT (Papua/Maluku)
-    // Koordinat lintang dan bujur (Default: Jakarta/Jawa)
-    LATITUDE: -6.2088,
-    LONGITUDE: 106.8456
+    LATITUDE: -6.2088, // Koordinat lintang (Default: Jakarta/Jawa)
+    LONGITUDE: 106.8456 // Koordinat bujur
   },
 
-  // 5. FORMAT KODE VOUCHER
-  // Pilihan: 'lowercase' (huruf kecil - default Arbill Baru), 'uppercase' (huruf besar), atau 'none' (sesuai ketikan pelanggan)
+  // 7. FORMAT KODE VOUCHER
+  // Pilihan: 'lowercase' (huruf kecil), 'uppercase' (huruf besar), atau 'none' (sesuai ketikan pelanggan)
   VOUCHER_CASE: 'lowercase',
 
-  // 6. FITUR-FITUR TAMPILAN
+  // 8. FITUR-FITUR TAMPILAN
   FEATURES: {
     ENABLE_FLASH_SALE: true, // Tampilkan banner promo Flash Sale jika aktif di billing
     ENABLE_LIVE_CLOCK: true, // Jam digital realtime di sudut atas
     ENABLE_THEME_SWITCHER: true // Tombol pilihan tema Gelap / Gold / Terang
   },
 
-  // 7. LIVE CHAT WIDGET (ARBILL-CHAT)
-  // Pengaturan obrolan langsung diedit lewat tag <script id="chat-widget"> 
-  // di baris paling bawah file login.html & status.html
-
-  // 8. DAFTAR PAKET CADANGAN (FALLBACK)
+  // 9. DAFTAR PAKET CADANGAN (FALLBACK JIKA OFFLINE)
   // Tampil jika server billing sedang offline atau belum terhubung
   FALLBACK_PACKAGES: [
     {
@@ -125,3 +110,6 @@ window.APP_CONFIG = {
     }
   ]
 };
+
+// Alias kompatibilitas jika template lama memanggil QR_SCAN_URL
+window.APP_CONFIG.QR_SCAN_URL = window.APP_CONFIG.QR_SCANNER_URL;
