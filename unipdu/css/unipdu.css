@@ -640,20 +640,51 @@ body {
   color: var(--text-muted);
 }
 
-/* Visi Misi Card */
+/* Visi Misi Text Card */
 .visi-misi-box {
-  background: var(--bg-surface);
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.35) 0%, rgba(15, 23, 42, 0.75) 100%);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-md);
-  padding: 14px;
+  padding: 16px 18px;
   text-align: center;
   backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
 }
 
-.visi-misi-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
+.visi-misi-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--accent-gold), var(--primary-light));
+}
+
+.visi-misi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: var(--accent-gold);
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.visi-misi-quote {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.45;
+  font-style: italic;
+  letter-spacing: -0.01em;
 }
 
 /* Campus Footer */
