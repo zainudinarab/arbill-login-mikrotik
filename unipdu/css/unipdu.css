@@ -1377,12 +1377,24 @@ body {
   transform: translateY(-1px);
 }
 
+.browser-chip img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
 .browser-chip.forbidden {
   background: #fef2f2;
   border-color: #fca5a5;
   color: #991b1b;
   text-decoration: line-through;
   opacity: 0.85;
+}
+
+.browser-chip.forbidden img {
+  filter: grayscale(20%);
 }
 
 /* Steps Timeline Container */
