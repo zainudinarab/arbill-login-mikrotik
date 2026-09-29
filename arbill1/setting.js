@@ -18,7 +18,7 @@ window.APP_CONFIG = {
   // Masukkan ID Router (misal: 'rtr-mtv0hjfd') atau Nama Router di Arbill Baru.
   // Jika diisi, halaman login HANYA mengambil & menampilkan paket voucher milik router ini.
   // Jika dikosongkan (''), sistem otomatis membaca identity MikroTik atau menampilkan semua paket.
-  ROUTER_ID: '',
+  ROUTER_ID: 'DESKTOP-AUTJKVA',
 
   // 1.5. URL PEMINDAI KAMERA QR CODE VOUCHER (HTTPS)
   // Browser HP wajib membuka scanner lewat HTTPS agar diizinkan akses kamera

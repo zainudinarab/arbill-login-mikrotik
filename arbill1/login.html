@@ -1299,6 +1299,9 @@
           var mtIdentity = '$(identity)';
           if (mtIdentity && mtIdentity.indexOf('$') === -1) rId = mtIdentity.trim();
         }
+        if (!rId) {
+          rId = 'DESKTOP-AUTJKVA';
+        }
         if (rId) {
           availEndpoint += (availEndpoint.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
         }

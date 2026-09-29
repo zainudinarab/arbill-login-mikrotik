@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="0">
+  <title>Diagnostik & Tes API Voucher - WiFi ARABPAY</title>
+  <style>
+    :root {
+      --bg-dark: #0a0f1d;
+      --bg-card: rgba(15, 23, 42, 0.85);
+      --border-color: rgba(56, 189, 248, 0.25);
+      --accent-cyan: #06b6d4;
+      --accent-gold: #fbbf24;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      padding: 16px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 860px;
+    }
+
+    .header-box {
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(99, 102, 241, 0.15) 100%);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* URL Control Bar */
+    .control-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+
+    .control-label {
+      font-size: 0.78rem;
+      color: var(--accent-gold);
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .url-input {
+      flex: 1;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-size: 0.82rem;
+      font-family: monospace;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .url-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .btn-fetch {
+      background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.82rem;
+      padding: 10px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: transform 0.15s, opacity 0.15s;
+    }
+
+    .btn-fetch:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-fetch:active {
+      transform: scale(0.97);
+    }
+
+    /* Status Banner */
+    .status-banner {
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      font-size: 0.82rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+
+    .status-banner.loading {
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: #67e8f9;
+    }
+
+    .status-banner.success {
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      color: #6ee7b7;
+    }
+
+    .status-banner.error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      color: #fca5a5;
+    }
+
+    /* Stats Quick Bar */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .stat-card-title {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-card-val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #38bdf8;
+    }
+
+    /* Rendered Packages */
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--accent-gold);
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .packages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .pkg-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .pkg-item:hover {
+      border-color: var(--accent-cyan);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(6, 182, 212, 0.15);
+    }
+
+    .pkg-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: linear-gradient(135deg, #d97706, #b45309);
+      color: #fff;
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-bottom-left-radius: 8px;
+      border-top-right-radius: 11px;
+    }
+
+    .pkg-name {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+
+    .pkg-price {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #22d3ee;
+      margin-bottom: 8px;
+    }
+
+    .pkg-meta-tags {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+
+    .pkg-meta-tag {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      padding: 3px 6px;
+      font-size: 0.7rem;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .pkg-meta-tag .tag-k { color: var(--text-muted); }
+    .pkg-meta-tag .tag-v { font-weight: 700; color: #facc15; }
+
+    /* Raw JSON Viewer */
+    .json-box {
+      background: #050811;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .json-header {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .json-header-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .btn-copy {
+      background: rgba(6, 182, 212, 0.15);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+
+    .btn-copy:hover {
+      background: var(--accent-cyan);
+      color: #000;
+    }
+
+    pre code {
+      display: block;
+      padding: 14px;
+      font-family: Consolas, Monaco, "Courier New", monospace;
+      font-size: 0.74rem;
+      color: #a5f3fc;
+      line-height: 1.5;
+      overflow-x: auto;
+      max-height: 480px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 8px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: rgba(15, 23, 42, 0.6);
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--accent-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Header -->
+    <div class="header-box">
+      <div class="header-title">
+        <span>⚡</span> Diagnostik &amp; Pemantau JSON API Voucher
+      </div>
+      <div class="header-sub">
+        Halaman khusus untuk menguji koneksi langsung dari browser/MikroTik ke API Server Arbill Baru. Membantu memastikan apakah domain sudah ter-bypass di Walled Garden dan data voucher valid.
+      </div>
+    </div>
+
+    <!-- URL Control Card -->
+    <div class="control-card">
+      <label class="control-label" for="api-url-input">🌐 Target URL API Voucher:</label>
+      <div class="input-row">
+        <input type="text" id="api-url-input" class="url-input" 
+               value="https://arbill.arabpay.my.id/api/vouchers/available?router_id=DESKTOP-AUTJKVA">
+        <button type="button" class="btn-fetch" id="btn-fetch" onclick="fetchVoucherData()">
+          <span>🔄 Ambil Data</span>
+        </button>
+      </div>
+      <div style="font-size:0.72rem; color:var(--text-muted); margin-top:6px;">
+        💡 Ganti <code>router_id</code> jika ingin menguji identitas router lain di sistem Arbill.
+      </div>
+    </div>
+
+    <!-- Realtime Status Banner -->
+    <div id="status-banner" class="status-banner loading">
+      <div>⏳</div>
+      <div id="status-text">Sedang menghubungi server API...</div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-card-title">HTTP Status</div>
+        <div class="stat-card-val" id="stat-http-code">--</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">Jumlah Paket</div>
+        <div class="stat-card-val" id="stat-pkg-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">Waktu Respons</div>
+        <div class="stat-card-val" id="stat-latency">-- ms</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card-title">Flash Sale</div>
+        <div class="stat-card-val" id="stat-flash-sale">Tidak Ada</div>
+      </div>
+    </div>
+
+    <!-- Hasil Visualisasi Paket -->
+    <div class="section-title">
+      <span>📦 Paket Voucher Terdeteksi:</span>
+      <span id="pkg-counter-label" style="font-size:0.75rem; color:var(--text-muted);">Memuat...</span>
+    </div>
+    <div id="packages-container" class="packages-grid">
+      <!-- Kartu paket akan dirender otomatis di sini -->
+    </div>
+
+    <!-- Raw JSON Data Box -->
+    <div class="json-box">
+      <div class="json-header">
+        <span class="json-header-title">📄 Raw JSON Response dari Server:</span>
+        <button type="button" class="btn-copy" onclick="copyJson()">📋 Salin JSON</button>
+      </div>
+      <pre><code id="json-output">// Data JSON akan muncul di sini...</code></pre>
+    </div>
+
+    <!-- Navigation Shortcuts -->
+    <div class="nav-links">
+      <a href="login.html" class="nav-btn">⬅ Kembali ke Halaman Login</a>
+      <a href="status.html" class="nav-btn">📊 Halaman Status</a>
+    </div>
+
+  </div>
+
+  <script>
+    function formatIsoDuration(iso) {
+      if (!iso || typeof iso !== 'string') return '';
+      var s = iso.trim().toUpperCase();
+      if (!s.startsWith('P')) {
+        var clean = s.replace(/W/g, ' Minggu ').replace(/D/g, ' Hari ').replace(/H/g, ' Jam ').replace(/M/g, ' Menit ').replace(/S/g, ' Detik');
+        return clean.trim();
+      }
+      var m = s.match(/P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)?/);
+      if (!m) return iso;
+      var yrs = parseInt(m[1] || 0, 10);
+      var mos = parseInt(m[2] || 0, 10);
+      var wks = parseInt(m[3] || 0, 10);
+      var dys = parseInt(m[4] || 0, 10);
+      var hrs = parseInt(m[5] || 0, 10);
+      var mns = parseInt(m[6] || 0, 10);
+      var parts = [];
+      if (yrs > 0) parts.push(yrs + ' Thn');
+      if (mos > 0) parts.push(mos + ' Bln');
+      if (wks > 0) parts.push(wks + ' Minggu');
+      if (dys > 0) parts.push(dys + ' Hari');
+      if (hrs > 0) parts.push(hrs + ' Jam');
+      if (mns > 0) parts.push(mns + ' Mnt');
+      return parts.join(' ') || iso;
+    }
+
+    function getPackageMeta(pkg) {
+      var masaAktif = '';
+      if (pkg.validity_iso) {
+        masaAktif = formatIsoDuration(pkg.validity_iso);
+      } else if (pkg.validity) {
+        masaAktif = formatIsoDuration(pkg.validity);
+      }
+
+      var masaPakai = '';
+      if (pkg.uptime_limit && String(pkg.uptime_limit).trim() !== '') {
+        masaPakai = formatIsoDuration(pkg.uptime_limit);
+      }
+
+      var kuota = 'Unlimited';
+      if (pkg.quota_mb && Number(pkg.quota_mb) > 0) {
+        var qmb = Number(pkg.quota_mb);
+        kuota = qmb >= 1024 ? ((qmb / 1024).toFixed(qmb % 1024 === 0 ? 0 : 1) + ' GB') : (qmb + ' MB');
+      } else if (pkg.quota && String(pkg.quota).trim() !== '') {
+        kuota = String(pkg.quota);
+      }
+
+      if (!masaAktif && !masaPakai) {
+        var n = (pkg.package_name || pkg.name || '').toUpperCase();
+        if (n.indexOf('JAM') !== -1 || n.indexOf('HARI') !== -1 || n.indexOf('BULAN') !== -1) {
+          masaAktif = pkg.package_name || pkg.name;
+          masaPakai = masaAktif;
+        } else {
+          masaAktif = '1 Hari';
+          masaPakai = 'Bebas Pakai';
+        }
+      } else if (masaAktif && !masaPakai) {
+        masaPakai = 'Bebas Pakai';
+      } else if (!masaAktif && masaPakai) {
+        masaAktif = masaPakai;
+      }
+
+      return {
+        aktif: masaAktif || '1 Hari',
+        pakai: masaPakai || 'Bebas Pakai',
+        kuota: kuota || 'Unlimited'
+      };
+    }
+
+    function fetchVoucherData() {
+      var input = document.getElementById('api-url-input');
+      var url = (input.value || '').trim();
+      var banner = document.getElementById('status-banner');
+      var statusText = document.getElementById('status-text');
+      var jsonOut = document.getElementById('json-output');
+      var container = document.getElementById('packages-container');
+      var countLabel = document.getElementById('pkg-counter-label');
+
+      var statHttp = document.getElementById('stat-http-code');
+      var statCount = document.getElementById('stat-pkg-count');
+      var statLatency = document.getElementById('stat-latency');
+      var statFs = document.getElementById('stat-flash-sale');
+
+      if (!url) {
+        alert('Silakan masukkan URL API terlebih dahulu!');
+        return;
+      }
+
+      banner.className = 'status-banner loading';
+      banner.innerHTML = '<div>⏳</div><div id="status-text">Menghubungi server API: <code>' + url + '</code> ...</div>';
+      statHttp.innerText = 'FETCH...';
+      statCount.innerText = '--';
+      statLatency.innerText = '-- ms';
+      jsonOut.innerText = '// Memuat data...';
+      container.innerHTML = '<div style="color:var(--text-muted); font-size:0.8rem; grid-column: 1/-1;">Sedang memproses...</div>';
+
+      var startTime = performance.now();
+
+      fetch(url, {
+        method: 'GET',
+        cache: 'no-cache'
+      })
+      .then(function(res) {
+        var endTime = performance.now();
+        var ms = Math.round(endTime - startTime);
+        statLatency.innerText = ms + ' ms';
+        statHttp.innerText = res.status;
+
+        if (!res.ok) {
+          throw new Error('HTTP ' + res.status + ' (' + res.statusText + ')');
+        }
+        return res.json();
+      })
+      .then(function(data) {
+        banner.className = 'status-banner success';
+        banner.innerHTML = '<div>✅</div><div><strong>Koneksi Berhasil (HTTP 200)!</strong> API Arbill dapat diakses sempurna melalui browser/jaringan hotspot Anda. Walled Garden MikroTik sudah berfungsi.</div>';
+
+        // Tampilkan Raw JSON dengan format rapi (indent 2)
+        jsonOut.innerText = JSON.stringify(data, null, 2);
+
+        var packages = (data && data.packages) ? data.packages : ((data && data.groups) ? data.groups : []);
+        statCount.innerText = packages.length;
+        countLabel.innerText = packages.length + ' Paket Ditemukan';
+
+        if (data.has_flash_sale) {
+          statFs.innerText = '⚡ Aktif (' + (data.flash_sales_count || 1) + ')';
+          statFs.style.color = '#facc15';
+        } else {
+          statFs.innerText = 'Tidak Ada';
+          statFs.style.color = '#38bdf8';
+        }
+
+        if (packages.length === 0) {
+          container.innerHTML = '<div style="color:#ef4444; font-size:0.82rem; grid-column: 1/-1;">⚠️ API merespons dengan sukses, tetapi paket kosong untuk router_id ini. Pastikan nama router_id sesuai dengan yang ada di Arbill Baru.</div>';
+          return;
+        }
+
+        // Render Kartu Paket Visual
+        var html = '';
+        packages.forEach(function(pkg, idx) {
+          var name = pkg.package_name || pkg.name || 'Paket Voucher';
+          var numPrice = Number(pkg.effective_price || pkg.price || 0);
+          var priceText = 'Rp ' + numPrice.toLocaleString('id-ID');
+          var badgeText = pkg.badge || (pkg.is_flash_sale ? 'FLASH SALE' : (idx === 1 ? 'POPULER' : ''));
+          var badgeHtml = badgeText ? '<span class="pkg-badge">' + badgeText + '</span>' : '';
+          var meta = getPackageMeta(pkg);
+
+          html += '<div class="pkg-item">' +
+            badgeHtml +
+            '<div>' +
+              '<div class="pkg-name">' + name + '</div>' +
+              '<div class="pkg-price">' + priceText + '</div>' +
+              '<div class="pkg-meta-tags">' +
+                '<div class="pkg-meta-tag"><span class="tag-k">⏳ Masa Aktif:</span><span class="tag-v">' + meta.aktif + '</span></div>' +
+                '<div class="pkg-meta-tag"><span class="tag-k">⏱️ Masa Pakai:</span><span class="tag-v">' + meta.pakai + '</span></div>' +
+                '<div class="pkg-meta-tag"><span class="tag-k">📦 Kuota Data:</span><span class="tag-v">' + meta.kuota + '</span></div>' +
+              '</div>' +
+            '</div>' +
+            '<div style="font-size:0.68rem; color:#64748b; margin-top:4px;">Profile: ' + (pkg.profile_name || pkg.profile_id || '-') + '</div>' +
+          '</div>';
+        });
+        container.innerHTML = html;
+      })
+      .catch(function(err) {
+        var endTime = performance.now();
+        statLatency.innerText = Math.round(endTime - startTime) + ' ms';
+        statHttp.innerText = 'GAGAL';
+        statCount.innerText = '0';
+
+        banner.className = 'status-banner error';
+        banner.innerHTML = '<div>❌</div><div><strong>Gagal Mengakses API:</strong> ' + err.message + '<br><small style="color:#cbd5e1; margin-top:4px; display:block;">Penyebab umum: Domain <code>arbill.arabpay.my.id</code> belum ter-bypass di <code>/ip hotspot walled-garden</code> MikroTik, atau koneksi internet router belum tersambung ke domain tersebut.</small></div>';
+
+        jsonOut.innerText = '// Error: ' + err.toString();
+        container.innerHTML = '<div style="color:#ef4444; font-size:0.82rem; grid-column: 1/-1;">Gagal memuat paket dari server API.</div>';
+        countLabel.innerText = 'Gagal';
+      });
+    }
+
+    function copyJson() {
+      var text = document.getElementById('json-output').innerText;
+      if (!text || text.startsWith('//')) {
+        alert('Belum ada data JSON yang dapat disalin.');
+        return;
+      }
+      navigator.clipboard.writeText(text).then(function() {
+        alert('✅ Data JSON berhasil disalin ke clipboard!');
+      }).catch(function() {
+        alert('Gagal menyalin otomatis. Silakan pilih teks manual.');
+      });
+    }
+
+    // Auto-fetch saat halaman dibuka
+    document.addEventListener('DOMContentLoaded', fetchVoucherData);
+  </script>
+</body>
+</html>
