@@ -1357,13 +1357,13 @@ body {
 .browser-chip {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   background: #ffffff;
   border: 1.5px solid #cbd5e1;
   color: var(--text-title);
-  padding: 6px 14px;
+  padding: 8px 18px;
   border-radius: var(--radius-full);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 700;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -1378,8 +1378,8 @@ body {
 }
 
 .browser-chip img {
-  width: 18px;
-  height: 18px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
   display: block;
   flex-shrink: 0;
