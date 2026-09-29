@@ -500,7 +500,7 @@
 
     <!-- Tab 2: CENTER PROMINENT FAB SCAN BUTTON (ARBILL CYBER SCANNER) -->
     <div class="fab-scan-wrapper">
-      <a href="https://arbill.arabpay.my.id/myqr/" id="fab-scan-link" class="fab-scan-btn" onclick="return handleFabScanClick(event)" title="Scan QR & Barcode Voucher">
+      <a href="javascript:void(0)" id="fab-scan-link" class="fab-scan-btn" onclick="return handleFabScanClick(event)" title="Scan QR & Barcode Voucher">
         <svg viewBox="0 0 24 24" fill="currentColor">
           <path d="M9.5 6.5v3h-3v-3h3M11 5H5v6h6V5zm-1.5 9.5v3h-3v-3h3M11 13H5v6h6v-6zm9.5-6.5v3h-3v-3h3M20 5h-6v6h6V5zm-6 8h1.5v1.5H14V13zm1.5 1.5H17V16h-1.5v-1.5zM14 16h1.5v1.5H14V16zm3-1.5H18.5V16H17v-1.5zm0 3h1.5V19H17v-1.5zm-1.5 0H17V20h-1.5v-1.5zm3-3H20V16h-1.5v-1.5zm0 3H20V19h-1.5v-1.5zM20 20h-1.5v-1.5H20V20zM3 3h4V1H1v6h2V3zm18-2h-4v2h4v4h2V1h-2zm2 18h-2v4h-4v2h6v-6zM3 17H1v6h6v-2H3v-4z"/>
         </svg>
@@ -1288,7 +1288,8 @@
 
     // Buka Halaman Billing ArbilBaru & Langsung Munculkan Pembelian Paket Terpilih
     function orderPkgDirect(name, price, packageId, flashSaleId) {
-      var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      var billingBase = (window.APP_CONFIG && window.APP_CONFIG.BILLING_URL ? window.APP_CONFIG.BILLING_URL : (CFG.BILLING_URL || '')).replace(/\/+$/, '');
+      if (!billingBase) return;
       var url = billingBase + '/#/portal';
       var params = [];
       if (packageId) {
@@ -1466,7 +1467,7 @@
       }
 
       // 2. Fetch live data dari API Billing dengan toleransi cerdas (auto fallback tanpa filter jika kosong)
-      var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      var billingBase = (window.APP_CONFIG && window.APP_CONFIG.BILLING_URL ? window.APP_CONFIG.BILLING_URL : (CFG.BILLING_URL || '')).replace(/\/+$/, '');
       if (window.fetch && billingBase) {
         var controller = window.AbortController ? new AbortController() : null;
         var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 5000) : null;
@@ -1618,8 +1619,9 @@
 
     function handleFabScanClick(e) {
       var cfg = window.APP_CONFIG || {};
-      var base = (cfg.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
-      var qrUrl = cfg.QR_SCANNER_URL || cfg.QR_SCAN_URL || (base + '/myqr/');
+      var base = (cfg.BILLING_URL || CFG.BILLING_URL || '').replace(/\/+$/, '');
+      var qrUrl = cfg.QR_SCANNER_URL || cfg.QR_SCAN_URL || (base ? (base + '/myqr/') : '');
+      if (!qrUrl) return false;
       var currentUrl = window.location.href.split('?')[0].split('#')[0];
       var delim = qrUrl.indexOf('?') !== -1 ? '&' : '?';
       var target = qrUrl + delim + 'loginUrl=' + encodeURIComponent(currentUrl);
@@ -1631,10 +1633,10 @@
 
     function updateFabScanLink() {
       var cfg = window.APP_CONFIG || {};
-      var base = (cfg.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
-      var qrUrl = cfg.QR_SCANNER_URL || cfg.QR_SCAN_URL || (base + '/myqr/');
+      var base = (cfg.BILLING_URL || CFG.BILLING_URL || '').replace(/\/+$/, '');
+      var qrUrl = cfg.QR_SCANNER_URL || cfg.QR_SCAN_URL || (base ? (base + '/myqr/') : '');
       var linkEl = document.getElementById('fab-scan-link');
-      if (linkEl) {
+      if (linkEl && qrUrl) {
         var currentUrl = window.location.href.split('?')[0].split('#')[0];
         var delim = qrUrl.indexOf('?') !== -1 ? '&' : '?';
         linkEl.href = qrUrl + delim + 'loginUrl=' + encodeURIComponent(currentUrl);

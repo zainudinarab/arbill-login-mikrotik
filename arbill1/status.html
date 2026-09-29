@@ -897,7 +897,7 @@
       }
 
       // 4. Sinkronisasi Resmi dari Server Billing Arbill (Di Background)
-      var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      var billingBase = (window.APP_CONFIG && window.APP_CONFIG.BILLING_URL ? window.APP_CONFIG.BILLING_URL : (CFG.BILLING_URL || '')).replace(/\/+$/, '');
       if (window.fetch && billingBase) {
         var statusEndpoint = billingBase + '/api/vouchers/status?code=' + encodeURIComponent(username);
         var cfg = window.APP_CONFIG || {};
@@ -1134,7 +1134,7 @@
       }
 
       // Coba sinkronisasi paket dari live billing jika server terhubung
-      var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
+      var billingBase = (window.APP_CONFIG && window.APP_CONFIG.BILLING_URL ? window.APP_CONFIG.BILLING_URL : (CFG.BILLING_URL || '')).replace(/\/+$/, '');
       if (window.fetch && billingBase) {
         var controller = window.AbortController ? new AbortController() : null;
         var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 5000) : null;
@@ -1266,7 +1266,9 @@
     });
 
     function openArbillPortal() {
-      var url = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '') + '/#/portal';
+      var billingBase = (window.APP_CONFIG && window.APP_CONFIG.BILLING_URL ? window.APP_CONFIG.BILLING_URL : (CFG.BILLING_URL || '')).replace(/\/+$/, '');
+      if (!billingBase) return;
+      var url = billingBase + '/#/portal';
       var cfg = window.APP_CONFIG || {};
       var rId = (cfg.ROUTER_ID || CFG.ROUTER_ID || 'DESKTOP-AUTJKVA').trim();
       if (rId) {
