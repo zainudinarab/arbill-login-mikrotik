@@ -11,6 +11,69 @@
   <script src="setting.js"></script>
   <script src="js/jsQR.min.js" defer></script>
   <script>
+    // Helper fleksibel untuk mengekstrak array paket dari berbagai format respon API / LocalStorage
+    function extractPackagesFromData(data) {
+      if (!data) return [];
+      if (Array.isArray(data)) return data;
+      if (data.packages && Array.isArray(data.packages) && data.packages.length > 0) return data.packages;
+      if (data.groups && Array.isArray(data.groups) && data.groups.length > 0) return data.groups;
+      var list = [];
+      if (data.ondemand && Array.isArray(data.ondemand)) list = list.concat(data.ondemand);
+      if (data.pregenerated && Array.isArray(data.pregenerated)) list = list.concat(data.pregenerated);
+      return list;
+    }
+
+    // Ambil paket voucher tersimpan di LocalStorage browser (Instan 0 ms tanpa reload API)
+    function getLocalVouchers() {
+      try {
+        var raw1 = localStorage.getItem('arbill_vouchers_cache');
+        if (raw1) {
+          var p1 = JSON.parse(raw1);
+          var res1 = extractPackagesFromData(p1);
+          if (res1 && res1.length > 0) return res1;
+        }
+      } catch(e) {}
+      try {
+        var raw2 = localStorage.getItem('arbill_cached_packages');
+        if (raw2) {
+          var p2 = JSON.parse(raw2);
+          var res2 = extractPackagesFromData(p2);
+          if (res2 && res2.length > 0) return res2;
+        }
+      } catch(e) {}
+      return null;
+    }
+
+    // Simpan paket voucher ke LocalStorage browser agar login, status, dan modal selalu ada data
+    function saveLocalVouchers(packages, fullData) {
+      try {
+        if (packages && packages.length > 0) {
+          localStorage.setItem('arbill_vouchers_cache', JSON.stringify(packages));
+        }
+        if (fullData) {
+          localStorage.setItem('arbill_cached_packages', JSON.stringify(fullData));
+        }
+      } catch(e) {}
+    }
+
+    // Daftar paket cadangan standar
+    function getFallbackPackages() {
+      var cfg = window.APP_CONFIG || {};
+      if (cfg.FALLBACK_PACKAGES && cfg.FALLBACK_PACKAGES.length > 0) {
+        return cfg.FALLBACK_PACKAGES;
+      }
+      return [
+        { name: '1 JAM', price: 2000, validity_iso: 'PT1H', uptime_limit: 'PT1H', badge: '', desc: 'Akses internet cepat & stabil' },
+        { name: '3 JAM', price: 3000, validity_iso: 'PT3H', uptime_limit: 'PT3H', badge: 'POPULER', desc: 'Nonton YouTube & streaming lancar' },
+        { name: '12 JAM', price: 5000, validity_iso: 'PT12H', uptime_limit: 'PT12H', badge: '', desc: 'Aktif setengah hari full speed' },
+        { name: '24 JAM', price: 7000, validity_iso: 'P1D', uptime_limit: 'P1D', badge: 'POPULER', desc: 'Paket harian paling diminati' },
+        { name: '3 HARI', price: 15000, validity_iso: 'P3D', uptime_limit: 'P3D', badge: '', desc: 'Akses 3 hari tanpa batas kuota' },
+        { name: '7 HARI', price: 25000, validity_iso: 'P7D', uptime_limit: 'P7D', badge: 'HEMAT', desc: 'Paket mingguan hemat & stabil' },
+        { name: '14 HARI', price: 45000, validity_iso: 'P14D', uptime_limit: 'P14D', badge: '', desc: 'Dua pekan online ngebut' },
+        { name: '30 HARI', price: 75000, validity_iso: 'P1M', uptime_limit: 'P1M', badge: 'BEST VALUE', desc: 'Paket bulanan full unlimited' }
+      ];
+    }
+
     // Immediate UI Handlers - Ready at 0ms before full DOM finishes
     function switchTab(tab) {
       var btns = document.querySelectorAll('.tab-btn');
@@ -34,6 +97,9 @@
     }
 
     function openPackageListModal() {
+      if (typeof window.ensurePackagesRendered === 'function') {
+        window.ensurePackagesRendered();
+      }
       var navs = document.querySelectorAll('.nav-item');
       for (var i = 0; i < navs.length; i++) navs[i].classList.remove('active');
       var el = document.getElementById('nav-item-paket');
@@ -74,6 +140,9 @@
       var cards = document.querySelectorAll('.price-card');
       for (var i = 0; i < cards.length; i++) cards[i].classList.remove('selected');
       if (el) el.classList.add('selected');
+      if (typeof window.ensurePackagesRendered === 'function') {
+        window.ensurePackagesRendered();
+      }
       var modal = document.getElementById('pkg-modal');
       if (modal) modal.classList.add('active');
     }
@@ -471,7 +540,129 @@
 
       <!-- Container Daftar Paket Dinamis (3 Kolom di Laptop, 1 Kolom di HP) -->
       <div id="status-packages-container" class="modal-packages-grid">
-        <!-- Paket-paket dirender otomatis dari API Billing & Cache -->
+        <div class="pkg-card-item">
+          <div>
+            <div class="pkg-card-duration">1 JAM</div>
+            <div class="pkg-card-meta-grid">
+              <div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">1 Jam</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">1 Jam</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">Unlimited</span></div>
+            </div>
+            <div class="pkg-card-desc">Akses internet cepat &amp; stabil</div>
+          </div>
+          <div>
+            <div class="pkg-card-price-row">
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>
+              <span class="pkg-card-price">Rp 2.000</span>
+            </div>
+            <button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect('1 JAM', 'Rp 2.000')">
+              <span>🛒 Beli Sekarang</span>
+            </button>
+          </div>
+        </div>
+        <div class="pkg-card-item">
+          <span class="pkg-card-badge">POPULER</span>
+          <div>
+            <div class="pkg-card-duration">3 JAM</div>
+            <div class="pkg-card-meta-grid">
+              <div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">3 Jam</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">3 Jam</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">Unlimited</span></div>
+            </div>
+            <div class="pkg-card-desc">Nonton YouTube &amp; streaming lancar</div>
+          </div>
+          <div>
+            <div class="pkg-card-price-row">
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>
+              <span class="pkg-card-price">Rp 3.000</span>
+            </div>
+            <button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect('3 JAM', 'Rp 3.000')">
+              <span>🛒 Beli Sekarang</span>
+            </button>
+          </div>
+        </div>
+        <div class="pkg-card-item">
+          <div>
+            <div class="pkg-card-duration">12 JAM</div>
+            <div class="pkg-card-meta-grid">
+              <div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">12 Jam</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">12 Jam</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">Unlimited</span></div>
+            </div>
+            <div class="pkg-card-desc">Aktif setengah hari full speed</div>
+          </div>
+          <div>
+            <div class="pkg-card-price-row">
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>
+              <span class="pkg-card-price">Rp 5.000</span>
+            </div>
+            <button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect('12 JAM', 'Rp 5.000')">
+              <span>🛒 Beli Sekarang</span>
+            </button>
+          </div>
+        </div>
+        <div class="pkg-card-item">
+          <span class="pkg-card-badge">POPULER</span>
+          <div>
+            <div class="pkg-card-duration">24 JAM</div>
+            <div class="pkg-card-meta-grid">
+              <div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">1 Hari</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">1 Hari</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">Unlimited</span></div>
+            </div>
+            <div class="pkg-card-desc">Paket harian paling diminati</div>
+          </div>
+          <div>
+            <div class="pkg-card-price-row">
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>
+              <span class="pkg-card-price">Rp 7.000</span>
+            </div>
+            <button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect('24 JAM', 'Rp 7.000')">
+              <span>🛒 Beli Sekarang</span>
+            </button>
+          </div>
+        </div>
+        <div class="pkg-card-item">
+          <div>
+            <div class="pkg-card-duration">3 HARI</div>
+            <div class="pkg-card-meta-grid">
+              <div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">3 Hari</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">3 Hari</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">Unlimited</span></div>
+            </div>
+            <div class="pkg-card-desc">Akses 3 hari tanpa batas kuota</div>
+          </div>
+          <div>
+            <div class="pkg-card-price-row">
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>
+              <span class="pkg-card-price">Rp 15.000</span>
+            </div>
+            <button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect('3 HARI', 'Rp 15.000')">
+              <span>🛒 Beli Sekarang</span>
+            </button>
+          </div>
+        </div>
+        <div class="pkg-card-item">
+          <span class="pkg-card-badge">HEMAT</span>
+          <div>
+            <div class="pkg-card-duration">7 HARI</div>
+            <div class="pkg-card-meta-grid">
+              <div class="pkg-meta-badge"><span class="meta-label">⏳ Masa Aktif:</span> <span class="meta-val">7 Hari</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">⏱️ Masa Pakai:</span> <span class="meta-val">7 Hari</span></div>
+              <div class="pkg-meta-badge"><span class="meta-label">📦 Kuota Data:</span> <span class="meta-val">Unlimited</span></div>
+            </div>
+            <div class="pkg-card-desc">Paket mingguan hemat &amp; stabil</div>
+          </div>
+          <div>
+            <div class="pkg-card-price-row">
+              <span style="font-size: 0.72rem; color: var(--text-secondary);">Tarif Voucher:</span>
+              <span class="pkg-card-price">Rp 25.000</span>
+            </div>
+            <button type="button" class="pkg-card-buy-btn" onclick="orderPkgDirect('7 HARI', 'Rp 25.000')">
+              <span>🛒 Beli Sekarang</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1132,12 +1323,22 @@
 
     // Navigasi Modal Daftar Paket (Dari Tab Bawah / Tombol Beli / Klik Kartu)
     function openPackageListModal() {
+      ensurePackagesRendered();
       document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
       var el = document.getElementById('nav-item-paket');
       if (el) el.classList.add('active');
       var m = document.getElementById('pkg-modal') || document.getElementById('pkg-list-modal');
       if (m) m.classList.add('active');
     }
+
+    function ensurePackagesRendered() {
+      var grid = document.getElementById('status-packages-container') || document.getElementById('modal-packages-container');
+      if (grid && (!grid.children.length || grid.innerHTML.indexOf('pkg-card-item') === -1)) {
+        var localPkgs = getLocalVouchers();
+        renderStatusPackages(localPkgs && localPkgs.length ? localPkgs : getFallbackPackages());
+      }
+    }
+    window.ensurePackagesRendered = ensurePackagesRendered;
 
     function navToLogin() {
       document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
@@ -1253,47 +1454,26 @@
     // Dynamic Live Voucher Loader dari Billing ArbilBaru (SWR + Live Fetch Persis status.html)
     function loadLiveVoucherPackages() {
       var statusBadge = document.getElementById('pricing-live-status');
-
-      var fallbackList = (CFG.FALLBACK_PACKAGES && CFG.FALLBACK_PACKAGES.length > 0)
-        ? CFG.FALLBACK_PACKAGES
-        : [
-            { name: '1 JAM', price: 2000, validity_iso: 'P1D', uptime_limit: 'PT1H', badge: '', desc: 'Akses internet cepat & stabil' },
-            { name: '3 JAM', price: 3000, validity_iso: 'P1D', uptime_limit: 'PT3H', badge: 'POPULER', desc: 'Nonton YouTube & streaming lancar' },
-            { name: '12 JAM', price: 5000, validity_iso: 'P1D', uptime_limit: 'PT12H', badge: '', desc: 'Aktif setengah hari full speed' },
-            { name: '24 JAM', price: 7000, validity_iso: 'P2D', uptime_limit: 'P1D', badge: 'POPULER', desc: 'Paket harian paling diminati' },
-            { name: '3 HARI', price: 15000, validity_iso: 'P3D', uptime_limit: '', badge: '', desc: 'Akses 3 hari tanpa batas kuota' },
-            { name: '7 HARI', price: 25000, validity_iso: 'P7D', uptime_limit: '', badge: 'HEMAT', desc: 'Paket mingguan hemat & stabil' },
-            { name: '14 HARI', price: 45000, validity_iso: 'P14D', uptime_limit: '', badge: '', desc: 'Dua pekan online ngebut' },
-            { name: '30 HARI', price: 75000, validity_iso: 'P1M', uptime_limit: '', badge: 'BEST VALUE', desc: 'Paket bulanan full unlimited' }
-          ];
-      var plans = (CFG.PRICING_PLANS && CFG.PRICING_PLANS.length > 0) ? CFG.PRICING_PLANS : fallbackList;
+      var plans = getFallbackPackages();
 
       // 1. Cek cache paket di LocalStorage lebih dulu (SWR - Instan 0 ms)
       var hasRenderedCache = false;
-      try {
-        var cachedPkgRaw = localStorage.getItem('arbill_cached_packages');
-        if (cachedPkgRaw) {
-          var cachedPkgData = JSON.parse(cachedPkgRaw);
-          if (cachedPkgData && cachedPkgData.packages && cachedPkgData.packages.length > 0) {
-            renderStatusPackages(cachedPkgData.packages);
-            hasRenderedCache = true;
-            if (statusBadge) statusBadge.innerHTML = '<span style="color:#06b6d4;">⚡</span> Memuat data...';
-          }
-        }
-      } catch(e) {}
-
-      // Jika belum ada cache, render fallback default langsung agar layar tidak pernah kosong
-      if (!hasRenderedCache) {
+      var cachedPkgs = getLocalVouchers();
+      if (cachedPkgs && cachedPkgs.length > 0) {
+        renderStatusPackages(cachedPkgs);
+        hasRenderedCache = true;
+        if (statusBadge) statusBadge.innerHTML = '<span style="color:#06b6d4;">⚡</span> Mode Tersimpan';
+      } else {
         renderStatusPackages(plans);
+        if (statusBadge) statusBadge.innerHTML = '<span style="color:#fbbf24;">⚡</span> Standar';
       }
 
-      // 2. Fetch live data dari API Billing
+      // 2. Fetch live data dari API Billing dengan toleransi cerdas (auto fallback tanpa filter jika kosong)
       var billingBase = (CFG.BILLING_URL || 'https://arbill.arabpay.my.id').replace(/\/+$/, '');
       if (window.fetch && billingBase) {
         var controller = window.AbortController ? new AbortController() : null;
-        var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 4000) : null;
+        var timeoutId = controller ? setTimeout(function() { controller.abort(); }, 5000) : null;
 
-        var availEndpoint = billingBase + '/api/vouchers/available';
         var rId = (CFG.ROUTER_ID || '').trim();
         if (!rId) {
           var mtIdentity = '$(identity)';
@@ -1302,8 +1482,21 @@
         if (!rId) {
           rId = 'DESKTOP-AUTJKVA';
         }
+
+        function handleApiSuccess(data) {
+          var extracted = extractPackagesFromData(data);
+          if (extracted && extracted.length > 0) {
+            saveLocalVouchers(extracted, data);
+            renderStatusPackages(extracted);
+            if (statusBadge) statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
+            return true;
+          }
+          return false;
+        }
+
+        var availEndpoint = billingBase + '/api/vouchers/available';
         if (rId) {
-          availEndpoint += (availEndpoint.indexOf('?') === -1 ? '?' : '&') + 'router_id=' + encodeURIComponent(rId);
+          availEndpoint += '?router_id=' + encodeURIComponent(rId);
         }
 
         fetch(availEndpoint, {
@@ -1317,10 +1510,15 @@
           return res.json();
         })
         .then(function(data) {
-          if (data && data.success && data.packages && data.packages.length > 0) {
-            try { localStorage.setItem('arbill_cached_packages', JSON.stringify(data)); } catch(e) {}
-            renderStatusPackages(data.packages);
-            if (statusBadge) statusBadge.innerHTML = '<span style="color:#10b981;">●</span> Live Billing';
+          var handled = handleApiSuccess(data);
+          // Jika router_id tidak cocok sehingga mengembalikan 0 paket, coba ambil paket umum tanpa parameter router_id
+          if (!handled && rId) {
+            var genericUrl = billingBase + '/api/vouchers/available';
+            return fetch(genericUrl, { method: 'GET', cache: 'no-cache' })
+              .then(function(r2) { return r2.ok ? r2.json() : null; })
+              .then(function(d2) {
+                if (d2) handleApiSuccess(d2);
+              });
           }
         })
         .catch(function(err) {

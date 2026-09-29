@@ -556,9 +556,18 @@
         // Tampilkan Raw JSON dengan format rapi (indent 2)
         jsonOut.innerText = JSON.stringify(data, null, 2);
 
-        var packages = (data && data.packages) ? data.packages : ((data && data.groups) ? data.groups : []);
+        var packages = (data && data.packages && data.packages.length > 0) 
+          ? data.packages 
+          : ((data && data.groups && data.groups.length > 0) ? data.groups : (data.packages || []));
+        
+        // Simpan langsung ke LocalStorage browser agar login.html dan status.html otomatis dapat data tanpa fetch ulang!
+        try {
+          localStorage.setItem('arbill_vouchers_cache', JSON.stringify(packages));
+          localStorage.setItem('arbill_cached_packages', JSON.stringify(data));
+        } catch(e) {}
+
         statCount.innerText = packages.length;
-        countLabel.innerText = packages.length + ' Paket Ditemukan';
+        countLabel.innerText = packages.length + ' Paket Ditemukan (Tersimpan di Browser)';
 
         if (data.has_flash_sale) {
           statFs.innerText = '⚡ Aktif (' + (data.flash_sales_count || 1) + ')';
