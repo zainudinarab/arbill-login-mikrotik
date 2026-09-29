@@ -135,6 +135,47 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
+.topbar-left-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Tombol Menu di Kiri Atas untuk Tampilan PC */
+.campus-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+}
+
+.campus-menu-btn:hover {
+  background: #ecfdf5;
+  border-color: var(--primary-green);
+  color: var(--primary-green);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(4, 120, 87, 0.12);
+}
+
+.campus-menu-btn svg {
+  color: var(--primary-green);
+  transition: transform 0.2s ease;
+}
+
+.campus-menu-btn:hover svg {
+  transform: scale(1.1);
+}
+
 .campus-brand {
   display: flex;
   align-items: center;
@@ -782,14 +823,270 @@ body {
   font-weight: 700;
 }
 
+/* ==============================================================
+ * CAMPUS SIDE DRAWER MENU (MODAL / SLIDE-OUT)
+ * ============================================================== */
+.campus-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 10000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.campus-drawer-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.campus-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 86vw;
+  background: #ffffff;
+  z-index: 10001;
+  box-shadow: 10px 0 35px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.campus-drawer.open {
+  transform: translateX(0);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-light);
+  background: #f8fafc;
+}
+
+.drawer-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.drawer-logo-img {
+  height: 38px;
+  width: auto;
+}
+
+.drawer-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--text-title);
+  line-height: 1.2;
+}
+
+.drawer-sub {
+  font-size: 0.7rem;
+  color: var(--primary-green);
+  font-weight: 600;
+}
+
+.drawer-close-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drawer-close-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.drawer-content {
+  padding: 16px 18px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.drawer-section-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  margin: 10px 0 8px;
+}
+
+.drawer-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  text-decoration: none;
+  color: var(--text-title);
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.drawer-item:hover {
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+  transform: translateX(3px);
+}
+
+.drawer-item.active {
+  background: #ecfdf5;
+  border-color: #a7f3d0;
+  color: #047857;
+}
+
+.drawer-item-icon {
+  font-size: 1.25rem;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.drawer-item-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.drawer-item-text strong {
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: inherit;
+}
+
+.drawer-item-text span {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.drawer-item-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 6px;
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.drawer-help-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.drawer-help-title {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-title);
+  margin-bottom: 6px;
+}
+
+.drawer-help-text {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin-bottom: 10px;
+}
+
+.drawer-help-btn {
+  display: inline-block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #047857;
+  text-decoration: none;
+  background: #ffffff;
+  border: 1px solid #a7f3d0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.drawer-help-btn:hover {
+  background: #ecfdf5;
+  border-color: #059669;
+}
+
+.drawer-footer {
+  padding: 14px 20px;
+  border-top: 1px solid var(--border-light);
+  background: #f8fafc;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ==============================================================
+ * MOBILE BOTTOM APP NAVIGATION (MENU SEPERTI APLIKASI HP)
+ * ============================================================== */
+.mobile-bottom-nav {
+  display: none;
+}
+
+.canvas-icon-box-small {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: #E6261F;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(230, 38, 31, 0.25);
+  flex-shrink: 0;
+}
+
 /* Responsive Tweaks (Tampilan HP / Mobile) */
 @media (max-width: 768px) {
+  body {
+    padding-bottom: 74px; /* Ruang agar konten bawah tidak tertutup navigation bar HP */
+  }
+
+  /* Sembunyikan tombol menu PC di layar HP karena sudah ada bottom nav */
+  .campus-menu-btn {
+    display: none;
+  }
+
   .campus-topbar {
     padding: 12px 14px;
     position: relative;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .topbar-left-group {
+    width: 100%;
   }
 
   .campus-brand {
@@ -857,5 +1154,70 @@ body {
 
   .login-card {
     padding: 20px 16px;
+  }
+
+  /* Menu Bawah Seperti Aplikasi HP */
+  .mobile-bottom-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 62px;
+    background: rgba(255, 255, 255, 0.97);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-top: 1px solid #e2e8f0;
+    box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.08);
+    z-index: 9999;
+    align-items: center;
+    justify-content: space-around;
+    padding: 2px 6px env(safe-area-inset-bottom, 4px);
+  }
+
+  .bottom-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: none;
+    border: none;
+    padding: 6px 4px;
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 0.68rem;
+    font-weight: 600;
+    gap: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex: 1;
+    min-width: 0;
+    font-family: inherit;
+  }
+
+  .bottom-nav-item:hover,
+  .bottom-nav-item.active {
+    color: #047857;
+  }
+
+  .bottom-nav-item.active {
+    font-weight: 700;
+  }
+
+  .bottom-nav-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 22px;
+  }
+
+  .bottom-nav-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
   }
 }
