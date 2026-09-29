@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Pusat panduan resmi sivitas akademika Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang: Canvas LMS, Hotspot Wi-Fi, Email Institusi, SIAKAD, dan Layanan IT.">
+  <meta name="description" content="Daftar panduan resmi sivitas akademika Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang.">
   <meta name="theme-color" content="#047857">
   <title>Pusat Panduan Sivitas Akademika - UNIPDU Jombang</title>
   
@@ -51,179 +51,131 @@
     <!-- Main Content Area -->
     <main>
 
-      <!-- Hero Header Section -->
-      <section class="guide-hero">
-        <div class="guide-hero-top">
+      <!-- Clean Header Title -->
+      <section class="guide-hero" style="margin-bottom: 20px; padding: 22px 20px;">
+        <div class="guide-hero-top" style="margin-bottom: 8px;">
           <span class="guide-badge-pill" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">
-            📖 PUSAT PANDUAN &amp; BANTUAN DIGITAL
+            📖 PUSAT PANDUAN KAMPUS
           </span>
-          <span style="font-size: 0.78rem; color: var(--text-muted);">Pusat Komputer &amp; Jaringan (Puskomnet)</span>
+          <span style="font-size: 0.78rem; color: var(--text-muted);">Puskomnet UNIPDU</span>
         </div>
-        <h2 class="guide-hero-title">Daftar Panduan Sivitas Akademika UNIPDU</h2>
+        <h2 class="guide-hero-title" style="margin-bottom: 6px;">Pilih Panduan yang Anda Butuhkan</h2>
         <p class="guide-hero-subtitle">
-          Temukan petunjuk langkah demi langkah untuk mengakses sistem perkuliahan daring Canvas, jaringan hotspot kampus, email institusi, SIAKAD, dan administrasi perkuliahan.
+          Klik pada salah satu judul panduan di bawah ini untuk membuka petunjuk langkah demi langkah.
         </p>
       </section>
 
-      <!-- Search & Category Filters -->
-      <section class="guide-search-wrapper">
-        <div class="guide-search-input-wrap">
-          <span class="guide-search-icon">🔍</span>
-          <input type="text" id="guide-search" class="guide-search-input" placeholder="Cari panduan (contoh: canvas, email, wifi, siakad, krs)..." oninput="filterGuides()">
-        </div>
+      <!-- Minimalist Clean List of Guides (CANVAS PALING ATAS!) -->
+      <section class="guide-simple-list">
 
-        <div class="guide-category-chips">
-          <button type="button" class="category-chip-btn active" onclick="setCategory('all', this)">Semua Panduan</button>
-          <button type="button" class="category-chip-btn" onclick="setCategory('canvas', this)">🔴 Canvas LMS</button>
-          <button type="button" class="category-chip-btn" onclick="setCategory('wifi', this)">📶 Wi-Fi Hotspot</button>
-          <button type="button" class="category-chip-btn" onclick="setCategory('email', this)">📧 Email Institusi</button>
-          <button type="button" class="category-chip-btn" onclick="setCategory('siakad', this)">🎓 SIAKAD &amp; KRS</button>
-          <button type="button" class="category-chip-btn" onclick="setCategory('app', this)">📱 Aplikasi Mobile</button>
-          <button type="button" class="category-chip-btn" onclick="setCategory('finance', this)">💳 Pembayaran</button>
-        </div>
-      </section>
-
-      <!-- Guides Cards Grid -->
-      <section class="guides-grid" id="guides-grid">
-
-        <!-- Card 1: Canvas LMS (Featured) -->
-        <article class="guide-hub-card featured" data-category="canvas" data-keywords="canvas lms kuliah daring email institusi google sso firefox opera tugas">
-          <div>
-            <div class="guide-hub-header">
-              <span class="guide-hub-icon">🔴</span>
-              <span class="guide-hub-tag hot">⭐ Paling Sering Digunakan</span>
+        <!-- 1. CANVAS LMS (PALING ATAS - FEATURED) -->
+        <a href="panduan-canvas.html" class="guide-row-item featured" title="Buka Panduan Login Canvas LMS UNIPDU">
+          <div class="guide-row-left">
+            <span class="guide-row-icon">
+              <span class="canvas-icon-box" style="width:28px; height:28px;">
+                <svg width="20" height="20" viewBox="0 0.1 26.7 26.8" fill="none">
+                  <path fill="#ffffff" d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z"/><circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2"/>
+                  <path fill="#ffffff" d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z"/><circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2"/>
+                  <path fill="#ffffff" d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z"/><circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2"/>
+                  <path fill="#ffffff" d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z"/><circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2"/>
+                  <path fill="#ffffff" d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z"/><circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2"/>
+                  <path fill="#ffffff" d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z"/><circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2"/>
+                  <path fill="#ffffff" d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z"/><circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2"/>
+                  <path fill="#ffffff" d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z"/><circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2"/>
+                </svg>
+              </span>
+            </span>
+            <div class="guide-row-info">
+              <span class="guide-row-title">Panduan Login Canvas LMS UNIPDU</span>
             </div>
-            <h3 class="guide-hub-title">Panduan Login Canvas LMS dengan Email Institusi</h3>
-            <p class="guide-hub-desc">
-              Langkah lengkap autentikasi ke LMS Canvas UNIPDU menggunakan akun email resmi Google Workspace melalui browser Firefox/Opera (Dilarang Chrome).
-            </p>
           </div>
-          <div class="guide-hub-footer">
-            <span class="guide-hub-time">⏱️ 7 Langkah &bull; 3 Menit</span>
-            <a href="panduan-canvas.html" class="guide-hub-btn">
-              Buka Panduan &rarr;
-            </a>
+          <div class="guide-row-right">
+            <span class="guide-row-badge hot">⭐ Paling Utama</span>
+            <span class="guide-row-arrow">&rarr;</span>
           </div>
-        </article>
+        </a>
 
-        <!-- Card 2: Wi-Fi Hotspot -->
-        <article class="guide-hub-card" data-category="wifi" data-keywords="wifi hotspot internet login koneksi nim nidn password laptop hp">
-          <div>
-            <div class="guide-hub-header">
-              <span class="guide-hub-icon">📶</span>
-              <span class="guide-hub-tag">Jaringan Wi-Fi</span>
+        <!-- 2. KONEKSI WI-FI HOTSPOT KAMPUS -->
+        <a href="panduan-wifi.html" class="guide-row-item" title="Buka Panduan Koneksi Wi-Fi Hotspot UNIPDU">
+          <div class="guide-row-left">
+            <span class="guide-row-icon">📶</span>
+            <div class="guide-row-info">
+              <span class="guide-row-title">Panduan Koneksi Wi-Fi Hotspot Kampus</span>
             </div>
-            <h3 class="guide-hub-title">Panduan Koneksi Wi-Fi Hotspot Kampus UNIPDU</h3>
-            <p class="guide-hub-desc">
-              Cara menyambungkan perangkat laptop, Android, dan iPhone ke jaringan nirkabel UNIPDU dan login menggunakan akun NIM mahasiswa atau NIDN dosen.
-            </p>
           </div>
-          <div class="guide-hub-footer">
-            <span class="guide-hub-time">⏱️ 4 Langkah &bull; Cepat</span>
-            <button type="button" class="guide-hub-btn" onclick="openModal('modal-wifi')">
-              Lihat Langkah &rarr;
-            </button>
+          <div class="guide-row-right">
+            <span class="guide-row-badge">Hotspot</span>
+            <span class="guide-row-arrow">&rarr;</span>
           </div>
-        </article>
+        </a>
 
-        <!-- Card 3: Email Institusi -->
-        <article class="guide-hub-card" data-category="email" data-keywords="email institusi google workspace gmail aktivasi lupa password reset mhs unipdu">
-          <div>
-            <div class="guide-hub-header">
-              <span class="guide-hub-icon">📧</span>
-              <span class="guide-hub-tag">Akun &amp; Email</span>
+        <!-- 3. EMAIL INSTITUSI & RESET PASSWORD -->
+        <a href="panduan-email.html" class="guide-row-item" title="Buka Panduan Email Institusi UNIPDU">
+          <div class="guide-row-left">
+            <span class="guide-row-icon">📧</span>
+            <div class="guide-row-info">
+              <span class="guide-row-title">Panduan Akun &amp; Email Institusi UNIPDU</span>
             </div>
-            <h3 class="guide-hub-title">Panduan Aktivasi &amp; Reset Password Email Institusi</h3>
-            <p class="guide-hub-desc">
-              Format akun resmi <code>@mhs.unipdu.ac.id</code>, aktivasi perdana Google Workspace, serta prosedur reset kata sandi melalui Puskomnet jika lupa password.
-            </p>
           </div>
-          <div class="guide-hub-footer">
-            <span class="guide-hub-time">⏱️ Panduan Akun</span>
-            <button type="button" class="guide-hub-btn" onclick="openModal('modal-email')">
-              Lihat Langkah &rarr;
-            </button>
+          <div class="guide-row-right">
+            <span class="guide-row-badge">Email</span>
+            <span class="guide-row-arrow">&rarr;</span>
           </div>
-        </article>
+        </a>
 
-        <!-- Card 4: SIAKAD & KRS Online -->
-        <article class="guide-hub-card" data-category="siakad" data-keywords="siakad krs krs online khs nilai transkrip jadwal kuliah perwalian">
-          <div>
-            <div class="guide-hub-header">
-              <span class="guide-hub-icon">🎓</span>
-              <span class="guide-hub-tag">Akademik</span>
+        <!-- 4. SIAKAD & KRS ONLINE -->
+        <a href="panduan-siakad.html" class="guide-row-item" title="Buka Panduan SIAKAD & KRS Online">
+          <div class="guide-row-left">
+            <span class="guide-row-icon">🎓</span>
+            <div class="guide-row-info">
+              <span class="guide-row-title">Panduan Pengisian KRS di SIAKAD Online</span>
             </div>
-            <h3 class="guide-hub-title">Panduan Pengisian KRS &amp; Transkrip di SIAKAD Online</h3>
-            <p class="guide-hub-desc">
-              Tata cara memprogram mata kuliah semester (KRS Online), perwalian dosen Pembimbing Akademik (PA), serta cetak KHS dan kartu ujian mahasiswa.
-            </p>
           </div>
-          <div class="guide-hub-footer">
-            <span class="guide-hub-time">⏱️ Panduan SIAKAD</span>
-            <button type="button" class="guide-hub-btn" onclick="openModal('modal-siakad')">
-              Lihat Langkah &rarr;
-            </button>
+          <div class="guide-row-right">
+            <span class="guide-row-badge">SIAKAD</span>
+            <span class="guide-row-arrow">&rarr;</span>
           </div>
-        </article>
+        </a>
 
-        <!-- Card 5: Canvas Student Mobile App -->
-        <article class="guide-hub-card" data-category="app" data-keywords="canvas student aplikasi hp android iphone app playstore appstore">
-          <div>
-            <div class="guide-hub-header">
-              <span class="guide-hub-icon">📱</span>
-              <span class="guide-hub-tag">Aplikasi HP</span>
+        <!-- 5. APLIKASI CANVAS STUDENT DI HP -->
+        <a href="panduan-canvas-app.html" class="guide-row-item" title="Buka Panduan Aplikasi Canvas Student di HP">
+          <div class="guide-row-left">
+            <span class="guide-row-icon">📱</span>
+            <div class="guide-row-info">
+              <span class="guide-row-title">Panduan Aplikasi Canvas Student di HP (Android &amp; iOS)</span>
             </div>
-            <h3 class="guide-hub-title">Panduan Aplikasi Canvas Student di Android &amp; iPhone</h3>
-            <p class="guide-hub-desc">
-              Cara mengunduh dan menghubungkan aplikasi resmi "Canvas Student" di HP Anda dengan memilih institusi <strong>canvas.unipdu.ac.id</strong>.
-            </p>
           </div>
-          <div class="guide-hub-footer">
-            <span class="guide-hub-time">⏱️ 3 Langkah Mudah</span>
-            <button type="button" class="guide-hub-btn" onclick="openModal('modal-app')">
-              Lihat Langkah &rarr;
-            </button>
+          <div class="guide-row-right">
+            <span class="guide-row-badge">Mobile App</span>
+            <span class="guide-row-arrow">&rarr;</span>
           </div>
-        </article>
+        </a>
 
-        <!-- Card 6: Pembayaran Kuliah -->
-        <article class="guide-hub-card" data-category="finance" data-keywords="pembayaran spp ukt virtual account bank atm qris arabpay biaya kuliah">
-          <div>
-            <div class="guide-hub-header">
-              <span class="guide-hub-icon">💳</span>
-              <span class="guide-hub-tag">Keuangan</span>
+        <!-- 6. PEMBAYARAN KULIAH & VIRTUAL ACCOUNT -->
+        <a href="panduan-pembayaran.html" class="guide-row-item" title="Buka Panduan Pembayaran Kuliah">
+          <div class="guide-row-left">
+            <span class="guide-row-icon">💳</span>
+            <div class="guide-row-info">
+              <span class="guide-row-title">Panduan Pembayaran Kuliah &amp; Virtual Account</span>
             </div>
-            <h3 class="guide-hub-title">Panduan Pembayaran Biaya Kuliah &amp; Virtual Account</h3>
-            <p class="guide-hub-desc">
-              Petunjuk alur pembayaran her-registrasi, SPP/UKT perkuliahan melalui Virtual Account Bank, M-Banking, ATM, serta QRIS &amp; Dompet Digital ArabPay.
-            </p>
           </div>
-          <div class="guide-hub-footer">
-            <span class="guide-hub-time">⏱️ Panduan Keuangan</span>
-            <button type="button" class="guide-hub-btn" onclick="openModal('modal-finance')">
-              Lihat Langkah &rarr;
-            </button>
+          <div class="guide-row-right">
+            <span class="guide-row-badge">Keuangan</span>
+            <span class="guide-row-arrow">&rarr;</span>
           </div>
-        </article>
+        </a>
 
       </section>
 
-      <!-- Empty state if search has no results -->
-      <div id="no-results" style="display:none; text-align:center; padding:30px; background:#ffffff; border-radius:12px; margin-bottom:24px; border:1px dashed #cbd5e1;">
-        <span style="font-size:2rem;">🔍</span>
-        <h4 style="margin:8px 0 4px; color:var(--text-title);">Panduan Tidak Ditemukan</h4>
-        <p style="font-size:0.84rem; color:var(--text-muted);">Coba gunakan kata kunci pencarian lain atau pilih kategori di atas.</p>
-      </div>
-
-      <!-- Helpdesk Puskomnet UNIPDU -->
-      <section class="visi-misi-box" style="margin-bottom: 28px; text-align: left;">
-        <div class="visi-misi-badge">📞 Pusat Bantuan &amp; Helpdesk IT UNIPDU</div>
+      <!-- Puskomnet Helpdesk Card -->
+      <section class="visi-misi-box" style="margin-bottom: 24px; text-align: left;">
+        <div class="visi-misi-badge">📞 Layanan IT &amp; Helpdesk Puskomnet UNIPDU</div>
         <p style="font-size: 0.86rem; color: #064e3b; margin: 10px 0 14px; line-height: 1.6;">
-          Butuh bantuan langsung terkait kendala akun, internet, atau administrasi digital? Kunjungi unit <strong>Pusat Komputer &amp; Jaringan (Puskomnet)</strong> di Gedung Rektorat Lantai 1 UNIPDU Jombang pada jam kerja (Senin - Sabtu).
+          Membutuhkan panduan lain atau mengalami kendala teknis? Hubungi <strong>Pusat Komputer &amp; Jaringan (Puskomnet)</strong> Gedung Rektorat UNIPDU Jombang.
         </p>
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <a href="https://unipdu.ac.id/" target="_blank" class="step-action-btn">
-            Situs Resmi UNIPDU &rarr;
+            Website Resmi UNIPDU &rarr;
           </a>
           <a href="login.html" class="step-action-btn" style="background:#ffffff; color:#047857; border:1px solid #a7f3d0;">
             Kembali ke Login Hotspot
@@ -247,138 +199,6 @@
       </div>
     </footer>
 
-  </div>
-
-  <!-- ============================================================== -->
-  <!-- INTERACTIVE DETAIL MODALS                                      -->
-  <!-- ============================================================== -->
-
-  <!-- Modal Wi-Fi Hotspot -->
-  <div class="guide-modal-overlay" id="modal-wifi" onclick="closeModalOnOverlay(event, 'modal-wifi')">
-    <div class="guide-modal-card">
-      <div class="guide-modal-header">
-        <h3 class="guide-modal-title">📶 Panduan Koneksi Wi-Fi Hotspot UNIPDU</h3>
-        <button type="button" class="guide-modal-close" onclick="closeModal('modal-wifi')">&times;</button>
-      </div>
-      <div class="guide-modal-body">
-        <p><strong>Langkah Menghubungkan Perangkat ke Wi-Fi Kampus:</strong></p>
-        <ol>
-          <li>Nyalakan Wi-Fi di perangkat HP atau Laptop Anda.</li>
-          <li>Pilih nama Wi-Fi (SSID) resmi kampus: <strong>HOTSPOT UNIPDU</strong> atau <strong>UNIPDU-STUDENT</strong>.</li>
-          <li>Buka browser (Chrome, Firefox, Safari) dan akses <code>http://unipdu.ac.id</code> atau halaman login yang otomatis muncul (Captive Portal).</li>
-          <li>Pilih tab <strong>Mahasiswa</strong> (jika mahasiswa) atau <strong>Dosen &amp; Staf</strong>.</li>
-          <li>Masukkan <strong>NIM</strong> dan <strong>Password</strong> resmi akun kampus Anda.</li>
-          <li>Tekan tombol <strong>"Masuk Internet Kampus"</strong>. Koneksi internet Anda akan langsung aktif!</li>
-        </ol>
-        <div style="background:#ecfdf5; padding:10px 14px; border-radius:8px; font-size:0.8rem; color:#065f46;">
-          💡 <em>Tips: Centang "Ingat saya di perangkat ini" agar tidak perlu memasukkan NIM berulang kali.</em>
-        </div>
-      </div>
-      <div class="guide-modal-footer">
-        <a href="login.html" class="step-action-btn">Ke Halaman Login &rarr;</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Email Institusi -->
-  <div class="guide-modal-overlay" id="modal-email" onclick="closeModalOnOverlay(event, 'modal-email')">
-    <div class="guide-modal-card">
-      <div class="guide-modal-header">
-        <h3 class="guide-modal-title">📧 Panduan Email Institusi UNIPDU</h3>
-        <button type="button" class="guide-modal-close" onclick="closeModal('modal-email')">&times;</button>
-      </div>
-      <div class="guide-modal-body">
-        <p><strong>Format Akun Email Resmi:</strong></p>
-        <ul>
-          <li><strong>Mahasiswa:</strong> <code>NIM@mhs.unipdu.ac.id</code> (contoh: <code>210101001@mhs.unipdu.ac.id</code>)</li>
-          <li><strong>Dosen/Staf:</strong> <code>nama@unipdu.ac.id</code></li>
-        </ul>
-        <p><strong>Cara Login Pertama Kali:</strong></p>
-        <ol>
-          <li>Buka <strong>mail.google.com</strong>.</li>
-          <li>Ketikkan email institusi Anda secara lengkap.</li>
-          <li>Masukkan kata sandi awal yang diberikan oleh fakultas / Puskomnet.</li>
-          <li>Sistem Google akan meminta Anda membuat kata sandi baru pribadi.</li>
-        </ol>
-        <p><strong>Jika Lupa Kata Sandi Email:</strong></p>
-        <p style="font-size:0.82rem; color:var(--text-muted);">
-          Silakan hubungi admin Puskomnet di Gedung Rektorat dengan menunjukkan Kartu Tanda Mahasiswa (KTM) aktif untuk proses reset password.
-        </p>
-      </div>
-      <div class="guide-modal-footer">
-        <button type="button" class="step-action-btn" onclick="closeModal('modal-email')">Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal SIAKAD -->
-  <div class="guide-modal-overlay" id="modal-siakad" onclick="closeModalOnOverlay(event, 'modal-siakad')">
-    <div class="guide-modal-card">
-      <div class="guide-modal-header">
-        <h3 class="guide-modal-title">🎓 Panduan SIAKAD Online UNIPDU</h3>
-        <button type="button" class="guide-modal-close" onclick="closeModal('modal-siakad')">&times;</button>
-      </div>
-      <div class="guide-modal-body">
-        <p><strong>Fungsi Layanan SIAKAD:</strong></p>
-        <ol>
-          <li><strong>Pengisian KRS:</strong> Dilakukan pada masa her-registrasi tiap awal semester sesuai jadwal akademik.</li>
-          <li><strong>Jadwal Kuliah:</strong> Mengetahui ruangan, waktu, dan nama dosen pengampu mata kuliah.</li>
-          <li><strong>KHS &amp; Transkrip:</strong> Melihat nilai semester dan Indeks Prestasi Kumulatif (IPK).</li>
-          <li><strong>Presensi &amp; Kehadiran:</strong> Memantau rekap absensi kehadiran perkuliahan.</li>
-        </ol>
-        <p style="margin-top:10px;">
-          Akses portal SIAKAD resmi dapat dilakukan melalui link di bawah:
-        </p>
-      </div>
-      <div class="guide-modal-footer">
-        <a href="https://siakad.unipdu.ac.id/" target="_blank" class="step-action-btn">Buka Portal SIAKAD &rarr;</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Canvas App -->
-  <div class="guide-modal-overlay" id="modal-app" onclick="closeModalOnOverlay(event, 'modal-app')">
-    <div class="guide-modal-card">
-      <div class="guide-modal-header">
-        <h3 class="guide-modal-title">📱 Panduan Canvas Student di Smartphone</h3>
-        <button type="button" class="guide-modal-close" onclick="closeModal('modal-app')">&times;</button>
-      </div>
-      <div class="guide-modal-body">
-        <p><strong>Langkah Setup Canvas Student di HP:</strong></p>
-        <ol>
-          <li>Buka <strong>Google Play Store</strong> (Android) atau <strong>App Store</strong> (iOS iPhone).</li>
-          <li>Cari dan unduh aplikasi resmi bernama <strong>Canvas Student</strong> (ikon lingkaran merah Instructure).</li>
-          <li>Buka aplikasi, lalu tekan tombol <strong>"Find My School"</strong>.</li>
-          <li>Ketikkan: <strong>canvas.unipdu.ac.id</strong> atau <strong>UNIPDU</strong>.</li>
-          <li>Pilih institusi UNIPDU, lalu login menggunakan akun email institusi Google Anda.</li>
-        </ol>
-      </div>
-      <div class="guide-modal-footer">
-        <button type="button" class="step-action-btn" onclick="closeModal('modal-app')">Tutup</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Modal Finance -->
-  <div class="guide-modal-overlay" id="modal-finance" onclick="closeModalOnOverlay(event, 'modal-finance')">
-    <div class="guide-modal-card">
-      <div class="guide-modal-header">
-        <h3 class="guide-modal-title">💳 Panduan Pembayaran Kuliah</h3>
-        <button type="button" class="guide-modal-close" onclick="closeModal('modal-finance')">&times;</button>
-      </div>
-      <div class="guide-modal-body">
-        <p><strong>Alur Pembayaran SPP / UKT:</strong></p>
-        <ol>
-          <li>Buka SIAKAD UNIPDU dan cek menu <strong>Keuangan / Tagihan</strong>.</li>
-          <li>Dapatkan nomor <strong>Virtual Account (VA)</strong> yang tertera untuk tagihan semester Anda.</li>
-          <li>Lakukan pembayaran melalui ATM, Mobile Banking, Internet Banking, atau Teller Bank rekanan.</li>
-          <li>Status pembayaran akan terverifikasi secara otomatis (real-time) di sistem SIAKAD.</li>
-        </ol>
-      </div>
-      <div class="guide-modal-footer">
-        <button type="button" class="step-action-btn" onclick="closeModal('modal-finance')">Tutup</button>
-      </div>
-    </div>
   </div>
 
   <!-- Mobile Bottom App Navigation Bar (Tampilan HP) -->
@@ -418,69 +238,8 @@
     </a>
   </nav>
 
-  <!-- Interactive Search & Filter Script -->
+  <!-- Digital Clock Script -->
   <script>
-    var currentCat = 'all';
-
-    function setCategory(cat, btn) {
-      currentCat = cat;
-      var btns = document.querySelectorAll('.category-chip-btn');
-      btns.forEach(function(b) { b.classList.remove('active'); });
-      if (btn) btn.classList.add('active');
-      filterGuides();
-    }
-
-    function filterGuides() {
-      var query = (document.getElementById('guide-search').value || '').toLowerCase().trim();
-      var cards = document.querySelectorAll('.guide-hub-card');
-      var visibleCount = 0;
-
-      cards.forEach(function(card) {
-        var cat = card.getAttribute('data-category');
-        var keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
-        var title = (card.querySelector('.guide-hub-title') ? card.querySelector('.guide-hub-title').innerText : '').toLowerCase();
-        var desc = (card.querySelector('.guide-hub-desc') ? card.querySelector('.guide-hub-desc').innerText : '').toLowerCase();
-
-        var matchesCat = (currentCat === 'all' || cat === currentCat);
-        var matchesQuery = !query || title.includes(query) || desc.includes(query) || keywords.includes(query);
-
-        if (matchesCat && matchesQuery) {
-          card.style.display = 'flex';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-
-      var noRes = document.getElementById('no-results');
-      if (noRes) noRes.style.display = (visibleCount === 0) ? 'block' : 'none';
-    }
-
-    // Modal Control
-    function openModal(id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.add('open');
-    }
-
-    function closeModal(id) {
-      var el = document.getElementById(id);
-      if (el) el.classList.remove('open');
-    }
-
-    function closeModalOnOverlay(e, id) {
-      if (e.target && e.target.id === id) {
-        closeModal(id);
-      }
-    }
-
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        var openModals = document.querySelectorAll('.guide-modal-overlay.open');
-        openModals.forEach(function(m) { m.classList.remove('open'); });
-      }
-    });
-
-    // Digital Clock
     function updateClock() {
       var now = new Date();
       var h = String(now.getHours()).padStart(2, '0');

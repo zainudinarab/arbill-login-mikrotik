@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#047857">
+  <title>Panduan Pembayaran Kuliah & Virtual Account - UNIPDU Jombang</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/unipdu.css">
+</head>
+<body>
+  <div class="page-wrapper guide-wrapper">
+    <header class="campus-topbar">
+      <div class="topbar-left-group">
+        <a href="panduan.html" class="guide-back-link" title="Kembali ke Daftar Panduan">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Daftar Panduan</span>
+        </a>
+        <a href="https://unipdu.ac.id/" target="_blank" class="campus-brand">
+          <div class="campus-logo-wrap"><img src="img/logo.png" alt="UNIPDU" class="campus-logo-img"></div>
+          <div class="campus-meta-text">
+            <h1 class="campus-title-h1">UNIPDU JOMBANG</h1>
+            <span class="campus-tagline">Universitas Pesantren Tinggi Darul 'Ulum</span>
+          </div>
+        </a>
+      </div>
+      <div class="topbar-status-badges">
+        <div class="topbar-clock-pill">⏱️ <span id="clock-display" class="clock-time">--:--:--</span></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="guide-hero">
+        <div class="guide-hero-top">
+          <span class="guide-badge-pill" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">💳 KEUANGAN &amp; ADMINISTRASI</span>
+        </div>
+        <h2 class="guide-hero-title">Panduan Pembayaran Kuliah &amp; Virtual Account</h2>
+        <p class="guide-hero-subtitle">Prosedur pelunasan biaya kuliah (SPP / UKT) melalui Virtual Account Bank mitra, Mobile Banking, ATM, QRIS, &amp; ArabPay.</p>
+      </section>
+
+      <section class="guide-steps-list">
+        <article class="guide-step-card">
+          <div class="step-number-badge">1</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Periksa Tagihan di Akun SIAKAD</h3></div>
+            <p class="step-desc">Login ke akun SIAKAD Anda di <code>https://siakad.unipdu.ac.id</code>, masuk ke menu <strong>Keuangan &gt; Tagihan Mahasiswa</strong> untuk mengetahui rincian nominal pembayaran semester berjalan.</p>
+          </div>
+        </article>
+
+        <article class="guide-step-card">
+          <div class="step-number-badge">2</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Dapatkan Kode Virtual Account (VA)</h3></div>
+            <p class="step-desc">Salin nomor Virtual Account yang tercantum pada menu tagihan sesuai bank pembayaran pilihan Anda (Bank Syariah Indonesia / Bank Mitra resmi kampus).</p>
+          </div>
+        </article>
+
+        <article class="guide-step-card">
+          <div class="step-number-badge">3</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Lakukan Pembayaran via M-Banking / ATM</h3></div>
+            <p class="step-desc">Buka aplikasi mobile banking Anda, pilih menu <strong>Transfer / Bayar Virtual Account</strong>, masukkan kode VA, periksa kecocokan nama dan nominal, lalu konfirmasi transaksi.</p>
+          </div>
+        </article>
+
+        <article class="guide-step-card">
+          <div class="step-number-badge">4</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Verifikasi Otomatis Terhubung SIAKAD</h3></div>
+            <p class="step-desc">Sistem pembayaran terintegrasi real-time. Status tagihan akan otomatis berubah menjadi <strong>LUNAS</strong> dalam 5-15 menit dan hak pengisian KRS akan langsung aktif.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="campus-footer">
+      <div><strong>&copy; 2026 Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang</strong></div>
+      <div>Biro Administrasi Keuangan (BAK) &bull; Puskomnet UNIPDU</div>
+    </footer>
+  </div>
+
+  <nav class="mobile-bottom-nav">
+    <a href="login.html" class="bottom-nav-item"><span class="bottom-nav-icon">↩️</span><span class="bottom-nav-label">Login</span></a>
+    <a href="https://siakad.unipdu.ac.id/" target="_blank" class="bottom-nav-item"><span class="bottom-nav-icon">🎓</span><span class="bottom-nav-label">SIAKAD</span></a>
+    <a href="https://canvas.unipdu.ac.id/" target="_blank" class="bottom-nav-item"><span class="bottom-nav-icon">🔴</span><span class="bottom-nav-label">Canvas</span></a>
+    <a href="panduan.html" class="bottom-nav-item active"><span class="bottom-nav-icon">📖</span><span class="bottom-nav-label">Panduan</span></a>
+  </nav>
+
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var el = document.getElementById('clock-display');
+      if (el) el.innerText = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+    }
+    setInterval(updateClock, 1000); updateClock();
+  </script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#047857">
+  <title>Panduan Koneksi Wi-Fi Hotspot - UNIPDU Jombang</title>
+  <link rel="icon" type="image/png" href="img/logo.png">
+  <link rel="stylesheet" href="css/unipdu.css">
+</head>
+<body>
+  <div class="page-wrapper guide-wrapper">
+    <header class="campus-topbar">
+      <div class="topbar-left-group">
+        <a href="panduan.html" class="guide-back-link" title="Kembali ke Daftar Panduan">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <span>Daftar Panduan</span>
+        </a>
+        <a href="https://unipdu.ac.id/" target="_blank" class="campus-brand">
+          <div class="campus-logo-wrap"><img src="img/logo.png" alt="UNIPDU" class="campus-logo-img"></div>
+          <div class="campus-meta-text">
+            <h1 class="campus-title-h1">UNIPDU JOMBANG</h1>
+            <span class="campus-tagline">Universitas Pesantren Tinggi Darul 'Ulum</span>
+          </div>
+        </a>
+      </div>
+      <div class="topbar-status-badges">
+        <div class="topbar-clock-pill">⏱️ <span id="clock-display" class="clock-time">--:--:--</span></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="guide-hero">
+        <div class="guide-hero-top">
+          <span class="guide-badge-pill" style="background:#ecfdf5; border-color:#a7f3d0; color:#065f46;">📶 JARINGAN HOTSPOT KAMPUS</span>
+        </div>
+        <h2 class="guide-hero-title">Panduan Koneksi Wi-Fi Hotspot UNIPDU</h2>
+        <p class="guide-hero-subtitle">Petunjuk menghubungkan perangkat Laptop, Android, iPhone/iPad ke jaringan Wi-Fi resmi kampus UNIPDU.</p>
+      </section>
+
+      <section class="guide-steps-list">
+        <article class="guide-step-card">
+          <div class="step-number-badge">1</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Aktifkan Wi-Fi di Perangkat Anda</h3></div>
+            <p class="step-desc">Buka pengaturan Wi-Fi pada laptop atau smartphone Anda, lalu pastikan koneksi Wi-Fi dalam status aktif.</p>
+          </div>
+        </article>
+
+        <article class="guide-step-card">
+          <div class="step-number-badge">2</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Pilih SSID Resmi UNIPDU</h3></div>
+            <p class="step-desc">Pilih salah satu nama jaringan Wi-Fi kampus resmi: <strong>HOTSPOT UNIPDU</strong> atau <strong>UNIPDU-STUDENT</strong>.</p>
+          </div>
+        </article>
+
+        <article class="guide-step-card">
+          <div class="step-number-badge">3</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Masuk ke Halaman Login Hotspot</h3></div>
+            <p class="step-desc">Jika halaman login tidak otomatis muncul, buka browser dan ketik alamat: <code>http://unipdu.ac.id</code>.</p>
+            <div class="step-mockup-box">
+              <span class="step-mockup-url">http://unipdu.ac.id</span>
+              <a href="login.html" class="step-action-btn">Buka Halaman Login &rarr;</a>
+            </div>
+          </div>
+        </article>
+
+        <article class="guide-step-card">
+          <div class="step-number-badge">4</div>
+          <div class="step-card-body">
+            <div class="step-card-header"><h3 class="step-title">Masukkan NIM / NIDN &amp; Password</h3></div>
+            <p class="step-desc">Pilih tab peran (Mahasiswa / Dosen), ketikkan NIM atau NIDN Anda beserta password akun kampus, lalu tekan tombol <strong>"Masuk Internet Kampus"</strong>.</p>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="campus-footer">
+      <div><strong>&copy; 2026 Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU) Jombang</strong></div>
+      <div>Pusat Komputer &amp; Jaringan (Puskomnet)</div>
+    </footer>
+  </div>
+
+  <nav class="mobile-bottom-nav">
+    <a href="login.html" class="bottom-nav-item"><span class="bottom-nav-icon">↩️</span><span class="bottom-nav-label">Login</span></a>
+    <a href="https://siakad.unipdu.ac.id/" target="_blank" class="bottom-nav-item"><span class="bottom-nav-icon">🎓</span><span class="bottom-nav-label">SIAKAD</span></a>
+    <a href="https://canvas.unipdu.ac.id/" target="_blank" class="bottom-nav-item"><span class="bottom-nav-icon">🔴</span><span class="bottom-nav-label">Canvas</span></a>
+    <a href="panduan.html" class="bottom-nav-item active"><span class="bottom-nav-icon">📖</span><span class="bottom-nav-label">Panduan</span></a>
+  </nav>
+
+  <script>
+    function updateClock() {
+      var now = new Date();
+      var el = document.getElementById('clock-display');
+      if (el) el.innerText = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+    }
+    setInterval(updateClock, 1000); updateClock();
+  </script>
+</body>
+</html>

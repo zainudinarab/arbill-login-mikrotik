@@ -1881,4 +1881,152 @@ body {
   justify-content: flex-end;
 }
 
+/* ==============================================================
+ * CLEAN GUIDE MENU LIST (HANYA JUDUL & KLIK MASUK HALAMAN)
+ * ============================================================== */
+.guide-simple-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.guide-row-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-title);
+  box-shadow: var(--shadow-soft);
+  transition: all 0.22s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.guide-row-item:hover {
+  border-color: var(--primary-green);
+  background: #f8fafc;
+  transform: translateX(4px);
+  box-shadow: var(--shadow-card);
+}
+
+.guide-row-item.featured {
+  border: 1.5px solid #a7f3d0;
+  background: linear-gradient(90deg, #ffffff 0%, #f0fdf4 100%);
+}
+
+.guide-row-item.featured::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: #E6261F;
+}
+
+.guide-row-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
+}
+
+.guide-row-icon {
+  font-size: 1.4rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #f1f5f9;
+  flex-shrink: 0;
+}
+
+.guide-row-item.featured .guide-row-icon {
+  background: #ffffff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.guide-row-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.guide-row-title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  color: var(--text-title);
+  line-height: 1.35;
+}
+
+.guide-row-sub {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
+
+.guide-row-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+.guide-row-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #ecfdf5;
+  color: #065f46;
+  white-space: nowrap;
+}
+
+.guide-row-badge.hot {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.guide-row-arrow {
+  font-size: 1.25rem;
+  color: #94a3b8;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.guide-row-item:hover .guide-row-arrow {
+  color: var(--primary-green);
+  transform: translateX(3px);
+}
+
+@media (max-width: 600px) {
+  .guide-row-item {
+    padding: 14px 16px;
+  }
+  .guide-row-title {
+    font-size: 0.88rem;
+  }
+  .guide-row-sub {
+    font-size: 0.7rem;
+  }
+  .guide-row-badge {
+    display: none; /* Hide badge on very small screens to keep clean title */
+  }
+}
+
+
 
