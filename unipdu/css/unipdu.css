@@ -328,23 +328,28 @@ body {
   border-radius: 12px;
   padding: 4px;
   margin-bottom: 20px;
+  gap: 4px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .role-tab-btn {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   color: var(--text-muted);
-  padding: 9px 8px;
+  padding: 9px 4px;
   border-radius: 9px;
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
+  white-space: nowrap;
 }
 
 .role-tab-btn.active {
@@ -356,6 +361,14 @@ body {
 .role-tab-btn:hover:not(.active) {
   color: var(--text-title);
   background: rgba(255, 255, 255, 0.6);
+}
+
+@media (max-width: 480px) {
+  .role-tab-btn {
+    font-size: 0.72rem;
+    padding: 8px 3px;
+    gap: 3px;
+  }
 }
 
 /* Sub-Mode Selector (Akun vs Voucher 1 Input) */

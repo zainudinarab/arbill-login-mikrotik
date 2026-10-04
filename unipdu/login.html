@@ -47,8 +47,11 @@
       }
     }
 
-    // Role Switcher Handlers (Civitas Kampus vs Tamu)
+    // Role Switcher Handlers (Civitas Kampus, Kode Akses Hotspot, Tamu)
+    var currentRole = 'civitas'; // 'civitas', 'kode-akses', 'tamu'
+
     function switchRole(role) {
+      currentRole = role;
       document.querySelectorAll('.role-tabs > .role-tab-btn').forEach(function (b) { b.classList.remove('active'); });
       var tab = document.getElementById('tab-' + role);
       if (tab) tab.classList.add('active');
@@ -56,39 +59,28 @@
       var regularPanel = document.getElementById('regular-panel');
       var guestPanel = document.getElementById('guest-panel');
 
+      var labelUser = document.getElementById('label-user');
+      var userInput = document.getElementById('username-input');
+      var pwGroup = document.getElementById('group-password');
+      var pwInput = document.getElementById('password-input');
+      var rememberRow = document.querySelector('.remember-row');
+      var kodeAksesHint = document.getElementById('kode-akses-hint');
+      var btnSubmit = document.getElementById('btn-login-submit');
+
       if (role === 'tamu') {
         if (regularPanel) regularPanel.style.display = 'none';
         if (guestPanel) guestPanel.style.display = 'block';
         if (!activeGuestData) {
           checkActiveGuestByMac();
         }
-      } else {
+      } else if (role === 'kode-akses') {
         if (guestPanel) guestPanel.style.display = 'none';
         if (regularPanel) regularPanel.style.display = 'block';
-      }
-    }
 
-    // Sub-Mode Switcher: Akun (User & Password Beda) vs Voucher (User = Password 1 Input)
-    var currentLoginMode = 'member'; // 'member' atau 'voucher'
-
-    function setLoginMode(mode) {
-      currentLoginMode = mode;
-      var btnMember = document.getElementById('btn-mode-member');
-      var btnVoucher = document.getElementById('btn-mode-voucher');
-      var labelUser = document.getElementById('label-user');
-      var userInput = document.getElementById('username-input');
-      var pwGroup = document.getElementById('group-password');
-      var pwInput = document.getElementById('password-input');
-      var resetPwLink = document.querySelector('.link-reset-pw');
-      var voucherHint = document.getElementById('voucher-hint');
-      var btnSubmit = document.getElementById('btn-login-submit');
-
-      if (mode === 'voucher') {
-        if (btnMember) btnMember.classList.remove('active');
-        if (btnVoucher) btnVoucher.classList.add('active');
-        if (labelUser) labelUser.innerText = 'Kode Voucher / Akses Hotspot';
+        // Mode Kode Akses: 1 input saja (Username & Password otomatis disamakan)
+        if (labelUser) labelUser.innerText = 'Kode Akses Hotspot';
         if (userInput) {
-          userInput.placeholder = 'Masukkan kode voucher Anda';
+          userInput.placeholder = 'Masukkan kode akses Anda';
           userInput.focus();
         }
         if (pwGroup) pwGroup.style.display = 'none';
@@ -96,15 +88,17 @@
           pwInput.required = false;
           pwInput.value = '';
         }
-        if (resetPwLink) resetPwLink.style.display = 'none';
-        if (voucherHint) voucherHint.style.display = 'block';
+        if (rememberRow) rememberRow.style.display = 'none';
+        if (kodeAksesHint) kodeAksesHint.style.display = 'block';
         if (btnSubmit) {
           var span = btnSubmit.querySelector('span');
-          if (span) span.innerText = 'MASUK DENGAN KODE VOUCHER';
+          if (span) span.innerText = 'MASUK DENGAN KODE AKSES';
         }
-      } else {
-        if (btnVoucher) btnVoucher.classList.remove('active');
-        if (btnMember) btnMember.classList.add('active');
+      } else { // 'civitas'
+        if (guestPanel) guestPanel.style.display = 'none';
+        if (regularPanel) regularPanel.style.display = 'block';
+
+        // Mode Akun Civitas: NIM / NIDN & Password Akun (2 input)
         if (labelUser) labelUser.innerText = 'NIM / NIDN / Username Akun';
         if (userInput) {
           userInput.placeholder = 'Contoh: 210101001 atau nama_user';
@@ -112,8 +106,8 @@
         }
         if (pwGroup) pwGroup.style.display = 'block';
         if (pwInput) pwInput.required = true;
-        if (resetPwLink) resetPwLink.style.display = 'inline';
-        if (voucherHint) voucherHint.style.display = 'none';
+        if (rememberRow) rememberRow.style.display = 'flex';
+        if (kodeAksesHint) kodeAksesHint.style.display = 'none';
         if (btnSubmit) {
           var span = btnSubmit.querySelector('span');
           if (span) span.innerText = 'MASUK INTERNET KAMPUS';
@@ -372,18 +366,21 @@
           <p class="login-card-desc">Gunakan akun resmi UNIPDU Anda untuk terhubung ke internet kampus.</p>
         </div>
 
-        <!-- Role Selector Tabs: Gabungan Mahasiswa & Dosen menjadi 1 Tab -->
+        <!-- Role Selector Tabs: 3 Pilihan Singkat (Civitas, Kode Akses, Tamu) -->
         <div class="role-tabs">
-          <button type="button" class="role-tab-btn active" id="tab-civitas" onclick="switchRole('civitas')">
-            <span>🎓</span> Civitas (Mahasiswa &amp; Dosen)
+          <button type="button" class="role-tab-btn active" id="tab-civitas" onclick="switchRole('civitas')" title="Civitas Akademika (Mahasiswa &amp; Dosen)">
+            <span>🎓</span> Civitas
           </button>
-          <button type="button" class="role-tab-btn" id="tab-tamu" onclick="switchRole('tamu')">
-            <span>👥</span> Tamu &amp; Pengunjung
+          <button type="button" class="role-tab-btn" id="tab-kode-akses" onclick="switchRole('kode-akses')" title="Login Kode Akses (1 Input)">
+            <span>🎫</span> Kode Akses
+          </button>
+          <button type="button" class="role-tab-btn" id="tab-tamu" onclick="switchRole('tamu')" title="Tamu &amp; Pengunjung Kampus">
+            <span>👥</span> Tamu
           </button>
         </div>
 
         <!-- ============================================================== -->
-        <!-- REGULAR PANEL: LOGIN MAHASISWA & DOSEN                         -->
+        <!-- REGULAR PANEL: LOGIN MAHASISWA, DOSEN & KODE AKSES             -->
         <!-- ============================================================== -->
         <div id="regular-panel">
           <!-- MikroTik CHAP Login Form (Disembunyikan agar teks $(if chap-id) tidak muncul saat preview browser) -->
@@ -406,13 +403,13 @@
               var u = (form.username.value || '').trim();
               var p = '';
 
-              if (currentLoginMode === 'voucher') {
+              if (currentRole === 'kode-akses') {
                 if (!u) {
-                  alert('Silakan masukkan Kode Voucher Anda.');
+                  alert('Silakan masukkan Kode Akses Hotspot Anda.');
                   if (form.username) form.username.focus();
                   return false;
                 }
-                p = u; // Pada mode voucher, password otomatis sama persis dengan username/kode voucher
+                p = u; // Pada mode kode akses, password otomatis sama persis dengan kode akses
                 form.password.value = p;
               } else {
                 p = form.password.value || '';
@@ -422,11 +419,11 @@
                 }
               }
 
-              // Simpan username jika checkbox ingat saya dicentang (hanya pada mode akun)
+              // Simpan username jika checkbox ingat saya dicentang (hanya pada mode civitas)
               var remember = document.getElementById('remember-me');
-              if (remember && remember.checked && currentLoginMode !== 'voucher') {
+              if (remember && remember.checked && currentRole === 'civitas') {
                 try { localStorage.setItem('unipdu_saved_user', u); } catch (e) { }
-              } else if (currentLoginMode !== 'voucher') {
+              } else if (currentRole === 'civitas') {
                 try { localStorage.removeItem('unipdu_saved_user'); } catch (e) { }
               }
 
@@ -470,13 +467,13 @@
                   var res = await window.UNIPDU_API.verifyLogin(username, password);
                   showLoginResultDialog(true, res.data);
                 } else {
-                  var isVoucher = (currentLoginMode === 'voucher');
+                  var isKodeAkses = (currentRole === 'kode-akses');
                   showLoginResultDialog(true, {
                     username: username,
-                    name: isVoucher ? ('Voucher ' + username) : username,
-                    role: isVoucher ? 'voucher' : 'civitas',
-                    profile: isVoucher ? 'Voucher-Hotspot' : 'Civitas-Kampus',
-                    prodi_unit: isVoucher ? 'Akses Voucher Hotspot' : 'Civitas Akademika UNIPDU',
+                    name: isKodeAkses ? ('Kode Akses ' + username) : username,
+                    role: isKodeAkses ? 'kode-akses' : 'civitas',
+                    profile: isKodeAkses ? 'Kode-Akses-Hotspot' : 'Civitas-Kampus',
+                    prodi_unit: isKodeAkses ? 'Pengguna Kode Akses Hotspot' : 'Civitas Akademika UNIPDU',
                     target_routers: ['all']
                   });
                 }
@@ -555,21 +552,9 @@
             <input type="hidden" name="dst" value="$(link-orig)">
             <input type="hidden" name="popup" value="true">
 
-            <!-- Sub-Mode Selector: Akun (User & PW Beda) vs Voucher (User & PW Sama / 1 Input) -->
-            <div class="login-mode-selector">
-              <button type="button" class="mode-pill-btn active" id="btn-mode-member" onclick="setLoginMode('member')">
-                <span class="mode-pill-icon">🔑</span>
-                <span>Akun (NIM / NIDN)</span>
-              </button>
-              <button type="button" class="mode-pill-btn" id="btn-mode-voucher" onclick="setLoginMode('voucher')">
-                <span class="mode-pill-icon">🎟️</span>
-                <span>Kode Voucher (1 Input)</span>
-              </button>
-            </div>
-
-            <!-- Petunjuk Akses Mode Voucher -->
-            <div id="voucher-hint" style="display: none; background: #ecfdf5; border: 1.5px dashed #10b981; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.8rem; color: #065f46; line-height: 1.45;">
-              🎟️ <strong>Akses Kode Voucher:</strong> Masukkan kode voucher hotspot Anda di bawah. Password otomatis disamakan dengan kode voucher untuk masuk ke jaringan internet.
+            <!-- Petunjuk Akses Mode Kode Akses -->
+            <div id="kode-akses-hint" style="display: none; background: #ecfdf5; border: 1.5px dashed #10b981; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.8rem; color: #065f46; line-height: 1.45;">
+              🎫 <strong>Mode Kode Akses:</strong> Masukkan kode akses hotspot Anda di bawah. Password otomatis disamakan dengan kode akses untuk masuk ke jaringan internet.
             </div>
 
             <!-- Input Username / NIM / Kode Voucher -->
