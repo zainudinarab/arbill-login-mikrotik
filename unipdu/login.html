@@ -19,6 +19,37 @@
   <!-- Semua operasi database menggunakan Cloud Functions API via setting.js (UNIPDU_API) -->
   <!-- Tidak perlu lagi firebase-direct-adapter.js / api.js dari web (menghindari akses gstatic.com) -->
   <script>
+    // ==============================================================
+    // VARIABEL RESMI MIKROTIK ROUTEROS (HANYA AKTIF JIKA DI FILE HTML)
+    // ==============================================================
+    var MIKROTIK_IDENTITY = '$(identity)';
+    var MIKROTIK_SERVER_NAME = '$(server-name)';
+    var MIKROTIK_SERVER_ADDR = '$(server-address)';
+    var MIKROTIK_INTERFACE = '$(interface-name)';
+    var MIKROTIK_MAC = '$(mac)';
+    var MIKROTIK_IP = '$(ip)';
+    var MIKROTIK_HOSTNAME = '$(hostname)';
+
+    // Deteksi Identity / Nama Router MikroTik yang aman
+    function getMikrotikRouterIdentity() {
+      // 1. Cek $(identity) asli dari RouterOS
+      if (typeof MIKROTIK_IDENTITY === 'string' && MIKROTIK_IDENTITY.indexOf('$') === -1 && MIKROTIK_IDENTITY.trim() !== '') {
+        return MIKROTIK_IDENTITY.trim();
+      }
+      // 2. Cek $(server-name) dari Hotspot RouterOS
+      if (typeof MIKROTIK_SERVER_NAME === 'string' && MIKROTIK_SERVER_NAME.indexOf('$') === -1 && MIKROTIK_SERVER_NAME.trim() !== '') {
+        return MIKROTIK_SERVER_NAME.trim();
+      }
+      // 3. Cek parameter URL (misal: ?router=puskomnet atau ?identity=graha)
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('router') || params.get('identity') || params.get('router_id');
+        if (q && q.indexOf('$') === -1 && q.trim() !== '') return q.trim();
+      } catch (e) { }
+      // 4. Default fallback jika preview browser luar router
+      return (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.DEFAULT_ROUTER_ID) ? window.UNIPDU_CONFIG.DEFAULT_ROUTER_ID : 'all';
+    }
+
     // Live Clock Digital
     function updateClock() {
       var now = new Date();
@@ -954,15 +985,21 @@
         statusBox.innerHTML = '⏳ <strong>Sedang mendaftarkan tamu ke sistem...</strong> Mohon tunggu sebentar.';
       }
 
-      var routerId = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ROUTER_ID) ? window.UNIPDU_CONFIG.ROUTER_ID : '$(identity)';
+      var routerId = getMikrotikRouterIdentity();
+
+      var clientMac = (typeof MIKROTIK_MAC === 'string' && MIKROTIK_MAC.indexOf('$') === -1) ? MIKROTIK_MAC : '';
+      if (!clientMac) {
+        try { clientMac = localStorage.getItem('unipdu_guest_mac') || ''; } catch (e) { }
+      }
+      var clientIp = (typeof MIKROTIK_IP === 'string' && MIKROTIK_IP.indexOf('$') === -1) ? MIKROTIK_IP : '';
 
       var payload = {
         name: name,
         phone: phone,
         purpose: purpose,
-        mac: '$(mac)',
-        ip: '$(ip)',
-        identity: '$(identity)',
+        mac: clientMac,
+        ip: clientIp,
+        identity: routerId,
         router_id: routerId
       };
 
