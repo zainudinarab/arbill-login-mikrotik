@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -8,8 +9,314 @@
   <title>Login Hotspot Kampus - Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU)</title>
   <link rel="stylesheet" href="css/unipdu.css">
   <link rel="icon" href="img/favicon.png">
+  <style>
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+  </style>
   <script src="setting.js"></script>
+  <!-- Semua operasi database menggunakan Cloud Functions API via setting.js (UNIPDU_API) -->
+  <!-- Tidak perlu lagi firebase-direct-adapter.js / api.js dari web (menghindari akses gstatic.com) -->
+  <script>
+    // Live Clock Digital
+    function updateClock() {
+      var now = new Date();
+      var h = String(now.getHours()).padStart(2, '0');
+      var m = String(now.getMinutes()).padStart(2, '0');
+      var s = String(now.getSeconds()).padStart(2, '0');
+      var el = document.getElementById('clock-display');
+      if (el) el.innerText = h + ':' + m + ':' + s;
+    }
+
+    // Toggle Password Visibility
+    function togglePasswordVisibility() {
+      var pwInput = document.getElementById('password-input');
+      var eye = document.getElementById('eye-icon');
+      if (!pwInput) return;
+      if (pwInput.type === 'password') {
+        pwInput.type = 'text';
+        if (eye) {
+          eye.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
+        }
+      } else {
+        pwInput.type = 'password';
+        if (eye) {
+          eye.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
+        }
+      }
+    }
+
+    // Role Switcher Handlers (Civitas Kampus vs Tamu)
+    function switchRole(role) {
+      document.querySelectorAll('.role-tabs > .role-tab-btn').forEach(function (b) { b.classList.remove('active'); });
+      var tab = document.getElementById('tab-' + role);
+      if (tab) tab.classList.add('active');
+
+      var regularPanel = document.getElementById('regular-panel');
+      var guestPanel = document.getElementById('guest-panel');
+
+      if (role === 'tamu') {
+        if (regularPanel) regularPanel.style.display = 'none';
+        if (guestPanel) guestPanel.style.display = 'block';
+        if (!activeGuestData) {
+          checkActiveGuestByMac();
+        }
+      } else {
+        if (guestPanel) guestPanel.style.display = 'none';
+        if (regularPanel) regularPanel.style.display = 'block';
+      }
+    }
+
+    // Sub-Mode Switcher: Akun (User & Password Beda) vs Voucher (User = Password 1 Input)
+    var currentLoginMode = 'member'; // 'member' atau 'voucher'
+
+    function setLoginMode(mode) {
+      currentLoginMode = mode;
+      var btnMember = document.getElementById('btn-mode-member');
+      var btnVoucher = document.getElementById('btn-mode-voucher');
+      var labelUser = document.getElementById('label-user');
+      var userInput = document.getElementById('username-input');
+      var pwGroup = document.getElementById('group-password');
+      var pwInput = document.getElementById('password-input');
+      var resetPwLink = document.querySelector('.link-reset-pw');
+      var voucherHint = document.getElementById('voucher-hint');
+      var btnSubmit = document.getElementById('btn-login-submit');
+
+      if (mode === 'voucher') {
+        if (btnMember) btnMember.classList.remove('active');
+        if (btnVoucher) btnVoucher.classList.add('active');
+        if (labelUser) labelUser.innerText = 'Kode Voucher / Akses Hotspot';
+        if (userInput) {
+          userInput.placeholder = 'Masukkan kode voucher Anda';
+          userInput.focus();
+        }
+        if (pwGroup) pwGroup.style.display = 'none';
+        if (pwInput) {
+          pwInput.required = false;
+          pwInput.value = '';
+        }
+        if (resetPwLink) resetPwLink.style.display = 'none';
+        if (voucherHint) voucherHint.style.display = 'block';
+        if (btnSubmit) {
+          var span = btnSubmit.querySelector('span');
+          if (span) span.innerText = 'MASUK DENGAN KODE VOUCHER';
+        }
+      } else {
+        if (btnVoucher) btnVoucher.classList.remove('active');
+        if (btnMember) btnMember.classList.add('active');
+        if (labelUser) labelUser.innerText = 'NIM / NIDN / Username Akun';
+        if (userInput) {
+          userInput.placeholder = 'Contoh: 210101001 atau nama_user';
+          userInput.focus();
+        }
+        if (pwGroup) pwGroup.style.display = 'block';
+        if (pwInput) pwInput.required = true;
+        if (resetPwLink) resetPwLink.style.display = 'inline';
+        if (voucherHint) voucherHint.style.display = 'none';
+        if (btnSubmit) {
+          var span = btnSubmit.querySelector('span');
+          if (span) span.innerText = 'MASUK INTERNET KAMPUS';
+        }
+      }
+    }
+
+    // Toggle Slide-out Side Drawer Menu
+    function toggleCampusMenu() {
+      var drawer = document.getElementById('campus-drawer');
+      var overlay = document.getElementById('campus-drawer-overlay');
+      if (!drawer || !overlay) return;
+      var isOpen = drawer.classList.contains('open');
+      if (isOpen) {
+        drawer.classList.remove('open');
+        overlay.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+      } else {
+        drawer.classList.add('open');
+        overlay.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+      }
+    }
+
+    // ==============================================================
+    // AUTO DETECT AKUN TAMU AKTIF (BERDASARKAN MAC PERANGKAT)
+    // ==============================================================
+    var activeGuestData = null;
+
+    async function checkActiveGuestByMac() {
+      var clientMac = '$(mac)';
+      if (!clientMac || clientMac === '$' + '(mac)') {
+        try { clientMac = localStorage.getItem('unipdu_guest_mac') || ''; } catch (e) { }
+        if (!clientMac) {
+          try {
+            var urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('mac')) {
+              clientMac = urlParams.get('mac');
+            }
+          } catch (e) { }
+        }
+        if (!clientMac) return;
+      }
+
+      try {
+        if (window.UNIPDU_API && typeof window.UNIPDU_API.checkActiveGuest === 'function') {
+          var activeGuest = await window.UNIPDU_API.checkActiveGuest(clientMac);
+          if (activeGuest) {
+            activeGuestData = activeGuest;
+            renderActiveGuestCard(activeGuest);
+          }
+        }
+      } catch (err) {
+        console.warn('Cek tamu aktif:', err.message);
+      }
+    }
+
+    function renderActiveGuestCard(guest) {
+      var activeCard = document.getElementById('active-guest-card');
+      var regForm = document.getElementById('form-guest-register');
+      var nameEl = document.getElementById('active-guest-name');
+      var codeEl = document.getElementById('active-guest-code');
+      var passwordEl = document.getElementById('active-guest-password');
+      var timerEl = document.getElementById('active-guest-timer');
+      var expiredEl = document.getElementById('active-guest-expired');
+      var createdEl = document.getElementById('active-guest-created');
+      var profileEl = document.getElementById('active-guest-profile');
+
+      if (!activeCard) return;
+
+      if (nameEl) nameEl.innerText = guest.name || 'Tamu';
+      if (codeEl) codeEl.innerText = guest.username || '-';
+      if (passwordEl) passwordEl.innerText = guest.password || '-';
+      if (timerEl) timerEl.innerText = guest.remaining_str || 'Masih aktif';
+      if (profileEl) profileEl.innerText = guest.profile || 'Hotspot Tamu (1 Mbps)';
+
+      // Format waktu pendaftaran
+      if (createdEl && guest.created_at) {
+        try {
+          var dc = new Date(guest.created_at);
+          var jamC = String(dc.getHours()).padStart(2, '0');
+          var mntC = String(dc.getMinutes()).padStart(2, '0');
+          var tglC = String(dc.getDate()).padStart(2, '0');
+          var blnC = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][dc.getMonth()];
+          createdEl.innerText = tglC + ' ' + blnC + ' ' + dc.getFullYear() + ', ' + jamC + ':' + mntC + ' WIB';
+        } catch (e) {
+          createdEl.innerText = guest.created_at;
+        }
+      } else if (createdEl) {
+        createdEl.innerText = 'Hari ini';
+      }
+
+      // Format jam berakhir ke waktu lokal Indonesia
+      if (expiredEl && guest.expired_at) {
+        try {
+          var d = new Date(guest.expired_at);
+          var jam = String(d.getHours()).padStart(2, '0');
+          var mnt = String(d.getMinutes()).padStart(2, '0');
+          var tgl = String(d.getDate()).padStart(2, '0');
+          var bln = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'][d.getMonth()];
+          expiredEl.innerText = jam + ':' + mnt + ' WIB, ' + tgl + ' ' + bln + ' ' + d.getFullYear();
+        } catch (e) {
+          expiredEl.innerText = guest.expired_at;
+        }
+      } else if (expiredEl) {
+        expiredEl.innerText = 'Tidak terbatas';
+        expiredEl.style.color = '#047857';
+      }
+
+      activeCard.style.display = 'block';
+      if (regForm) regForm.style.display = 'none';
+
+      // Buka tab tamu otomatis agar kartu langsung muncul di layar
+      switchRole('tamu');
+    }
+
+    function showManualGuestRegisterForm() {
+      var activeCard = document.getElementById('active-guest-card');
+      var regForm = document.getElementById('form-guest-register');
+      if (activeCard) activeCard.style.display = 'none';
+      if (regForm) regForm.style.display = 'block';
+    }
+
+    function loginWithActiveGuest() {
+      if (!activeGuestData || !activeGuestData.username) return;
+      var username = activeGuestData.username;
+      var password = activeGuestData.password || username;
+
+      var btn = document.getElementById('btn-active-guest-login');
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'MENGHUBUNGKAN KE INTERNET...';
+      }
+
+      // Deteksi lingkungan MikroTik RouterOS
+      var linkLogin = (document.sendin && document.sendin.action) ? document.sendin.action : '$(link-login-only)';
+      var isRouterOS = (linkLogin && linkLogin.indexOf('$') === -1 && linkLogin !== '');
+
+      if (!isRouterOS) {
+        // Mode Browser: jangan redirect keluar, masukkan ke form login utama di login.html
+        var uInput = document.getElementById('username-input');
+        var pInput = document.getElementById('password-input');
+        if (uInput) uInput.value = username;
+        if (pInput) pInput.value = password;
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'MASUK INTERNET LAGI SEBAGAI TAMU';
+        }
+        showLoginResultDialog(true, {
+          username: username,
+          name: activeGuestData.name || 'Tamu Kampus',
+          role: 'tamu',
+          profile: 'Tamu-Hotspot',
+          prodi_unit: 'Tamu / Pengunjung UNIPDU',
+          target_routers: ['all']
+        });
+        return;
+      }
+
+      // 1. Submit via form sendin resmi MikroTik
+      if (document.sendin) {
+        document.sendin.username.value = username;
+        if (typeof hexMD5 === 'function' && typeof '$(chap-id)' !== 'undefined' && '$(chap-id)' !== '' && '$(chap-id)' !== '$' + '(chap-id)') {
+          document.sendin.password.value = hexMD5('$(chap-id)' + password + '$(chap-challenge)');
+        } else {
+          document.sendin.password.value = password;
+        }
+        document.sendin.submit();
+        return;
+      }
+
+      // 2. Fallback submit via form login utama
+      if (document.login) {
+        document.login.username.value = username;
+        document.login.password.value = password;
+        if (typeof doLogin === 'function') {
+          doLogin();
+        } else {
+          document.login.submit();
+        }
+        return;
+      }
+    }
+
+    // Auto-start clock & check active guest when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      setInterval(updateClock, 1000);
+      updateClock();
+      checkActiveGuestByMac();
+
+      // Bersihkan teks $(username) jika tampil mentah saat mode preview di browser
+      var uInput = document.getElementById('username-input');
+      if (uInput) {
+        if (!uInput.value || uInput.value === '$' + '(username)' || uInput.value.indexOf('$(') !== -1) {
+          var saved = '';
+          try { saved = localStorage.getItem('unipdu_saved_user') || ''; } catch (e) { }
+          uInput.value = saved;
+        }
+      }
+    });
+  </script>
 </head>
+
 <body>
 
   <!-- Ambient Glow Orbs -->
@@ -22,8 +329,10 @@
     <!-- Top Campus Navigation Bar -->
     <header class="campus-topbar">
       <div class="topbar-left-group">
-        <button type="button" class="campus-menu-btn" id="btn-campus-menu" onclick="toggleCampusMenu()" title="Buka Menu Kampus">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <button type="button" class="campus-menu-btn" id="btn-campus-menu" onclick="toggleCampusMenu()"
+          title="Buka Menu Kampus">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+            stroke-linecap="round" stroke-linejoin="round">
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <line x1="3" y1="12" x2="21" y2="12"></line>
             <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -56,140 +365,380 @@
       <!-- LEFT COLUMN: ACADEMIC LOGIN CARD                               -->
       <!-- ============================================================== -->
       <section class="login-card">
-        
+
         <div class="login-card-header">
           <span class="login-badge-sub">Autentikasi Sivitas Akademika</span>
           <h2 class="login-card-title">Masuk Jaringan Internet</h2>
           <p class="login-card-desc">Gunakan akun resmi UNIPDU Anda untuk terhubung ke internet kampus.</p>
         </div>
 
-        <!-- Role Selector Tabs -->
+        <!-- Role Selector Tabs: Gabungan Mahasiswa & Dosen menjadi 1 Tab -->
         <div class="role-tabs">
-          <button type="button" class="role-tab-btn active" id="tab-mhs" onclick="switchRole('mhs')">
-            <span>🎓</span> Mahasiswa
+          <button type="button" class="role-tab-btn active" id="tab-civitas" onclick="switchRole('civitas')">
+            <span>🎓</span> Civitas (Mahasiswa &amp; Dosen)
           </button>
-          <button type="button" class="role-tab-btn" id="tab-dosen" onclick="switchRole('dosen')">
-            <span>👨‍🏫</span> Dosen &amp; Staf
-          </button>
-          $(if trial == 'yes')
           <button type="button" class="role-tab-btn" id="tab-tamu" onclick="switchRole('tamu')">
-            <span>👥</span> Tamu
+            <span>👥</span> Tamu &amp; Pengunjung
           </button>
-          $(endif)
         </div>
 
-        <!-- MikroTik CHAP Login Form -->
-        $(if chap-id)
-        <form name="sendin" action="$(link-login-only)" method="post">
-          <input type="hidden" name="username">
-          <input type="hidden" name="password">
-          <input type="hidden" name="dst" value="$(link-orig)">
-          <input type="hidden" name="popup" value="true">
-        </form>
+        <!-- ============================================================== -->
+        <!-- REGULAR PANEL: LOGIN MAHASISWA & DOSEN                         -->
+        <!-- ============================================================== -->
+        <div id="regular-panel">
+          <!-- MikroTik CHAP Login Form (Disembunyikan agar teks $(if chap-id) tidak muncul saat preview browser) -->
+          <div style="display:none;">
+          $(if chap-id)
+          <form name="sendin" action="$(link-login-only)" method="post">
+            <input type="hidden" name="username">
+            <input type="hidden" name="password">
+            <input type="hidden" name="dst" value="$(link-orig)">
+            <input type="hidden" name="popup" value="true">
+          </form>
 
-        <script src="md5.js"></script>
-        <script>
-          function doLogin() {
-            var form = document.login;
-            var u = form.username.value.trim();
-            var p = form.password.value;
-            if (!u || !p) {
-              alert('Silakan masukkan Username / NIM dan Password Anda.');
-              return false;
-            }
-            // Simpan username jika checkbox ingat saya dicentang
-            var remember = document.getElementById('remember-me');
-            if (remember && remember.checked) {
-              try { localStorage.setItem('unipdu_saved_user', u); } catch(e) {}
-            } else {
-              try { localStorage.removeItem('unipdu_saved_user'); } catch(e) {}
-            }
-
-            document.sendin.username.value = u;
-            document.sendin.password.value = hexMD5('$(chap-id)' + p + '$(chap-challenge)');
-            document.sendin.submit();
-            return false;
-          }
-        </script>
-        $(endif)
-
-        <form autocomplete="off" name="login" action="$(link-login-only)" method="post" $(if chap-id) onSubmit="return doLogin()" $(endif)>
-          <input type="hidden" name="dst" value="$(link-orig)">
-          <input type="hidden" name="popup" value="true">
-
-          <!-- Input Username / NIM -->
-          <div class="form-group">
-            <label class="form-label" for="username-input" id="label-user">Nomor Induk Mahasiswa (NIM)</label>
-            <div class="input-icon-wrapper">
-              <span class="input-icon-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
-              </span>
-              <input type="text" id="username-input" name="username" class="input-control" value="$(username)" placeholder="Contoh: 210101001" required autofocus>
-            </div>
+          <script src="md5.js"></script>
+          $(endif)
           </div>
 
-          <!-- Input Password -->
-          <div class="form-group" id="group-password">
-            <label class="form-label" for="password-input">Password Akun</label>
-            <div class="input-icon-wrapper">
-              <span class="input-icon-left">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-                </svg>
-              </span>
-              <input type="password" id="password-input" name="password" class="input-control" placeholder="Masukkan password Anda" required>
-              <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility()" title="Tampilkan / Sembunyikan Password">
-                <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                </svg>
+          <script>
+            function doLogin() {
+              var form = document.login;
+              var u = (form.username.value || '').trim();
+              var p = '';
+
+              if (currentLoginMode === 'voucher') {
+                if (!u) {
+                  alert('Silakan masukkan Kode Voucher Anda.');
+                  if (form.username) form.username.focus();
+                  return false;
+                }
+                p = u; // Pada mode voucher, password otomatis sama persis dengan username/kode voucher
+                form.password.value = p;
+              } else {
+                p = form.password.value || '';
+                if (!u || !p) {
+                  alert('Silakan masukkan Username / NIM dan Password Anda.');
+                  return false;
+                }
+              }
+
+              // Simpan username jika checkbox ingat saya dicentang (hanya pada mode akun)
+              var remember = document.getElementById('remember-me');
+              if (remember && remember.checked && currentLoginMode !== 'voucher') {
+                try { localStorage.setItem('unipdu_saved_user', u); } catch (e) { }
+              } else if (currentLoginMode !== 'voucher') {
+                try { localStorage.removeItem('unipdu_saved_user'); } catch (e) { }
+              }
+
+              // Deteksi apakah sedang berjalan di browser preview (bukan di dalam gateway MikroTik)
+              var linkLogin = (document.sendin && document.sendin.action) ? document.sendin.action : '$(link-login-only)';
+              var isRouterOS = (linkLogin && linkLogin.indexOf('$') === -1 && linkLogin !== '');
+
+              if (!isRouterOS) {
+                handleBrowserPreviewLogin(u, p);
+                return false;
+              }
+
+              if (document.sendin) {
+                document.sendin.username.value = u;
+                if (typeof hexMD5 === 'function' && typeof '$(chap-id)' !== 'undefined' && '$(chap-id)' !== '' && '$(chap-id)' !== '$' + '(chap-id)') {
+                  document.sendin.password.value = hexMD5('$(chap-id)' + p + '$(chap-challenge)');
+                } else {
+                  document.sendin.password.value = p;
+                }
+                document.sendin.submit();
+                return false;
+              }
+
+              return true;
+            }
+
+            async function handleBrowserPreviewLogin(username, password) {
+              var btn = document.getElementById('btn-login-submit');
+              var origContent = btn ? btn.innerHTML : '';
+              if (btn) {
+                btn.disabled = true;
+                btn.style.opacity = '0.75';
+                btn.innerHTML = '<span>MEMERIKSA KREDENSIAL...</span>';
+              }
+
+              var existing = document.getElementById('login-test-modal');
+              if (existing) existing.remove();
+
+              try {
+                if (window.UNIPDU_API && typeof window.UNIPDU_API.verifyLogin === 'function') {
+                  var res = await window.UNIPDU_API.verifyLogin(username, password);
+                  showLoginResultDialog(true, res.data);
+                } else {
+                  var isVoucher = (currentLoginMode === 'voucher');
+                  showLoginResultDialog(true, {
+                    username: username,
+                    name: isVoucher ? ('Voucher ' + username) : username,
+                    role: isVoucher ? 'voucher' : 'civitas',
+                    profile: isVoucher ? 'Voucher-Hotspot' : 'Civitas-Kampus',
+                    prodi_unit: isVoucher ? 'Akses Voucher Hotspot' : 'Civitas Akademika UNIPDU',
+                    target_routers: ['all']
+                  });
+                }
+              } catch (err) {
+                showLoginResultDialog(false, { message: err.message });
+              } finally {
+                if (btn) {
+                  btn.disabled = false;
+                  btn.style.opacity = '1';
+                  btn.innerHTML = origContent;
+                }
+              }
+            }
+
+            function showLoginResultDialog(isSuccess, data) {
+              var existing = document.getElementById('login-test-modal');
+              if (existing) existing.remove();
+
+              var modal = document.createElement('div');
+              modal.id = 'login-test-modal';
+              modal.style.position = 'fixed';
+              modal.style.top = '0';
+              modal.style.left = '0';
+              modal.style.width = '100vw';
+              modal.style.height = '100vh';
+              modal.style.background = 'rgba(15, 23, 42, 0.65)';
+              modal.style.backdropFilter = 'blur(6px)';
+              modal.style.zIndex = '99999';
+              modal.style.display = 'flex';
+              modal.style.alignItems = 'center';
+              modal.style.justifyContent = 'center';
+              modal.style.padding = '20px';
+
+              if (isSuccess) {
+                var u = data || {};
+                var roleBadge = (u.role || 'MAHASISWA').toUpperCase();
+                var routerNames = Array.isArray(u.target_routers) ? u.target_routers.join(', ') : 'Semua Router';
+                modal.innerHTML = '<div style="background:#ffffff; border-radius:20px; max-width:440px; width:100%; padding:28px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.3); text-align:center;">' +
+                  '<div style="width:64px; height:64px; margin:0 auto 16px; background:#ecfdf5; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px;">🎉</div>' +
+                  '<div style="display:inline-block; background:#ecfdf5; border:1px solid #10b981; color:#047857; font-weight:700; font-size:0.75rem; padding:4px 12px; border-radius:999px; margin-bottom:12px;">SIMULASI LOGIN BERHASIL</div>' +
+                  '<h3 style="font-size:1.3rem; font-weight:800; color:#0f172a; margin-bottom:6px;">' + (u.name || u.username) + '</h3>' +
+                  '<p style="font-size:0.85rem; color:#64748b; margin-bottom:18px;">Akun Anda aktif &amp; terdaftar di database UNIPDU</p>' +
+                  '<div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:14px; text-align:left; font-size:0.83rem; margin-bottom:18px;">' +
+                    '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#64748b;">NIM / Username:</span><strong style="color:#0f172a; font-family:monospace;">' + u.username + '</strong></div>' +
+                    '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#64748b;">Peran (Role):</span><span style="background:#047857; color:#fff; font-size:0.72rem; font-weight:700; padding:2px 8px; border-radius:6px;">' + roleBadge + '</span></div>' +
+                    '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#64748b;">Prodi / Unit:</span><strong style="color:#0f172a;">' + (u.prodi_unit || '-') + '</strong></div>' +
+                    '<div style="display:flex; justify-content:space-between; margin-bottom:6px;"><span style="color:#64748b;">Profil Hotspot:</span><strong style="color:#047857;">' + (u.profile || 'default') + '</strong></div>' +
+                    '<div style="display:flex; justify-content:space-between;"><span style="color:#64748b;">Router Target:</span><strong style="color:#2563eb;">' + routerNames + '</strong></div>' +
+                  '</div>' +
+                  '<div style="background:#eff6ff; border:1px dashed #60a5fa; border-radius:10px; padding:12px; font-size:0.78rem; color:#1e40af; line-height:1.45; text-align:left; margin-bottom:20px;">' +
+                    'ℹ️ <strong>Status MikroTik:</strong> Akun ini telah disinkronkan ke router. Saat perangkat terhubung ke WiFi Hotspot UNIPDU di router (Puskomnet, Graha, Asumta), form ini akan otomatis dialihkan ke gateway MikroTik untuk membuka internet.' +
+                  '</div>' +
+                  '<button onclick="document.getElementById(\'login-test-modal\').remove()" style="width:100%; background:linear-gradient(135deg, #047857, #065f46); color:#fff; font-weight:700; padding:12px; border-radius:12px; border:none; cursor:pointer; font-size:0.92rem; box-shadow:0 4px 14px rgba(4,120,87,0.3);">' +
+                    'Tutup &amp; Siap Digunakan' +
+                  '</button>' +
+                '</div>';
+              } else {
+                modal.innerHTML = '<div style="background:#ffffff; border-radius:20px; max-width:420px; width:100%; padding:28px; box-shadow:0 25px 50px -12px rgba(0,0,0,0.3); text-align:center;">' +
+                  '<div style="width:64px; height:64px; margin:0 auto 16px; background:#fef2f2; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:32px;">❌</div>' +
+                  '<div style="display:inline-block; background:#fef2f2; border:1px solid #ef4444; color:#b91c1c; font-weight:700; font-size:0.75rem; padding:4px 12px; border-radius:999px; margin-bottom:12px;">LOGIN GAGAL</div>' +
+                  '<h3 style="font-size:1.2rem; font-weight:800; color:#0f172a; margin-bottom:10px;">Autentikasi Ditolak</h3>' +
+                  '<p style="font-size:0.85rem; color:#dc2626; line-height:1.5; margin-bottom:20px; background:#fef2f2; padding:12px; border-radius:10px; border:1px dashed #fca5a5;">' +
+                    (data.message || 'Username atau password salah.') +
+                  '</p>' +
+                  '<button onclick="document.getElementById(\'login-test-modal\').remove()" style="width:100%; background:#334155; color:#fff; font-weight:700; padding:12px; border-radius:12px; border:none; cursor:pointer; font-size:0.92rem;">' +
+                    'Coba Lagi' +
+                  '</button>' +
+                '</div>';
+              }
+
+              document.body.appendChild(modal);
+            }
+          </script>
+
+          <form autocomplete="off" name="login" action="$(link-login-only)" method="post" onSubmit="return doLogin()">
+            <input type="hidden" name="dst" value="$(link-orig)">
+            <input type="hidden" name="popup" value="true">
+
+            <!-- Sub-Mode Selector: Akun (User & PW Beda) vs Voucher (User & PW Sama / 1 Input) -->
+            <div class="login-mode-selector">
+              <button type="button" class="mode-pill-btn active" id="btn-mode-member" onclick="setLoginMode('member')">
+                <span class="mode-pill-icon">🔑</span>
+                <span>Akun (NIM / NIDN)</span>
+              </button>
+              <button type="button" class="mode-pill-btn" id="btn-mode-voucher" onclick="setLoginMode('voucher')">
+                <span class="mode-pill-icon">🎟️</span>
+                <span>Kode Voucher (1 Input)</span>
               </button>
             </div>
-          </div>
 
-          <!-- Remember Me & Help Row -->
-          <div class="remember-row">
-            <label class="remember-label">
-              <input type="checkbox" id="remember-me" class="remember-checkbox" checked>
-              <span>Ingat saya di perangkat ini</span>
-            </label>
-            <a href="https://siakad.unipdu.ac.id/" target="_blank" class="link-reset-pw" title="Cek password di SIAKAD">Lupa Password?</a>
-          </div>
+            <!-- Petunjuk Akses Mode Voucher -->
+            <div id="voucher-hint" style="display: none; background: #ecfdf5; border: 1.5px dashed #10b981; border-radius: 12px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.8rem; color: #065f46; line-height: 1.45;">
+              🎟️ <strong>Akses Kode Voucher:</strong> Masukkan kode voucher hotspot Anda di bawah. Password otomatis disamakan dengan kode voucher untuk masuk ke jaringan internet.
+            </div>
 
-          <!-- Submit Button -->
-          <button type="submit" class="btn-campus-submit" id="btn-login-submit">
-            <span>MASUK INTERNET KAMPUS</span>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/>
-            </svg>
-          </button>
+            <!-- Input Username / NIM / Kode Voucher -->
+            <div class="form-group">
+              <label class="form-label" for="username-input" id="label-user">NIM / NIDN / Username Akun</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                  </svg>
+                </span>
+                <input type="text" id="username-input" name="username" class="input-control" value="$(username)"
+                  placeholder="Contoh: 210101001 atau nama_user" required autofocus>
+              </div>
+            </div>
 
-        </form>
+            <!-- Input Password -->
+            <div class="form-group" id="group-password">
+              <label class="form-label" for="password-input">Password Akun</label>
+              <div class="input-icon-wrapper">
+                <span class="input-icon-left">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                  </svg>
+                </span>
+                <input type="password" id="password-input" name="password" class="input-control"
+                  placeholder="Masukkan password Anda" required>
+                <button type="button" class="btn-toggle-eye" onclick="togglePasswordVisibility()"
+                  title="Tampilkan / Sembunyikan Password">
+                  <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
 
-        $(if trial == 'yes')
+            <!-- Remember Me & Help Row -->
+            <div class="remember-row">
+              <label class="remember-label">
+                <input type="checkbox" id="remember-me" class="remember-checkbox" checked>
+                <span>Ingat saya di perangkat ini</span>
+              </label>
+              <a href="javascript:void(0)" onclick="openCampusResetModal()" class="link-reset-pw"
+                title="Reset Password Mandiri Civitas Kampus">Lupa Password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-campus-submit" id="btn-login-submit">
+              <span>MASUK INTERNET KAMPUS</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z" />
+              </svg>
+            </button>
+
+          </form>
+        </div>
+
         <!-- ============================================================== -->
-        <!-- GUEST PANEL: REGISTRASI TAMU DENGAN AUTO LOGIN URL             -->
+        <!-- GUEST PANEL: FORM PENGISIAN TAMU DENGAN KONTROL TRIAL         -->
         <!-- ============================================================== -->
         <div id="guest-panel" style="display: none;">
-          <!-- Tamu Mode Switcher -->
-          <div style="display: flex; gap: 8px; background: #f1f5f9; padding: 4px; border-radius: 10px; margin-bottom: 18px; border: 1px solid #e2e8f0;">
-            <button type="button" class="role-tab-btn active" id="btn-tamu-reg" onclick="switchTamuMode('register')" style="font-size: 0.76rem; padding: 8px 6px;">
-              📝 Registrasi Tamu Baru
+
+          <!-- Card Sambutan Tamu yang Masih Aktif -->
+          <div id="active-guest-card"
+            style="display: none; background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 50%, #ffffff 100%); border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 22px 18px; text-align: center; box-shadow: 0 10px 25px -4px rgba(4, 120, 87, 0.12); margin-bottom: 18px;">
+            <div
+              style="display: inline-flex; align-items: center; gap: 6px; background: #dcfce7; border: 1px solid #10b981; color: #047857; padding: 4px 12px; border-radius: 9999px; font-size: 0.76rem; font-weight: 700; margin-bottom: 12px;">
+              <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%; animation: pulse-dot 1.5s ease-in-out infinite;"></span>
+              Akun Tamu Anda Masih Aktif
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin-bottom: 4px;">
+              Selamat Datang Kembali, <span id="active-guest-name" style="color: #047857;">Tamu</span>!
+            </h3>
+            <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 16px;">
+              Perangkat ini telah terdaftar. Anda dapat langsung masuk tanpa mendaftar ulang.
+            </p>
+            <div
+              style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px; text-align: left; font-size: 0.82rem;">
+              <!-- Username -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                <span style="color:#64748b;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b" style="vertical-align:-2px; margin-right:4px;">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                  </svg>
+                  Username:
+                </span>
+                <span id="active-guest-code"
+                  style="font-weight:800; font-family:monospace; color:#0f172a; font-size:0.95rem; background:#f1f5f9; padding:2px 8px; border-radius:6px;">-</span>
+              </div>
+              <!-- Password -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                <span style="color:#64748b;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b" style="vertical-align:-2px; margin-right:4px;">
+                    <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                  </svg>
+                  Password:
+                </span>
+                <span id="active-guest-password"
+                  style="font-weight:800; font-family:monospace; color:#0f172a; font-size:0.95rem; background:#f1f5f9; padding:2px 8px; border-radius:6px;">-</span>
+              </div>
+              <!-- Terdaftar Sejak -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                <span style="color:#64748b;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b" style="vertical-align:-2px; margin-right:4px;">
+                    <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z"/>
+                  </svg>
+                  Terdaftar:
+                </span>
+                <span id="active-guest-created" style="font-weight:600; color:#334155; font-size:0.8rem;">-</span>
+              </div>
+              <!-- Sisa Masa Berlaku -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                <span style="color:#64748b;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b" style="vertical-align:-2px; margin-right:4px;">
+                    <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                  </svg>
+                  Sisa Waktu:
+                </span>
+                <span id="active-guest-timer" style="font-weight:700; color:#047857;">-</span>
+              </div>
+              <!-- Berakhir Pada -->
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; padding-bottom:8px; border-bottom:1px dashed #e2e8f0;">
+                <span style="color:#64748b;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b" style="vertical-align:-2px; margin-right:4px;">
+                    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM9 10H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2z"/>
+                  </svg>
+                  Berakhir:
+                </span>
+                <span id="active-guest-expired" style="font-weight:600; color:#ef4444; font-size:0.8rem;">-</span>
+              </div>
+              <!-- Paket Layanan -->
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#64748b;">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b" style="vertical-align:-2px; margin-right:4px;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                  </svg>
+                  Paket:
+                </span>
+                <span id="active-guest-profile" style="font-weight:600; color:#475569; font-size:0.8rem; background:#f8fafc; border:1px solid #e2e8f0; padding:2px 8px; border-radius:4px;">-</span>
+              </div>
+            </div>
+            <button type="button" id="btn-active-guest-login" class="btn-campus-submit" onclick="loginWithActiveGuest()"
+              style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+              <span>MASUK INTERNET LAGI SEBAGAI TAMU</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z" />
+              </svg>
             </button>
-            <button type="button" class="role-tab-btn" id="btn-tamu-code" onclick="switchTamuMode('code')" style="font-size: 0.76rem; padding: 8px 6px;">
-              🔑 Sudah Punya Kode
-            </button>
+            <div style="margin-top: 14px;">
+              <a href="javascript:void(0)" onclick="showManualGuestRegisterForm()"
+                style="font-size: 0.78rem; color: #64748b; text-decoration: none; font-weight: 600;">
+                Bukan Anda? Atau daftarkan tamu baru &rarr;
+              </a>
+            </div>
           </div>
 
-          <!-- 1. Form Registrasi Tamu Baru (Auto Buatkan User & Login) -->
+          $(if trial == 'yes')
+          <!-- Form Pengisian Registrasi Tamu Baru (Auto Buatkan User & Login) -->
           <form id="form-guest-register" onsubmit="return handleGuestRegister(event)" autocomplete="off">
             <div class="form-group">
               <label class="form-label" for="guest-name">Nama Lengkap Tamu</label>
               <div class="input-icon-wrapper">
                 <span class="input-icon-left">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    <path
+                      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                   </svg>
                 </span>
                 <input type="text" id="guest-name" class="input-control" placeholder="Contoh: Budi Santoso" required>
@@ -201,7 +750,8 @@
               <div class="input-icon-wrapper">
                 <span class="input-icon-left">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    <path
+                      d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z" />
                   </svg>
                 </span>
                 <input type="tel" id="guest-phone" class="input-control" placeholder="Contoh: 081234567890" required>
@@ -213,54 +763,55 @@
               <div class="input-icon-wrapper">
                 <span class="input-icon-left">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/>
+                    <path
+                      d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V9h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V9h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z" />
                   </svg>
                 </span>
-                <input type="text" id="guest-purpose" class="input-control" placeholder="Contoh: Tamu Fakultas / Wali Mahasiswa / Seminar">
+                <input type="text" id="guest-purpose" class="input-control"
+                  placeholder="Contoh: Tamu Fakultas / Wali Mahasiswa / Seminar">
               </div>
             </div>
 
             <!-- Feedback / Status Box -->
-            <div id="guest-status-box" style="display: none; margin-bottom: 16px; padding: 12px 14px; border-radius: 10px; font-size: 0.82rem; line-height: 1.5;"></div>
+            <div id="guest-status-box"
+              style="display: none; margin-bottom: 16px; padding: 12px 14px; border-radius: 10px; font-size: 0.82rem; line-height: 1.5;">
+            </div>
 
             <!-- Submit Button Registrasi Tamu -->
             <button type="submit" class="btn-campus-submit" id="btn-guest-submit">
               <span id="guest-btn-text">DAFTAR &amp; MASUK INTERNET</span>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/>
+                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z" />
               </svg>
             </button>
           </form>
-
-          <!-- 2. Form Sudah Punya Kode Tamu -->
-          <div id="guest-code-section" style="display: none;">
-            <div class="form-group">
-              <label class="form-label" for="guest-code-input">Kode Akses / Voucher Tamu</label>
-              <div class="input-icon-wrapper">
-                <span class="input-icon-left">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/>
-                  </svg>
-                </span>
-                <input type="text" id="guest-code-input" class="input-control" placeholder="Masukkan kode akses tamu">
-              </div>
+          $(else)
+          <!-- Tampilan Jika Layanan Registrasi Tamu / Trial Belum Aktif -->
+          <div class="guest-unavailable-box"
+            style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 22px 18px; text-align: center; margin-bottom: 16px;">
+            <div style="font-size: 2.2rem; margin-bottom: 8px;">⏳</div>
+            <h3 style="font-size: 1.02rem; font-weight: 800; color: #92400e; margin-bottom: 6px;">Layanan Tamu Belum
+              Tersedia</h3>
+            <p style="font-size: 0.84rem; color: #78350f; line-height: 1.55; margin-bottom: 14px;">
+              Mohon maaf, saat ini pendaftaran akses internet mandiri untuk tamu belum dibuka atau dinonaktifkan
+              sementara oleh administrator jaringan kampus.
+            </p>
+            <div
+              style="background: #ffffff; border: 1px dashed #f59e0b; border-radius: 8px; padding: 10px 14px; font-size: 0.78rem; color: #451a03; line-height: 1.5; text-align: left;">
+              ℹ️ Jika Anda berkunjung untuk keperluan resmi kampus, silakan hubungi <strong>Layanan Kampus Utama
+                UNIPDU</strong> untuk informasi kode akses sementara.
             </div>
-
-            <button type="button" class="btn-campus-submit" onclick="doGuestCodeLogin()">
-              <span>MASUK DENGAN KODE TAMU</span>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M5 13h11.86l-5.43 5.43 1.42 1.42L21.14 12l-8.29-8.29-1.42 1.42L16.86 11H5v2z"/>
-              </svg>
-            </button>
           </div>
+          $(endif)
+
         </div>
-        $(endif)
 
         <!-- MikroTik Error Notification Banner -->
         $(if error)
         <div class="campus-alert">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            <path
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
           </svg>
           <div>$(error)</div>
         </div>
@@ -273,12 +824,14 @@
             <span>Informasi Password Mahasiswa</span>
           </div>
           <div class="siakad-notice-body">
-            Bagi Mahasiswa yang baru melakukan pergantian password, silakan cek password terbaru di akun <strong>SIAKAD</strong> masing-masing.
+            Bagi Mahasiswa yang baru melakukan pergantian password, silakan cek password terbaru di akun
+            <strong>SIAKAD</strong> masing-masing.
           </div>
           <a href="https://siakad.unipdu.ac.id/" target="_blank" class="btn-siakad-link">
             <span>🔗 Buka Portal SIAKAD UNIPDU</span>
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z"/>
+              <path
+                d="M14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3m-2 16H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7z" />
             </svg>
           </a>
         </div>
@@ -327,21 +880,37 @@
             <span class="portal-icon">
               <span class="canvas-icon-box">
                 <svg width="18" height="18" viewBox="0 0.1 26.7 26.8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path fill="#ffffff" d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z"/><circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2"/>
-                  <path fill="#ffffff" d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z"/><circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2"/>
-                  <path fill="#ffffff" d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z"/><circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2"/>
-                  <path fill="#ffffff" d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z"/><circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2"/>
-                  <path fill="#ffffff" d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z"/><circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2"/>
-                  <path fill="#ffffff" d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z"/><circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2"/>
-                  <path fill="#ffffff" d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z"/><circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2"/>
-                  <path fill="#ffffff" d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z"/><circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2"/>
-                </g>
-              </svg>
+                  <path fill="#ffffff"
+                    d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z" />
+                  <circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z" />
+                  <circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z" />
+                  <circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z" />
+                  <circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z" />
+                  <circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z" />
+                  <circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z" />
+                  <circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2" />
+                  <path fill="#ffffff"
+                    d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z" />
+                  <circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2" />
+                  </g>
+                </svg>
+              </span>
             </span>
-          </span>
-          <span class="portal-name">LMS Canvas</span>
-          <span class="portal-sub">Kuliah Daring</span>
-        </a>
+            <span class="portal-name">LMS Canvas</span>
+            <span class="portal-sub">Kuliah Daring</span>
+          </a>
         </div>
 
         <!-- Visi Misi Card (Format Teks Murni) -->
@@ -365,102 +934,15 @@
         Layanan Edukasi &amp; Internet Kampus Terintegrasi • Kampus Utama UNIPDU
       </div>
       <div style="margin-top: 4px;">
-        <a href="https://unipdu.ac.id/" target="_blank">unipdu.ac.id</a> &bull; 
+        <a href="https://unipdu.ac.id/" target="_blank">unipdu.ac.id</a> &bull;
         <a href="https://siakad.unipdu.ac.id/" target="_blank">siakad.unipdu.ac.id</a>
       </div>
     </footer>
 
   </div>
 
-  <!-- Realtime Clock & Interaction Script -->
+  <!-- Interaction Script for Guest Registration & Storage -->
   <script>
-    // Live Clock Digital
-    function updateClock() {
-      var now = new Date();
-      var h = String(now.getHours()).padStart(2, '0');
-      var m = String(now.getMinutes()).padStart(2, '0');
-      var s = String(now.getSeconds()).padStart(2, '0');
-      var el = document.getElementById('clock-display');
-      if (el) el.innerText = h + ':' + m + ':' + s;
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
-
-    // Toggle Password Visibility
-    function togglePasswordVisibility() {
-      var pwInput = document.getElementById('password-input');
-      var eye = document.getElementById('eye-icon');
-      if (!pwInput) return;
-      if (pwInput.type === 'password') {
-        pwInput.type = 'text';
-        if (eye) {
-          eye.innerHTML = '<path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.44-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/>';
-        }
-      } else {
-        pwInput.type = 'password';
-        if (eye) {
-          eye.innerHTML = '<path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>';
-        }
-      }
-    }
-
-    // Role Switcher Handlers
-    function switchRole(role) {
-      document.querySelectorAll('.role-tabs > .role-tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      var tab = document.getElementById('tab-' + role);
-      if (tab) tab.classList.add('active');
-
-      var regularForm = document.login;
-      var guestPanel = document.getElementById('guest-panel');
-      var label = document.getElementById('label-user');
-      var userInput = document.getElementById('username-input');
-      var pwGroup = document.getElementById('group-password');
-
-      if (role === 'tamu') {
-        if (regularForm) regularForm.style.display = 'none';
-        if (guestPanel) guestPanel.style.display = 'block';
-      } else {
-        if (guestPanel) guestPanel.style.display = 'none';
-        if (regularForm) regularForm.style.display = 'block';
-
-        if (role === 'mhs') {
-          if (label) label.innerText = 'Nomor Induk Mahasiswa (NIM)';
-          if (userInput) {
-            userInput.placeholder = 'Contoh: 210101001';
-            userInput.focus();
-          }
-          if (pwGroup) pwGroup.style.display = 'block';
-        } else if (role === 'dosen') {
-          if (label) label.innerText = 'NIDN / NIP / Username Dosen/Staf';
-          if (userInput) {
-            userInput.placeholder = 'Contoh: 0712345601 atau nama_user';
-            userInput.focus();
-          }
-          if (pwGroup) pwGroup.style.display = 'block';
-        }
-      }
-    }
-
-    // Switch between Tamu: Register vs Already have code
-    function switchTamuMode(mode) {
-      var regForm = document.getElementById('form-guest-register');
-      var codeSec = document.getElementById('guest-code-section');
-      var btnReg = document.getElementById('btn-tamu-reg');
-      var btnCode = document.getElementById('btn-tamu-code');
-
-      if (mode === 'register') {
-        if (btnReg) btnReg.classList.add('active');
-        if (btnCode) btnCode.classList.remove('active');
-        if (regForm) regForm.style.display = 'block';
-        if (codeSec) codeSec.style.display = 'none';
-      } else {
-        if (btnCode) btnCode.classList.add('active');
-        if (btnReg) btnReg.classList.remove('active');
-        if (regForm) regForm.style.display = 'none';
-        if (codeSec) codeSec.style.display = 'block';
-      }
-    }
-
     // Process Guest Registration via Backend API & Auto Login URL
     async function handleGuestRegister(event) {
       if (event && event.preventDefault) event.preventDefault();
@@ -487,8 +969,7 @@
         statusBox.innerHTML = '⏳ <strong>Sedang mendaftarkan tamu ke sistem...</strong> Mohon tunggu sebentar.';
       }
 
-      var apiUrl = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.GUEST_API_URL) ? window.UNIPDU_CONFIG.GUEST_API_URL : 'https://arbill.arabpay.my.id/api/guest/register';
-      var routerId = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ROUTER_ID) ? window.UNIPDU_CONFIG.ROUTER_ID : 'UNIPDU-MAIN';
+      var routerId = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ROUTER_ID) ? window.UNIPDU_CONFIG.ROUTER_ID : '$(identity)';
 
       var payload = {
         name: name,
@@ -496,22 +977,37 @@
         purpose: purpose,
         mac: '$(mac)',
         ip: '$(ip)',
+        identity: '$(identity)',
         router_id: routerId
       };
 
       try {
-        var response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
+        var data;
+        if (window.UNIPDU_API && typeof window.UNIPDU_API.registerGuest === 'function') {
+          data = await window.UNIPDU_API.registerGuest(payload);
+        } else {
+          throw new Error('Modul Web API belum siap.');
+        }
 
-        var data = await response.json();
-
-        if (response.ok && data.success) {
+        if (data && data.success) {
           var username = data.username;
           var password = data.password || data.username;
           var loginUrl = data.login_url;
+
+          try {
+            var myMac = '$(mac)';
+            if (myMac && myMac !== '$' + '(mac)') {
+              localStorage.setItem('unipdu_guest_mac', myMac);
+            } else if (data.mac) {
+              localStorage.setItem('unipdu_guest_mac', data.mac);
+            }
+            activeGuestData = {
+              username: username,
+              password: password,
+              name: name,
+              remaining_str: 'Baru saja didaftarkan'
+            };
+          } catch (e) { }
 
           if (statusBox) {
             statusBox.style.background = '#ecfdf5';
@@ -522,56 +1018,69 @@
               '<small>Sedang langsung menghubungkan login ke internet...</small>';
           }
 
-          // Otomatis langsung login via URL login MikroTik
-          setTimeout(function() {
-            if (loginUrl) {
-              window.location.href = loginUrl;
-              return;
-            }
+          // 1. Tampilkan kartu tamu aktif langsung di login page
+          renderActiveGuestCard({
+            name: name,
+            username: username,
+            password: password,
+            remaining_str: 'Akun tamu aktif'
+          });
 
-            if (typeof hexMD5 === 'function' && document.sendin) {
-              document.sendin.username.value = username;
-              document.sendin.password.value = hexMD5('$(chap-id)' + password + '$(chap-challenge)');
-              document.sendin.submit();
-              return;
-            }
+          // 2. Isikan username & password ke form input login utama
+          var uInput = document.getElementById('username-input');
+          var pInput = document.getElementById('password-input');
+          if (uInput) uInput.value = username;
+          if (pInput) pInput.value = password;
 
-            var directUrl = '$(link-login-only)' + 
-              '?username=' + encodeURIComponent(username) + 
-              '&password=' + encodeURIComponent(password) + 
-              '&dst=' + encodeURIComponent('$(link-orig)');
-            window.location.href = directUrl;
-          }, 1200);
+          // Deteksi apakah sedang berada di dalam jaringan MikroTik RouterOS sungguhan
+          var linkLogin = (document.sendin && document.sendin.action) ? document.sendin.action : '$(link-login-only)';
+          var isRouterOS = (linkLogin && linkLogin.indexOf('$') === -1 && linkLogin !== '');
+
+          if (isRouterOS) {
+            // Di MikroTik sungguhan: lakukan submit form login ke router setelah 1 detik
+            setTimeout(function () {
+              if (typeof hexMD5 === 'function' && document.sendin && typeof '$(chap-id)' !== 'undefined' && '$(chap-id)' !== '' && '$(chap-id)' !== '$' + '(chap-id)') {
+                document.sendin.username.value = username;
+                document.sendin.password.value = hexMD5('$(chap-id)' + password + '$(chap-challenge)');
+                document.sendin.submit();
+                return;
+              }
+              if (document.sendin) {
+                document.sendin.username.value = username;
+                document.sendin.password.value = password;
+                document.sendin.submit();
+                return;
+              }
+            }, 1000);
+          } else {
+            // Mode Browser / Testing: TIDAK PERNAH REDIRECT WEB!
+            // Kembalikan ke login page dengan kredensial yang siap dipakai login
+            btn.disabled = false;
+            btn.style.opacity = '1';
+            if (btnText) btnText.innerText = 'DAFTAR & MASUK INTERNET';
+          }
 
         } else {
           throw new Error(data.message || 'Gagal membuat user tamu dari server.');
         }
       } catch (err) {
-        // Fallback Simulasi Demo jika backend belum aktif
+        // Fallback Simulasi jika backend offline
         if (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ENABLE_MOCK_FALLBACK) {
           var demoCode = 'TAMU' + Math.floor(1000 + Math.random() * 9000);
-          if (statusBox) {
-            statusBox.style.background = '#fffbeb';
-            statusBox.style.border = '1.5px solid #fde68a';
-            statusBox.style.color = '#92400e';
-            statusBox.innerHTML = '⚡ <strong>Mode Demonstrasi Aktif</strong> (Backend Belum Dikonfigurasi):<br>' +
-              'Kode Tamu Dibuat: <strong>' + demoCode + '</strong><br>' +
-              '<small>Sedang langsung login via URL...</small>';
-          }
+          renderActiveGuestCard({
+            name: name,
+            username: demoCode,
+            password: demoCode,
+            remaining_str: 'Akun simulasi demo aktif'
+          });
+          var uInput = document.getElementById('username-input');
+          var pInput = document.getElementById('password-input');
+          if (uInput) uInput.value = demoCode;
+          if (pInput) pInput.value = demoCode;
 
-          setTimeout(function() {
-            if (typeof hexMD5 === 'function' && document.sendin) {
-              document.sendin.username.value = demoCode;
-              document.sendin.password.value = hexMD5('$(chap-id)' + demoCode + '$(chap-challenge)');
-              document.sendin.submit();
-              return;
-            }
-            var directUrl = '$(link-login-only)' + 
-              '?username=' + encodeURIComponent(demoCode) + 
-              '&password=' + encodeURIComponent(demoCode) + 
-              '&dst=' + encodeURIComponent('$(link-orig)');
-            window.location.href = directUrl;
-          }, 1500);
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          if (btnText) btnText.innerText = 'DAFTAR & MASUK INTERNET';
           return false;
         }
 
@@ -588,45 +1097,9 @@
       return false;
     }
 
-    // Login dengan Kode Tamu yang sudah dimiliki
-    function doGuestCodeLogin() {
-      var code = (document.getElementById('guest-code-input').value || '').trim();
-      if (!code) {
-        alert('Silakan masukkan Kode Akses Tamu Anda.');
-        return;
-      }
-      if (typeof hexMD5 === 'function' && document.sendin) {
-        document.sendin.username.value = code;
-        document.sendin.password.value = hexMD5('$(chap-id)' + code + '$(chap-challenge)');
-        document.sendin.submit();
-        return;
-      }
-      var loginUrl = '$(link-login-only)' + 
-        '?username=' + encodeURIComponent(code) + 
-        '&password=' + encodeURIComponent(code) + 
-        '&dst=' + encodeURIComponent('$(link-orig)');
-      window.location.href = loginUrl;
-    }
-
-    // Toggle Slide-out Side Drawer Menu
-    function toggleCampusMenu() {
-      var drawer = document.getElementById('campus-drawer');
-      var overlay = document.getElementById('campus-drawer-overlay');
-      if (!drawer || !overlay) return;
-      var isOpen = drawer.classList.contains('open');
-      if (isOpen) {
-        drawer.classList.remove('open');
-        overlay.classList.remove('open');
-        drawer.setAttribute('aria-hidden', 'true');
-      } else {
-        drawer.classList.add('open');
-        overlay.classList.add('open');
-        drawer.setAttribute('aria-hidden', 'false');
-      }
-    }
 
     // Close drawer on Escape key
-    document.addEventListener('keydown', function(e) {
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape') {
         var drawer = document.getElementById('campus-drawer');
         var overlay = document.getElementById('campus-drawer-overlay');
@@ -638,7 +1111,7 @@
     });
 
     // Restore saved username on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       try {
         var saved = localStorage.getItem('unipdu_saved_user');
         if (saved) {
@@ -649,7 +1122,7 @@
             if (pwInp) pwInp.focus();
           }
         }
-      } catch(e) {}
+      } catch (e) { }
     });
   </script>
 
@@ -692,14 +1165,30 @@
           <span class="drawer-item-icon">
             <span class="canvas-icon-box-small">
               <svg width="14" height="14" viewBox="0 0.1 26.7 26.8" fill="none">
-                <path fill="#ffffff" d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z"/><circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2"/>
-                <path fill="#ffffff" d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z"/><circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2"/>
-                <path fill="#ffffff" d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z"/><circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2"/>
-                <path fill="#ffffff" d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z"/><circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2"/>
-                <path fill="#ffffff" d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z"/><circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2"/>
-                <path fill="#ffffff" d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z"/><circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2"/>
-                <path fill="#ffffff" d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z"/><circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2"/>
-                <path fill="#ffffff" d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z"/><circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2"/>
+                <path fill="#ffffff"
+                  d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z" />
+                <circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z" />
+                <circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z" />
+                <circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z" />
+                <circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z" />
+                <circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z" />
+                <circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z" />
+                <circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2" />
+                <path fill="#ffffff"
+                  d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z" />
+                <circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2" />
               </svg>
             </span>
           </span>
@@ -736,7 +1225,8 @@
       <div class="drawer-section-title">Bantuan &amp; Layanan Kampus</div>
       <div class="drawer-help-card">
         <div class="drawer-help-title">💡 Layanan Kampus UNIPDU</div>
-        <p class="drawer-help-text">Jika mengalami kendala autentikasi akun NIM/NIDN atau koneksi hotspot kampus, silakan hubungi Layanan Kampus Utama UNIPDU.</p>
+        <p class="drawer-help-text">Jika mengalami kendala autentikasi akun NIM/NIDN atau koneksi hotspot kampus,
+          silakan hubungi Layanan Kampus Utama UNIPDU.</p>
         <a href="https://unipdu.ac.id/" target="_blank" class="drawer-help-btn">Bantuan Kampus UNIPDU &rarr;</a>
       </div>
     </div>
@@ -757,14 +1247,30 @@
       <span class="bottom-nav-icon">
         <span class="canvas-icon-box-small">
           <svg width="14" height="14" viewBox="0 0.1 26.7 26.8" fill="none">
-            <path fill="#ffffff" d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z"/><circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2"/>
-            <path fill="#ffffff" d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z"/><circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2"/>
-            <path fill="#ffffff" d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z"/><circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2"/>
-            <path fill="#ffffff" d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z"/><circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2"/>
-            <path fill="#ffffff" d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z"/><circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2"/>
-            <path fill="#ffffff" d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z"/><circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2"/>
-            <path fill="#ffffff" d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z"/><circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2"/>
-            <path fill="#ffffff" d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z"/><circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2"/>
+            <path fill="#ffffff"
+              d="M3.9,13.5c0-2-1.5-3.6-3.4-3.8C0.2,10.9,0,12.1,0,13.5s0.2,2.6,0.5,3.8C2.4,17.1,3.9,15.4,3.9,13.5L3.9,13.5z" />
+            <circle fill="#ffffff" cx="6.2" cy="13.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M22.8,13.5c0,2,1.5,3.6,3.4,3.8c0.3-1.2,0.5-2.5,0.5-3.8s-0.2-2.6-0.5-3.8C24.3,9.9,22.8,11.5,22.8,13.5L22.8,13.5z" />
+            <circle fill="#ffffff" cx="20.2" cy="13.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M13.3,23c-2,0-3.6,1.5-3.8,3.4c1.2,0.3,2.5,0.5,3.8,0.5c1.3,0,2.6-0.2,3.8-0.5C16.9,24.5,15.3,23,13.3,23L13.3,23z" />
+            <circle fill="#ffffff" cx="13.2" cy="20.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M13.3,4c2,0,3.6-1.5,3.8-3.4c-1.2-0.3-2.5-0.5-3.8-0.5c-1.3,0-2.6,0.2-3.8,0.5C9.7,2.5,11.3,4,13.3,4L13.3,4z" />
+            <circle fill="#ffffff" cx="13.2" cy="6.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M20,20.2c-1.4,1.4-1.5,3.6-0.3,5.1c2.2-1.3,4.1-3.2,5.4-5.4C23.6,18.7,21.4,18.8,20,20.2L20,20.2z" />
+            <circle fill="#ffffff" cx="18.2" cy="18.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M6.6,6.8C8,5.4,8.1,3.2,6.9,1.7C4.7,3,2.8,4.9,1.5,7.1C3,8.3,5.2,8.2,6.6,6.8L6.6,6.8z" />
+            <circle fill="#ffffff" cx="8.2" cy="8.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M20,6.8c1.4,1.4,3.6,1.5,5.1,0.3c-1.3-2.2-3.2-4.1-5.4-5.4C18.5,3.2,18.6,5.4,20,6.8L20,6.8z" />
+            <circle fill="#ffffff" cx="18.2" cy="8.4" r="1.2" />
+            <path fill="#ffffff"
+              d="M6.6,20.2c-1.4-1.4-3.6-1.5-5.1-0.3c1.3,2.2,3.2,4.1,5.4,5.4C8.1,23.7,8,21.6,6.6,20.2L6.6,20.2z" />
+            <circle fill="#ffffff" cx="8.2" cy="18.4" r="1.2" />
           </svg>
         </span>
       </span>
@@ -784,5 +1290,277 @@
     </button>
   </nav>
 
+  <!-- ============================================================== -->
+  <!-- MODAL RESET PASSWORD MANDIRI CIVITAS KAMPUS UNIPDU             -->
+  <!-- ============================================================== -->
+  <div id="modal-campus-reset" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:99999; background:rgba(15,23,42,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:16px; box-sizing:border-box;">
+    <div style="background:#ffffff; border-radius:18px; max-width:480px; width:100%; box-shadow:0 25px 50px -12px rgba(0,0,0,0.35); overflow:hidden; border:1px solid #cbd5e1;">
+      
+      <!-- Modal Header -->
+      <div style="background:linear-gradient(135deg, #064e3b 0%, #047857 100%); padding:18px 20px; color:#ffffff; display:flex; justify-content:space-between; align-items:center;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="font-size:1.4rem;">🔑</span>
+          <div>
+            <h3 style="margin:0; font-size:1.05rem; font-weight:800; letter-spacing:0.3px;">Reset Password Mandiri</h3>
+            <div style="font-size:0.75rem; color:#a7f3d0; margin-top:2px;">Civitas Akademika UNIPDU Jombang</div>
+          </div>
+        </div>
+        <button type="button" onclick="closeCampusResetModal()" style="background:none; border:none; color:#ffffff; font-size:1.6rem; cursor:pointer; line-height:1; padding:0 4px;">&times;</button>
+      </div>
+
+      <!-- Modal Body -->
+      <div style="padding:22px 20px; max-height:80vh; overflow-y:auto;">
+        
+        <!-- Alert Box -->
+        <div id="reset-alert-box" style="display:none; padding:10px 14px; border-radius:8px; font-size:0.82rem; margin-bottom:16px; line-height:1.45;"></div>
+
+        <!-- TAHAP 1: INPUT IDENTITAS -->
+        <div id="reset-step-1">
+          <div style="font-size:0.84rem; color:#475569; margin-bottom:14px; line-height:1.5;">
+            Masukkan <strong>NIM / NIDN / Username</strong> dan <strong>Email Institusi</strong> Anda untuk verifikasi akun Hotspot Kampus.
+          </div>
+
+          <div style="margin-bottom:12px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:4px;">NIM / NIDN / Username *</label>
+            <input type="text" id="reset-input-username" placeholder="Contoh: 210101001" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1.5px solid #cbd5e1; border-radius:8px; font-family:monospace; font-size:0.9rem; font-weight:700;">
+          </div>
+
+          <div style="margin-bottom:16px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:4px;">Email Institusi UNIPDU *</label>
+            <input type="email" id="reset-input-email" placeholder="contoh: 210101001@mhs.unipdu.ac.id" style="width:100%; box-sizing:border-box; padding:10px 12px; border:1.5px solid #cbd5e1; border-radius:8px; font-size:0.88rem;">
+            <small style="font-size:0.72rem; color:#64748b; margin-top:3px; display:block;">Gunakan email resmi berakhiran <code>@mhs.unipdu.ac.id</code> atau <code>@unipdu.ac.id</code></small>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:10px;">
+            <button type="button" id="btn-do-instant-reset" onclick="handleInstantReset()" style="background:#0284c7; color:#ffffff; border:none; padding:11px 16px; border-radius:9px; font-weight:700; font-size:0.86rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <span>⚡</span> Reset Instan ke Default SIAKAD
+            </button>
+            <button type="button" id="btn-request-otp" onclick="handleRequestOtp()" style="background:#059669; color:#ffffff; border:none; padding:11px 16px; border-radius:9px; font-weight:700; font-size:0.86rem; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+              <span>📧</span> Kirim Kode OTP (Untuk Buat Password Baru)
+            </button>
+          </div>
+        </div>
+
+        <!-- TAHAP 2: INPUT OTP & PILIH PASSWORD -->
+        <div id="reset-step-2" style="display:none;">
+          <div style="background:#ecfdf5; border:1px solid #a7f3d0; border-radius:8px; padding:10px 12px; font-size:0.8rem; color:#065f46; margin-bottom:14px;">
+            Kode OTP 6 digit telah dikirim ke <strong id="reset-target-email-disp">-</strong>. Silakan periksa kotak masuk atau spam email Anda.
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <label style="display:block; font-size:0.8rem; font-weight:700; color:#334155; margin-bottom:4px;">Masukkan Kode OTP (6 Digit) *</label>
+            <input type="text" id="reset-input-otp" maxlength="6" placeholder="123456" style="width:100%; box-sizing:border-box; padding:10px 14px; border:2px solid #059669; border-radius:8px; font-family:monospace; font-size:1.2rem; font-weight:800; letter-spacing:6px; text-align:center;">
+          </div>
+
+          <div style="margin-bottom:14px; background:#f8fafc; border:1px solid #e2e8f0; border-radius:10px; padding:12px;">
+            <label style="font-weight:700; font-size:0.82rem; color:#0f172a; margin-bottom:8px; display:block;">Pilihan Password Hotspot:</label>
+            <label style="display:flex; align-items:center; gap:8px; margin-bottom:8px; cursor:pointer; font-size:0.84rem;">
+              <input type="radio" name="reset-pwd-choice" value="siakad_default" checked onchange="toggleResetPwdInput()">
+              <span>Kembalikan ke <strong>Password Default SIAKAD</strong></span>
+            </label>
+            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:0.84rem;">
+              <input type="radio" name="reset-pwd-choice" value="custom" onchange="toggleResetPwdInput()">
+              <span>Buat <strong>Password Baru Sendiri</strong></span>
+            </label>
+
+            <div id="box-custom-pwd" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed #cbd5e1;">
+              <label style="display:block; font-size:0.78rem; font-weight:700; color:#334155; margin-bottom:4px;">Password Baru (Minimal 4 karakter) *</label>
+              <input type="text" id="reset-input-newpwd" placeholder="Ketik password baru Anda" style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; font-family:monospace; font-size:0.88rem;">
+            </div>
+          </div>
+
+          <div style="display:flex; gap:8px; justify-content:flex-end;">
+            <button type="button" onclick="backToResetStep1()" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:9px 14px; border-radius:8px; font-weight:600; font-size:0.82rem; cursor:pointer;">Kembali</button>
+            <button type="button" id="btn-verify-otp" onclick="handleVerifyResetOtp()" style="background:#047857; color:#ffffff; border:none; padding:9px 18px; border-radius:8px; font-weight:700; font-size:0.84rem; cursor:pointer;">
+              Simpan &amp; Terapkan ke WiFi
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function showResetAlert(msg, isSuccess) {
+      var box = document.getElementById('reset-alert-box');
+      if (!box) return;
+      box.style.display = 'block';
+      box.style.background = isSuccess ? '#ecfdf5' : '#fef2f2';
+      box.style.color = isSuccess ? '#065f46' : '#991b1b';
+      box.style.border = isSuccess ? '1.5px solid #a7f3d0' : '1.5px solid #fecaca';
+      box.innerHTML = msg;
+    }
+
+    function openCampusResetModal() {
+      var modal = document.getElementById('modal-campus-reset');
+      var alertBox = document.getElementById('reset-alert-box');
+      if (alertBox) alertBox.style.display = 'none';
+
+      // Prefill dari input username form jika sudah diketik
+      var curUser = document.getElementById('username-input')?.value || '';
+      var userInp = document.getElementById('reset-input-username');
+      var emailInp = document.getElementById('reset-input-email');
+      if (userInp && curUser) userInp.value = curUser.trim();
+      if (emailInp && curUser && !emailInp.value) {
+        if (/^\d+$/.test(curUser.trim())) {
+          emailInp.value = curUser.trim() + '@mhs.unipdu.ac.id';
+        }
+      }
+
+      backToResetStep1();
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function closeCampusResetModal() {
+      var modal = document.getElementById('modal-campus-reset');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function backToResetStep1() {
+      var s1 = document.getElementById('reset-step-1');
+      var s2 = document.getElementById('reset-step-2');
+      if (s1) s1.style.display = 'block';
+      if (s2) s2.style.display = 'none';
+    }
+
+    function toggleResetPwdInput() {
+      var choice = document.querySelector('input[name="reset-pwd-choice"]:checked')?.value;
+      var box = document.getElementById('box-custom-pwd');
+      if (box) box.style.display = choice === 'custom' ? 'block' : 'none';
+    }
+
+    async function handleInstantReset() {
+      var username = (document.getElementById('reset-input-username')?.value || '').trim();
+      var email = (document.getElementById('reset-input-email')?.value || '').trim();
+      var btn = document.getElementById('btn-do-instant-reset');
+
+      if (!username || !email) {
+        showResetAlert('⚠️ Harap isi NIM/Username dan Email Institusi terlebih dahulu.', false);
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Memproses Reset SIAKAD...';
+      }
+
+      try {
+        var res = await window.UNIPDU_API.resetPasswordInstant(username, email);
+        showResetAlert('✅ ' + (res.message || 'Password berhasil dikembalikan ke default SIAKAD!'), true);
+        
+        // Auto fill form login
+        var uInp = document.getElementById('username-input');
+        var pInp = document.getElementById('password-input');
+        if (uInp) uInp.value = username;
+        if (pInp && res.default_password) pInp.value = res.default_password;
+
+        setTimeout(function() {
+          closeCampusResetModal();
+          if (pInp) pInp.focus();
+        }, 1800);
+      } catch (err) {
+        showResetAlert('❌ ' + (err.message || 'Gagal reset password instan'), false);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>⚡</span> Reset Instan ke Default SIAKAD';
+        }
+      }
+    }
+
+    async function handleRequestOtp() {
+      var username = (document.getElementById('reset-input-username')?.value || '').trim();
+      var email = (document.getElementById('reset-input-email')?.value || '').trim();
+      var btn = document.getElementById('btn-request-otp');
+
+      if (!username || !email) {
+        showResetAlert('⚠️ Harap isi NIM/Username dan Email Institusi terlebih dahulu.', false);
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Mengirim Kode OTP...';
+      }
+
+      try {
+        var res = await window.UNIPDU_API.requestResetOtp(username, email);
+        showResetAlert('✅ ' + (res.message || 'Kode OTP telah dikirim ke email institusi Anda.'), true);
+
+        var s1 = document.getElementById('reset-step-1');
+        var s2 = document.getElementById('reset-step-2');
+        var dispEmail = document.getElementById('reset-target-email-disp');
+        if (dispEmail) dispEmail.innerText = email;
+        if (s1) s1.style.display = 'none';
+        if (s2) s2.style.display = 'block';
+
+        if (res.dev_otp) {
+          var otpInp = document.getElementById('reset-input-otp');
+          if (otpInp) otpInp.value = res.dev_otp;
+        }
+      } catch (err) {
+        showResetAlert('❌ ' + (err.message || 'Gagal meminta kode OTP'), false);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = '<span>📧</span> Kirim Kode OTP (Untuk Buat Password Baru)';
+        }
+      }
+    }
+
+    async function handleVerifyResetOtp() {
+      var username = (document.getElementById('reset-input-username')?.value || '').trim();
+      var otp = (document.getElementById('reset-input-otp')?.value || '').trim();
+      var choice = document.querySelector('input[name="reset-pwd-choice"]:checked')?.value || 'siakad_default';
+      var newPwd = (document.getElementById('reset-input-newpwd')?.value || '').trim();
+      var btn = document.getElementById('btn-verify-otp');
+
+      if (!otp || otp.length !== 6) {
+        showResetAlert('⚠️ Harap masukkan 6 digit kode OTP yang dikirim ke email.', false);
+        return;
+      }
+
+      if (choice === 'custom' && (!newPwd || newPwd.length < 4)) {
+        showResetAlert('⚠️ Password baru minimal 4 karakter.', false);
+        return;
+      }
+
+      if (btn) {
+        btn.disabled = true;
+        btn.innerText = 'Menyimpan ke WiFi...';
+      }
+
+      try {
+        var payload = {
+          username: username,
+          otp: otp,
+          reset_type: choice,
+          new_password: newPwd
+        };
+        var res = await window.UNIPDU_API.verifyResetOtp(payload);
+        showResetAlert('✅ ' + (res.message || 'Password berhasil diperbarui! Silakan login.'), true);
+
+        var uInp = document.getElementById('username-input');
+        var pInp = document.getElementById('password-input');
+        if (uInp) uInp.value = username;
+        if (pInp && res.new_password) pInp.value = res.new_password;
+
+        setTimeout(function() {
+          closeCampusResetModal();
+          if (pInp) pInp.focus();
+        }, 1800);
+      } catch (err) {
+        showResetAlert('❌ ' + (err.message || 'Gagal memverifikasi OTP'), false);
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerText = 'Simpan & Terapkan ke WiFi';
+        }
+      }
+    }
+  </script>
 </body>
+
 </html>
