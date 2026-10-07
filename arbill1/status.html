@@ -825,10 +825,8 @@
       var elMasaAktif = document.getElementById('MasaAktif');
       var elModalExpired = document.getElementById('modal-validity-expired');
       var elModalFirst = document.getElementById('modal-validity-first');
-      var elModalOnline = document.getElementById('modal-validity-online');
       var username = '$(username)'.trim();
-
-      if (username === '' || username.indexOf('$(') !== -1 || username === 'trial') {
+      if (username === '' || username.startsWith('$') || username === 'trial') {
         if (elMasaAktif) elMasaAktif.innerText = 'Mode Gratis / Trial';
         if (elModalExpired) elModalExpired.innerText = 'Mode Gratis';
         if (elModalFirst) elModalFirst.innerText = 'Hari ini';

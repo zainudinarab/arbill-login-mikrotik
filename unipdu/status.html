@@ -11,6 +11,7 @@
   <title>Status Koneksi - Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU)</title>
   <link rel="stylesheet" href="css/unipdu.css">
   <link rel="icon" href="img/favicon.png">
+  <script src="setting.js"></script>
   <script>
     $(if advert-pending == 'yes')
     var popup = '';
@@ -137,6 +138,13 @@
             </svg>
           </button>
         </form>
+
+        <!-- Tombol Ganti Password Akun Kampus (Mahasiswa / Dosen / Staff / CS / Satpam) -->
+        <div style="margin-top: 10px;">
+          <button type="button" onclick="openChangePasswordModal()" class="btn-campus-submit" style="background: #ffffff; color: var(--primary-emerald); border: 1.5px solid #a7f3d0; box-shadow: 0 4px 12px rgba(6, 78, 59, 0.08); font-weight: 700; cursor: pointer;">
+            <span>🔑 GANTI PASSWORD AKUN</span>
+          </button>
+        </div>
 
         <!-- Quick Access to SIAKAD -->
         <div class="siakad-notice-box" style="margin-top: 14px;">
@@ -279,9 +287,153 @@
           drawer.classList.remove('open');
           if (overlay) overlay.classList.remove('open');
         }
+        closeChangePasswordModal();
       }
     });
+
+    // ==============================================================
+    // LOGIKA MODAL GANTI PASSWORD MANDIRI
+    // ==============================================================
+    function openChangePasswordModal() {
+      var modal = document.getElementById('modal-change-password');
+      if (modal) {
+        modal.style.display = 'flex';
+        var alertBox = document.getElementById('cp-alert-box');
+        if (alertBox) alertBox.style.display = 'none';
+        var oldPw = document.getElementById('cp-old-password');
+        if (oldPw) { oldPw.value = ''; oldPw.focus(); }
+        var newPw = document.getElementById('cp-new-password');
+        if (newPw) newPw.value = '';
+        var confPw = document.getElementById('cp-confirm-password');
+        if (confPw) confPw.value = '';
+      }
+    }
+
+    function closeChangePasswordModal() {
+      var modal = document.getElementById('modal-change-password');
+      if (modal) modal.style.display = 'none';
+    }
+
+    async function submitChangePassword(event) {
+      if (event && event.preventDefault) event.preventDefault();
+      var username = (document.getElementById('cp-username').value || '').trim();
+      var oldPw = document.getElementById('cp-old-password').value;
+      var newPw = document.getElementById('cp-new-password').value;
+      var confPw = document.getElementById('cp-confirm-password').value;
+      var alertBox = document.getElementById('cp-alert-box');
+      var btn = document.getElementById('btn-cp-submit');
+
+      if (!username || !oldPw || !newPw) {
+        alert('Mohon isi semua bidang password.');
+        return false;
+      }
+      if (newPw !== confPw) {
+        if (alertBox) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = '#fef2f2';
+          alertBox.style.color = '#991b1b';
+          alertBox.style.border = '1px solid #fecaca';
+          alertBox.innerHTML = '❌ <strong>Konfirmasi password baru tidak cocok.</strong>';
+        }
+        return false;
+      }
+
+      btn.disabled = true;
+      btn.innerText = 'MEMPROSES...';
+      if (alertBox) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = '#eff6ff';
+        alertBox.style.color = '#1e40af';
+        alertBox.style.border = '1px solid #bfdbfe';
+        alertBox.innerHTML = '⏳ Sedang memperbarui password di Cloud Firestore & MikroTik...';
+      }
+
+      try {
+        var data;
+        if (window.UNIPDU_API && typeof window.UNIPDU_API.changePassword === 'function') {
+          data = await window.UNIPDU_API.changePassword(username, oldPw, newPw, '$(identity)');
+        } else {
+          throw new Error('Modul Web API belum siap.');
+        }
+
+        if (data && data.success) {
+          if (alertBox) {
+            alertBox.style.background = '#ecfdf5';
+            alertBox.style.color = '#065f46';
+            alertBox.style.border = '1.5px solid #a7f3d0';
+            alertBox.innerHTML = '✅ <strong>Berhasil!</strong> ' + data.message;
+          }
+          btn.innerText = 'SELESAI';
+          setTimeout(function() {
+            closeChangePasswordModal();
+            btn.disabled = false;
+            btn.innerText = 'SIMPAN PASSWORD BARU';
+          }, 2500);
+        } else {
+          throw new Error(data.message || 'Gagal mengubah password.');
+        }
+      } catch (err) {
+        if (alertBox) {
+          alertBox.style.background = '#fef2f2';
+          alertBox.style.color = '#991b1b';
+          alertBox.style.border = '1.5px solid #fecaca';
+          alertBox.innerHTML = '❌ <strong>Gagal:</strong> ' + err.message;
+        }
+        btn.disabled = false;
+        btn.innerText = 'SIMPAN PASSWORD BARU';
+      }
+      return false;
+    }
   </script>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: GANTI PASSWORD MANDIRI                                  -->
+  <!-- ============================================================== -->
+  <div id="modal-change-password" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 16px;">
+    <div style="background: #ffffff; border-radius: 20px; max-width: 440px; width: 100%; padding: 26px 22px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3); position: relative;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 1.3rem;">🔑</span>
+          <h3 style="font-size: 1.15rem; font-weight: 800; color: #0f172a; margin: 0;">Ganti Password Hotspot</h3>
+        </div>
+        <button type="button" onclick="closeChangePasswordModal()" style="border: none; background: none; font-size: 1.4rem; color: #64748b; cursor: pointer; padding: 4px 8px;">&times;</button>
+      </div>
+
+      <div id="cp-alert-box" style="display: none; padding: 10px 14px; border-radius: 10px; font-size: 0.82rem; margin-bottom: 14px; line-height: 1.4;"></div>
+
+      <form id="form-change-password" onsubmit="return submitChangePassword(event)">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 5px;">Username / NIM / NIP</label>
+          <input type="text" id="cp-username" value="$(username)" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem; background: #f8fafc; font-weight: 600; color: #0f172a;" required>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 5px;">Password Lama</label>
+          <input type="password" id="cp-old-password" placeholder="Masukkan password lama" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;" required>
+          <small style="color: #64748b; font-size: 0.72rem;">*Jika mode kode saja, masukkan kode login Anda.</small>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 5px;">Password Baru</label>
+          <input type="password" id="cp-new-password" placeholder="Minimal 4 karakter" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;" required minlength="4">
+        </div>
+
+        <div style="margin-bottom: 18px;">
+          <label style="display: block; font-size: 0.8rem; font-weight: 700; color: #334155; margin-bottom: 5px;">Konfirmasi Password Baru</label>
+          <input type="password" id="cp-confirm-password" placeholder="Ulangi password baru" style="width: 100%; padding: 9px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 0.9rem;" required minlength="4">
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" onclick="closeChangePasswordModal()" style="padding: 9px 15px; border: 1px solid #cbd5e1; background: #f1f5f9; border-radius: 8px; font-size: 0.84rem; font-weight: 600; color: #475569; cursor: pointer;">Batal</button>
+          <button type="submit" id="btn-cp-submit" style="padding: 9px 18px; border: none; background: #047857; color: #ffffff; border-radius: 8px; font-size: 0.84rem; font-weight: 700; cursor: pointer;">
+            <span>SIMPAN PASSWORD BARU</span>
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
 
   <!-- Slide-out Side Drawer Menu (PC & Mobile) -->
   <div class="campus-drawer-overlay" id="campus-drawer-overlay" onclick="toggleCampusMenu()"></div>

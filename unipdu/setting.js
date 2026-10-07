@@ -49,6 +49,40 @@ window.UNIPDU_API = {
       : '';
   },
 
+  // Helper cerdas mendeteksi Identity Router MikroTik
+  getRouterId: function(explicitId) {
+    if (explicitId && typeof explicitId === 'string' && explicitId.indexOf('$') === -1 && explicitId.trim() !== '') {
+      return explicitId.trim();
+    }
+    // Cek fungsi getMikrotikRouterIdentity di login.html
+    if (typeof window !== 'undefined') {
+      if (typeof window.getMikrotikRouterIdentity === 'function') {
+        var fromFunc = window.getMikrotikRouterIdentity();
+        if (fromFunc && fromFunc.indexOf('$') === -1 && fromFunc.trim() !== '') {
+          return fromFunc.trim();
+        }
+      }
+      // Cek variabel MIKROTIK_IDENTITY dari login.html
+      if (typeof window.MIKROTIK_IDENTITY === 'string' && window.MIKROTIK_IDENTITY.indexOf('$') === -1 && window.MIKROTIK_IDENTITY.trim() !== '') {
+        return window.MIKROTIK_IDENTITY.trim();
+      }
+      // Cek variabel MIKROTIK_SERVER_NAME dari login.html
+      if (typeof window.MIKROTIK_SERVER_NAME === 'string' && window.MIKROTIK_SERVER_NAME.indexOf('$') === -1 && window.MIKROTIK_SERVER_NAME.trim() !== '') {
+        return window.MIKROTIK_SERVER_NAME.trim();
+      }
+      // Cek query parameter URL (?router=... atau ?identity=...)
+      try {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('router') || params.get('identity') || params.get('router_id');
+        if (q && q.indexOf('$') === -1 && q.trim() !== '') {
+          return q.trim();
+        }
+      } catch (e) { }
+    }
+    // Fallback jika di luar router MikroTik
+    return (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.DEFAULT_ROUTER_ID) ? window.UNIPDU_CONFIG.DEFAULT_ROUTER_ID : 'all';
+  },
+
   // 1. Cek Tamu Aktif berdasarkan MAC Address
   checkActiveGuest: async function(mac) {
     if (!mac || mac.indexOf('$') !== -1) return null;
@@ -81,14 +115,7 @@ window.UNIPDU_API = {
   // 2. Pendaftaran Tamu Baru via Web API
   registerGuest: async function(formData) {
     var url = this.getBaseUrl() + (window.UNIPDU_CONFIG.GUEST_REGISTER_ENDPOINT || '/api/guest/register');
-    var defaultRouter = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.DEFAULT_ROUTER_ID) ? window.UNIPDU_CONFIG.DEFAULT_ROUTER_ID : 'all';
-    
-    var routerId = defaultRouter;
-    if (formData.router_id && formData.router_id.indexOf('$') === -1 && formData.router_id.trim() !== '') {
-      routerId = formData.router_id.trim();
-    } else if (formData.identity && formData.identity.indexOf('$') === -1 && formData.identity.trim() !== '') {
-      routerId = formData.identity.trim();
-    }
+    var routerId = this.getRouterId(formData.router_id || formData.identity);
 
     var mac = (formData.mac && formData.mac.indexOf('$') === -1) ? formData.mac.trim() : '';
     var ip = (formData.ip && formData.ip.indexOf('$') === -1) ? formData.ip.trim() : '';
@@ -128,6 +155,7 @@ window.UNIPDU_API = {
   // 3. Ganti Password Pengguna Kampus via Web API
   changePassword: async function(username, oldPw, newPw, routerId) {
     var url = this.getBaseUrl() + (window.UNIPDU_CONFIG.CHANGE_PASSWORD_ENDPOINT || '/api/users/change-password');
+    var finalRouterId = this.getRouterId(routerId);
     var res = await fetch(url + '?api_key=' + encodeURIComponent(this.getApiKey()), {
       method: 'POST',
       headers: {
@@ -138,8 +166,8 @@ window.UNIPDU_API = {
         old_password: oldPw,
         new_password: newPw,
         confirm_password: newPw,
-        router_id: routerId || 'all',
-        identity: routerId || 'all'
+        router_id: finalRouterId,
+        identity: finalRouterId
       })
     });
 

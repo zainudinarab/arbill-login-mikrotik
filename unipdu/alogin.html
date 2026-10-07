@@ -1,34 +1,107 @@
-<html>
+<!DOCTYPE html>
+<html lang="id">
 <head>
-<title id="title"></title>
-<meta http-equiv="refresh" content="2; url=$(link-redirect)">
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0;"/>
-<meta http-equiv="pragma" content="no-cache">
-<meta http-equiv="expires" content="-1">
-<link rel="stylesheet" href="css/desa-digital.css">
-<script language="JavaScript">
-<!--
-    function startClock() {
-        $(if popup == 'true')
-        open('$(link-status)', 'hotspot_status', 'toolbar=0,location=0,directories=0,status=0,menubars=0,resizable=1,width=290,height=200');
-	$(endif)
-	location.href = './status';
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="pragma" content="no-cache">
+  <meta http-equiv="expires" content="-1">
+  <meta http-equiv="refresh" content="2; url=$(link-redirect)">
+  <title>Login Berhasil - Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU)</title>
+  <link rel="stylesheet" href="css/unipdu.css">
+  <link rel="icon" href="img/favicon.png">
+  <script src="setting.js"></script>
+  <script>
+    function notifyWebhookLogin() {
+      try {
+        var webhookBase = (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.WEBHOOK_BASE_URL)
+          ? window.UNIPDU_CONFIG.WEBHOOK_BASE_URL
+          : 'http://localhost:3009/api/webhook/hotspot';
+        var payload = {
+          username: '$(username)',
+          ip: '$(ip)',
+          mac: '$(mac)',
+          router: (window.UNIPDU_CONFIG && window.UNIPDU_CONFIG.ROUTER_ID) ? window.UNIPDU_CONFIG.ROUTER_ID : '$(identity)'
+        };
+        if (navigator.sendBeacon) {
+          navigator.sendBeacon(webhookBase + '/login', new Blob([JSON.stringify(payload)], { type: 'application/json' }));
+        } else {
+          fetch(webhookBase + '/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          }).catch(function() {});
+        }
+      } catch (e) {}
     }
-//-->
-</script>
+
+    function startClock() {
+      notifyWebhookLogin();
+      $(if popup == 'true')
+      open('$(link-status)', 'hotspot_status', 'toolbar=0,location=0,directories=0,status=0,menubars=0,resizable=1,width=320,height=480');
+      $(endif)
+      setTimeout(function() {
+        location.href = unescape('$(link-redirect-esc)');
+      }, 1500);
+    }
+  </script>
 </head>
-<body onLoad="startClock()">
-<table width="100%" height="100%">
-<tr>
-	<td align="center" valign="middle">
-	Username Benar !!!
-	<br><br>
-	Jika belum bisa akses internet, klik <a style="color:rgb(0, 153, 187)" href="./login">di sini</a></td>
-</tr>
-</table>
-<script type="text/javascript">
-	document.getElementById('title').innerHTML = window.location.hostname + " > redirect";
-</script>
+<body onload="startClock()">
+
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-orb orb-top-left"></div>
+  <div class="ambient-orb orb-bottom-right"></div>
+  <div class="ambient-orb orb-center-gold"></div>
+
+  <div class="page-wrapper" style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+
+    <!-- Success Card -->
+    <div class="login-card" style="max-width: 480px; width: 100%; text-align: center; padding: 36px 28px;">
+      
+      <!-- Brand Logo -->
+      <div style="margin-bottom: 20px;">
+        <img src="img/logo.png" alt="UNIPDU" style="width: 68px; height: 68px; object-fit: contain;">
+      </div>
+
+      <!-- Success Icon Badge -->
+      <div style="width: 64px; height: 64px; background: #ecfdf5; border: 2.5px solid #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 2rem; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.25);">
+        ✅
+      </div>
+
+      <span class="login-badge-sub" style="background:#ecfdf5; color:#047857; border-color:#a7f3d0;">Autentikasi Sukses</span>
+      <h2 class="login-card-title" style="margin-top: 8px; font-size: 1.4rem;">Koneksi Berhasil Terhubung!</h2>
+      <p class="login-card-desc" style="margin-bottom: 24px;">
+        Selamat datang di jaringan internet <strong>UNIPDU Jombang</strong>. Sesi Anda telah aktif.
+      </p>
+
+      <!-- IP Notice Box -->
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 16px; margin-bottom: 24px; font-size: 0.82rem; color: #475569;">
+        IP Perangkat: <code style="color: #047857; font-weight: 700;">$(ip)</code> &bull; Akun: <strong>$(username)</strong>
+        <div style="font-size: 0.72rem; color: #94a3b8; margin-top: 4px;">Sedang mengalihkan ke halaman tujuan otomatis...</div>
+      </div>
+
+      <!-- Action Button -->
+      <a href="$(link-redirect)" class="btn-campus-submit" style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <span>MULAI BROWSING SEKARANG</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+        </svg>
+      </a>
+
+      <div style="margin-top: 18px;">
+        <a href="./status" style="font-size: 0.78rem; color: #047857; text-decoration: none; font-weight: 600;">
+          📊 Lihat Status Koneksi &amp; Kuota &rarr;
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Campus Footer -->
+    <div style="margin-top: 24px; text-align: center; font-size: 0.76rem; color: #64748b;">
+      <strong>&copy; 2026 Universitas Pesantren Tinggi Darul 'Ulum (UNIPDU)</strong><br>
+      <small>Kompleks Pondok Pesantren Darul 'Ulum, Peterongan, Jombang</small>
+    </div>
+
+  </div>
+
 </body>
 </html>

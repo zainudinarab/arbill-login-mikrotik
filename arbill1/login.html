@@ -75,6 +75,20 @@
     }
 
     // Immediate UI Handlers - Ready at 0ms before full DOM finishes
+    function setTheme(theme, btn) {
+      document.querySelectorAll('.theme-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (btn) {
+        btn.classList.add('active');
+      } else {
+        var matchBtn = document.querySelector('.theme-btn[onclick*="' + theme + '"]');
+        if (matchBtn) matchBtn.classList.add('active');
+      }
+      document.body.className = 'has-bottom-nav';
+      if (theme === 'gold') document.body.classList.add('theme-gold');
+      if (theme === 'light') document.body.classList.add('theme-light');
+      try { localStorage.setItem('arbill_theme', theme); } catch(e) {}
+    }
+
     function switchTab(tab) {
       var btns = document.querySelectorAll('.tab-btn');
       for (var i = 0; i < btns.length; i++) btns[i].classList.remove('active');
